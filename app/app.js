@@ -86,13 +86,48 @@ function renderTasks() {
   `).join("");
 }
 
+function renderFeishu() {
+  const record = {
+    "事件ID": selected.id,
+    "风险等级": selected.risk,
+    "异常摘要": `${selected.scene}：${selected.summary}`,
+    "影响范围": selected.scope,
+    "证据链": selected.evidence.join("；"),
+    "处置建议": selected.actions.join("；"),
+    "状态": selected.risk === "P1" ? "待质量负责人确认" : "待当班工程师处理"
+  };
+  const actions = [
+    ["多维表格", "写入质量事件表", `POST /bitable/v1/apps/:app_token/tables/:table_id/records`],
+    ["机器人卡片", "推送风险证据链", `Webhook群通知 ${selected.risk}`],
+    ["Aily技能", "解释事件并追问处置进展", `@质量AI 解释 ${selected.id}`],
+    ["复盘回写", "关闭任务后沉淀知识", "更新FMEA与质量图谱"]
+  ];
+  document.getElementById("feishu").innerHTML = `
+    <div class="integration-grid">
+      ${actions.map(a => `
+        <div class="integration">
+          <span class="tag">${a[0]}</span>
+          <strong>${a[1]}</strong>
+          <p>${a[2]}</p>
+        </div>
+      `).join("")}
+    </div>
+    <div class="evidence">
+      <strong>多维表格记录预览</strong>
+      <pre>${JSON.stringify({ fields: record }, null, 2)}</pre>
+    </div>
+  `;
+}
+
 function selectEvent(id) {
   selected = events.find(e => e.id === id);
   renderEvents();
   renderReasoning();
   renderTasks();
+  renderFeishu();
 }
 
 renderEvents();
 renderReasoning();
 renderTasks();
+renderFeishu();

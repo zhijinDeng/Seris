@@ -1,0 +1,9 @@
+{
+  "FEISHU_APP_ID": "cli_xxx",
+  "FEISHU_APP_SECRET": "xxx",
+  "FEISHU_BITABLE_APP_TOKEN": "app_token_xxx",
+  "FEISHU_BITABLE_EVENT_TABLE_ID": "tbl_quality_event",
+  "FEISHU_BITABLE_TASK_TABLE_ID": "tbl_action_task",
+  "FEISHU_WEBHOOK_URL": "https://open.feishu.cn/open-apis/bot/v2/hook/xxx",
+  "FEISHU_ENABLE_SEND": "false"
+}

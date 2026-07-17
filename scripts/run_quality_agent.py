@@ -27,8 +27,9 @@ def score_event(event):
         distance = (value - upper) / max(upper, 1)
     else:
         distance = 0
-    repeated = "连续" in event["alarm"] or "持续" in event["alarm"]
-    if distance >= 0.05 or repeated and event["station"].startswith(("底盘", "侧围")):
+    repeated = "连续" in event["alarm"] or "持续" in event["alarm"] or "漂移" in event["alarm"]
+    critical_quality = any(token in event["quality_risk"] for token in ["强度不足", "预紧力不足", "附着力风险"])
+    if distance >= 0.05 or repeated and critical_quality:
         return "P1"
     if distance > 0:
         return "P2"

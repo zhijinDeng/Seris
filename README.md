@@ -12,5 +12,6 @@
 - `data/`：本体、异常事件、质量案例、多维表格字段样例。
 - `app/index.html`：可打开的前端演示页面。
 - `scripts/run_quality_agent.py`：无外部依赖的质量智能体推理 demo。
+- `scripts/feishu_client.py`：飞书多维表格、Webhook机器人和Aily提示词的dry-run/真实发送客户端。
 
 GitHub：https://github.com/zhijinDeng/Seris
