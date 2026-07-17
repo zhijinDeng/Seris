@@ -13,6 +13,9 @@ required = [
     "docs/architecture.md",
     "docs/feishu-aily-bitable.md",
     "docs/feishu-integration-guide.md",
+    "docs/demo-guide.md",
+    "docs/tightening-case-study.md",
+    "docs/score-alignment.md",
     "docs/90-day-plan.md",
     "data/quality_ontology.jsonld",
     "data/factory_events.csv",
@@ -22,11 +25,14 @@ required = [
     "data/feishu_aily_skills.json",
     "data/feishu_event_callback.example.json",
     "data/feishu_bitable_record.example.json",
+    "data/end_to_end_trace.json",
+    "diagram/quality-ai-architecture.svg",
     "app/index.html",
     "app/styles.css",
     "app/app.js",
     "scripts/run_quality_agent.py",
     "scripts/feishu_client.py",
+    "scripts/build_case_docx.py",
 ]
 
 missing = [p for p in required if not (ROOT / p).exists()]

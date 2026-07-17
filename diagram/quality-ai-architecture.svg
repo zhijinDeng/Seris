@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
+    </marker>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap');
+      text { font-family: 'JetBrains Mono', 'Noto Sans SC', 'Microsoft YaHei', sans-serif; }
+      .title { fill: #f8fafc; font-size: 18px; font-weight: 700; }
+      .subtitle { fill: #94a3b8; font-size: 10px; }
+      .label { fill: #f8fafc; font-size: 12px; font-weight: 700; text-anchor: middle; }
+      .sub { fill: #cbd5e1; font-size: 9px; text-anchor: middle; }
+      .tiny { fill: #94a3b8; font-size: 8px; text-anchor: middle; }
+      .region { fill: none; stroke-width: 1.2; stroke-dasharray: 8 4; }
+      .region-label { font-size: 10px; font-weight: 700; }
+      .box-mask { fill: #0f172a; }
+      .box-primary { fill: rgba(8,51,68,.45); stroke: #22d3ee; stroke-width: 1.5; }
+      .box-secondary { fill: rgba(6,78,59,.45); stroke: #34d399; stroke-width: 1.5; }
+      .box-tertiary { fill: rgba(76,29,149,.45); stroke: #a78bfa; stroke-width: 1.5; }
+      .box-accent { fill: rgba(120,53,15,.35); stroke: #fbbf24; stroke-width: 1.5; }
+      .box-alert { fill: rgba(136,19,55,.42); stroke: #fb7185; stroke-width: 1.5; }
+      .box-neutral { fill: rgba(30,41,59,.55); stroke: #94a3b8; stroke-width: 1.5; }
+      .arrow { fill: none; stroke: #94a3b8; stroke-width: 1.6; marker-end: url(#arrow); }
+      .arrow-cyan { fill: none; stroke: #22d3ee; stroke-width: 1.8; marker-end: url(#arrow-cyan); }
+      .arrow-green { fill: none; stroke: #34d399; stroke-width: 1.8; marker-end: url(#arrow-green); }
+    </style>
+  </defs>
+
+  <rect width="1280" height="760" fill="#0f172a"/>
+  <rect width="1280" height="760" fill="url(#grid)"/>
+
+  <text x="38" y="36" class="title">赛力斯质量管控AI数字员工：从感知到行动的闭环架构</text>
+  <text x="38" y="56" class="subtitle">Ontology / Knowledge Graph / Graph RAG / Autonomous Agent / Feishu Aily & Bitable</text>
+
+  <rect x="30" y="86" width="210" height="560" rx="12" class="region" stroke="#22d3ee"/>
+  <text x="44" y="106" class="region-label" fill="#22d3ee">现场数据层</text>
+
+  <rect x="275" y="86" width="210" height="560" rx="12" class="region" stroke="#34d399"/>
+  <text x="289" y="106" class="region-label" fill="#34d399">语义治理层</text>
+
+  <rect x="520" y="86" width="240" height="560" rx="12" class="region" stroke="#a78bfa"/>
+  <text x="534" y="106" class="region-label" fill="#a78bfa">知识底座层</text>
+
+  <rect x="795" y="86" width="210" height="560" rx="12" class="region" stroke="#fbbf24"/>
+  <text x="809" y="106" class="region-label" fill="#fbbf24">Graph RAG + Agent</text>
+
+  <rect x="1040" y="86" width="210" height="560" rx="12" class="region" stroke="#fb7185"/>
+  <text x="1054" y="106" class="region-label" fill="#fb7185">飞书协同执行层</text>
+
+  <path class="arrow-cyan" d="M 240 365 L 275 365"/>
+  <path class="arrow-green" d="M 485 365 L 520 365"/>
+  <path class="arrow" d="M 760 365 L 795 365"/>
+  <path class="arrow" d="M 1005 365 L 1040 365"/>
+  <path class="arrow-green" d="M 1145 646 L 1145 704 L 640 704 L 640 646"/>
+  <text x="895" y="692" class="tiny">复盘结果回写：更新案例库 / FMEA / 图谱规则</text>
+
+  <g>
+    <rect x="58" y="136" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="58" y="136" width="154" height="58" rx="7" class="box-primary"/>
+    <text x="135" y="160" class="label">MES / SCADA</text>
+    <text x="135" y="177" class="sub">生产节拍与设备状态</text>
+
+    <rect x="58" y="224" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="58" y="224" width="154" height="58" rx="7" class="box-primary"/>
+    <text x="135" y="248" class="label">PLC / 传感器</text>
+    <text x="135" y="265" class="sub">扭矩 电流 温度 膜厚</text>
+
+    <rect x="58" y="312" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="58" y="312" width="154" height="58" rx="7" class="box-primary"/>
+    <text x="135" y="336" class="label">QMS / 视觉检测</text>
+    <text x="135" y="353" class="sub">缺陷与质检结果</text>
+
+    <rect x="58" y="400" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="58" y="400" width="154" height="58" rx="7" class="box-primary"/>
+    <text x="135" y="424" class="label">EAM / 维修工单</text>
+    <text x="135" y="441" class="sub">保养 寿命 故障记录</text>
+
+    <rect x="58" y="488" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="58" y="488" width="154" height="58" rx="7" class="box-primary"/>
+    <text x="135" y="512" class="label">工艺文件 / FMEA</text>
+    <text x="135" y="529" class="sub">控制计划与阈值</text>
+  </g>
+
+  <g>
+    <rect x="303" y="154" width="154" height="64" rx="7" class="box-mask"/>
+    <rect x="303" y="154" width="154" height="64" rx="7" class="box-secondary"/>
+    <text x="380" y="180" class="label">事件标准化</text>
+    <text x="380" y="198" class="sub">QualityEvent schema</text>
+
+    <rect x="303" y="260" width="154" height="64" rx="7" class="box-mask"/>
+    <rect x="303" y="260" width="154" height="64" rx="7" class="box-secondary"/>
+    <text x="380" y="286" class="label">实体对齐</text>
+    <text x="380" y="304" class="sub">设备 工位 参数 VIN</text>
+
+    <rect x="303" y="366" width="154" height="64" rx="7" class="box-mask"/>
+    <rect x="303" y="366" width="154" height="64" rx="7" class="box-secondary"/>
+    <text x="380" y="392" class="label">阈值与趋势规则</text>
+    <text x="380" y="410" class="sub">越界 漂移 连续异常</text>
+
+    <rect x="303" y="472" width="154" height="64" rx="7" class="box-mask"/>
+    <rect x="303" y="472" width="154" height="64" rx="7" class="box-secondary"/>
+    <text x="380" y="498" class="label">权限与审计</text>
+    <text x="380" y="516" class="sub">人工确认与留痕</text>
+  </g>
+
+  <g>
+    <rect x="550" y="134" width="180" height="68" rx="7" class="box-mask"/>
+    <rect x="550" y="134" width="180" height="68" rx="7" class="box-tertiary"/>
+    <text x="640" y="162" class="label">质量本体</text>
+    <text x="640" y="180" class="sub">设备 工序 参数 缺陷 根因</text>
+
+    <rect x="550" y="236" width="180" height="78" rx="7" class="box-mask"/>
+    <rect x="550" y="236" width="180" height="78" rx="7" class="box-tertiary"/>
+    <text x="640" y="266" class="label">工厂质量知识图谱</text>
+    <text x="640" y="284" class="sub">PPR + FMEA + HCP</text>
+
+    <rect x="550" y="350" width="180" height="78" rx="7" class="box-mask"/>
+    <rect x="550" y="350" width="180" height="78" rx="7" class="box-tertiary"/>
+    <text x="640" y="380" class="label">文档向量库</text>
+    <text x="640" y="398" class="sub">控制计划 维修手册 质检报告</text>
+
+    <rect x="550" y="464" width="180" height="78" rx="7" class="box-mask"/>
+    <rect x="550" y="464" width="180" height="78" rx="7" class="box-tertiary"/>
+    <text x="640" y="494" class="label">历史案例库</text>
+    <text x="640" y="512" class="sub">根因 措施 复盘规则</text>
+  </g>
+
+  <g>
+    <rect x="823" y="138" width="154" height="60" rx="7" class="box-mask"/>
+    <rect x="823" y="138" width="154" height="60" rx="7" class="box-accent"/>
+    <text x="900" y="162" class="label">子图召回</text>
+    <text x="900" y="180" class="sub">2-3跳关系路径</text>
+
+    <rect x="823" y="230" width="154" height="60" rx="7" class="box-mask"/>
+    <rect x="823" y="230" width="154" height="60" rx="7" class="box-accent"/>
+    <text x="900" y="254" class="label">文档证据召回</text>
+    <text x="900" y="272" class="sub">规则 案例 手册</text>
+
+    <rect x="823" y="322" width="154" height="60" rx="7" class="box-mask"/>
+    <rect x="823" y="322" width="154" height="60" rx="7" class="box-accent"/>
+    <text x="900" y="346" class="label">风险评分</text>
+    <text x="900" y="364" class="sub">P0-P3 / 影响范围</text>
+
+    <rect x="823" y="414" width="154" height="60" rx="7" class="box-mask"/>
+    <rect x="823" y="414" width="154" height="60" rx="7" class="box-accent"/>
+    <text x="900" y="438" class="label">处置规划</text>
+    <text x="900" y="456" class="sub">隔离 复检 校准 维修</text>
+
+    <rect x="823" y="506" width="154" height="60" rx="7" class="box-mask"/>
+    <rect x="823" y="506" width="154" height="60" rx="7" class="box-alert"/>
+    <text x="900" y="530" class="label">人工确认门</text>
+    <text x="900" y="548" class="sub">P0/P1动作受控</text>
+  </g>
+
+  <g>
+    <rect x="1068" y="136" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="1068" y="136" width="154" height="58" rx="7" class="box-alert"/>
+    <text x="1145" y="160" class="label">Aily机器人</text>
+    <text x="1145" y="177" class="sub">解释 追问 推进</text>
+
+    <rect x="1068" y="224" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="1068" y="224" width="154" height="58" rx="7" class="box-alert"/>
+    <text x="1145" y="248" class="label">多维表格</text>
+    <text x="1145" y="265" class="sub">事件 证据 任务 复盘</text>
+
+    <rect x="1068" y="312" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="1068" y="312" width="154" height="58" rx="7" class="box-alert"/>
+    <text x="1145" y="336" class="label">Webhook卡片</text>
+    <text x="1145" y="353" class="sub">质量快速响应群</text>
+
+    <rect x="1068" y="400" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="1068" y="400" width="154" height="58" rx="7" class="box-alert"/>
+    <text x="1145" y="424" class="label">任务中心 / SLA</text>
+    <text x="1145" y="441" class="sub">负责人 状态 时限</text>
+
+    <rect x="1068" y="488" width="154" height="58" rx="7" class="box-mask"/>
+    <rect x="1068" y="488" width="154" height="58" rx="7" class="box-alert"/>
+    <text x="1145" y="512" class="label">复盘知识</text>
+    <text x="1145" y="529" class="sub">根因 措施 预防规则</text>
+  </g>
+
+  <path class="arrow" d="M 135 194 L 135 224"/>
+  <path class="arrow" d="M 135 282 L 135 312"/>
+  <path class="arrow" d="M 135 370 L 135 400"/>
+  <path class="arrow" d="M 135 458 L 135 488"/>
+  <path class="arrow" d="M 380 218 L 380 260"/>
+  <path class="arrow" d="M 380 324 L 380 366"/>
+  <path class="arrow" d="M 380 430 L 380 472"/>
+  <path class="arrow" d="M 640 202 L 640 236"/>
+  <path class="arrow" d="M 640 314 L 640 350"/>
+  <path class="arrow" d="M 640 428 L 640 464"/>
+  <path class="arrow" d="M 900 198 L 900 230"/>
+  <path class="arrow" d="M 900 290 L 900 322"/>
+  <path class="arrow" d="M 900 382 L 900 414"/>
+  <path class="arrow" d="M 900 474 L 900 506"/>
+  <path class="arrow" d="M 1145 194 L 1145 224"/>
+  <path class="arrow" d="M 1145 282 L 1145 312"/>
+  <path class="arrow" d="M 1145 370 L 1145 400"/>
+  <path class="arrow" d="M 1145 458 L 1145 488"/>
+
+  <rect x="40" y="682" width="360" height="44" rx="8" class="box-neutral"/>
+  <text x="220" y="702" class="label">试点场景</text>
+  <text x="220" y="720" class="sub">总装拧紧 / 焊装焊点 / 涂装烘干</text>
+
+  <rect x="440" y="682" width="360" height="44" rx="8" class="box-neutral"/>
+  <text x="620" y="702" class="label">核心指标</text>
+  <text x="620" y="720" class="sub">定位时间 -50% / 重复问题 -20% / 追溯覆盖 100%</text>
+</svg>
