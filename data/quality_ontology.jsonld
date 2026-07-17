@@ -1,0 +1,95 @@
+{
+  "@context": {
+    "seres": "https://github.com/zhijinDeng/Seris/ontology#",
+    "name": "seres:name",
+    "type": "@type",
+    "id": "@id"
+  },
+  "@graph": [
+    {
+      "id": "seres:VehicleModel",
+      "type": "Class",
+      "name": "车型"
+    },
+    {
+      "id": "seres:ProcessStep",
+      "type": "Class",
+      "name": "工艺步骤"
+    },
+    {
+      "id": "seres:Equipment",
+      "type": "Class",
+      "name": "设备/工装"
+    },
+    {
+      "id": "seres:Sensor",
+      "type": "Class",
+      "name": "传感器"
+    },
+    {
+      "id": "seres:Parameter",
+      "type": "Class",
+      "name": "工艺参数"
+    },
+    {
+      "id": "seres:Alarm",
+      "type": "Class",
+      "name": "设备报警"
+    },
+    {
+      "id": "seres:QualityFeature",
+      "type": "Class",
+      "name": "质量特性"
+    },
+    {
+      "id": "seres:DefectMode",
+      "type": "Class",
+      "name": "缺陷模式"
+    },
+    {
+      "id": "seres:RootCause",
+      "type": "Class",
+      "name": "根因"
+    },
+    {
+      "id": "seres:ControlPlan",
+      "type": "Class",
+      "name": "控制计划"
+    },
+    {
+      "id": "seres:ActionTask",
+      "type": "Class",
+      "name": "处置任务"
+    },
+    {
+      "id": "seres:locatedIn",
+      "type": "Property",
+      "name": "位于工序/工位"
+    },
+    {
+      "id": "seres:monitors",
+      "type": "Property",
+      "name": "监测"
+    },
+    {
+      "id": "seres:deviatesFrom",
+      "type": "Property",
+      "name": "偏离阈值"
+    },
+    {
+      "id": "seres:mayCause",
+      "type": "Property",
+      "name": "可能导致"
+    },
+    {
+      "id": "seres:handledBy",
+      "type": "Property",
+      "name": "由任务处置"
+    },
+    {
+      "id": "seres:verifiedBy",
+      "type": "Property",
+      "name": "由检测验证"
+    }
+  ]
+}
