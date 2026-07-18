@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>赛力斯质量AI创新亮点</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d8dee8;
+      --blue: #2457c5;
+      --green: #148765;
+      --red: #c0392b;
+      --amber: #b26a00;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    header {
+      padding: 28px 36px;
+      background: #0f1f38;
+      color: white;
+    }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 30px; }
+    header p { margin-top: 10px; color: #c8d5ef; max-width: 980px; line-height: 1.65; }
+    main { padding: 24px 36px 36px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .panel, .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .panel strong {
+      display: block;
+      color: var(--blue);
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .panel p { line-height: 1.75; color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card h2 { font-size: 17px; margin-bottom: 10px; }
+    .card p { color: var(--muted); line-height: 1.65; }
+    .tag {
+      display: inline-flex;
+      height: 24px;
+      align-items: center;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: white;
+      font-size: 12px;
+      background: var(--blue);
+      margin-bottom: 12px;
+    }
+    .tag.green { background: var(--green); }
+    .tag.red { background: var(--red); }
+    .tag.amber { background: var(--amber); }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    th { color: var(--blue); }
+    @media (max-width: 1100px) {
+      .hero, .grid, .cards { grid-template-columns: 1fr; }
+      header, main { padding-left: 18px; padding-right: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>赛力斯质量管控AI数字员工：创新亮点速览</h1>
+    <p>这不是普通质量看板，也不是被动问答机器人，而是一名能主动发现异常、交付证据链、推动飞书闭环、持续沉淀质量记忆的AI数字员工。</p>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="panel">
+        <strong>答辩主张</strong>
+        <p>我们把AI从“知识检索入口”推进到“质量风险处置角色”：它能主动巡检现场数据，用质量因果图谱和Graph RAG生成证据合约，再把处置动作落到飞书Aily、多维表格、Webhook和SLA任务中。</p>
+      </div>
+      <div class="panel">
+        <strong>一句话打动评委</strong>
+        <p>不是人问AI答，而是AI主动带着风险卡、证据卡、任务卡找责任人闭环。</p>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card"><span class="tag">01</span><h2>主动巡检数字员工</h2><p>持续监听设备、工艺、质检和维修数据，主动发现隐性质量风险。</p></article>
+      <article class="card"><span class="tag green">02</span><h2>质量因果图谱</h2><p>连接设备、工艺参数、质量特性、缺陷模式、根因和处置任务。</p></article>
+      <article class="card"><span class="tag amber">03</span><h2>Graph RAG证据合约</h2><p>P0/P1建议必须带实时参数、图谱路径、历史案例或控制计划证据。</p></article>
+      <article class="card"><span class="tag red">04</span><h2>飞书闭环执行</h2><p>Aily解释，多维表格记录，Webhook播报，SLA任务推进，复盘回写。</p></article>
+    </section>
+
+    <section class="cards">
+      <article class="panel"><strong>风险卡</strong><p>风险等级、影响范围、疑似根因、建议隔离VIN。</p></article>
+      <article class="panel"><strong>证据卡</strong><p>参数越界、图谱路径、历史案例、控制计划。</p></article>
+      <article class="panel"><strong>任务卡</strong><p>隔离、复检、校准、维修、复盘，进入飞书SLA闭环。</p></article>
+    </section>
+
+    <section class="panel" style="margin-top:16px;">
+      <strong>传统方案与本方案差异</strong>
+      <table>
+        <thead><tr><th>维度</th><th>常规方案</th><th>本方案</th></tr></thead>
+        <tbody>
+          <tr><td>AI角色</td><td>被动问答助手</td><td>主动巡检和协同执行的数字员工</td></tr>
+          <tr><td>推理依据</td><td>文本相似度检索</td><td>质量因果图谱 + Graph RAG证据合约</td></tr>
+          <tr><td>行动闭环</td><td>生成报告或群通知</td><td>飞书事件、证据、任务、SLA、复盘全链路</td></tr>
+          <tr><td>安全边界</td><td>缺少清晰权限控制</td><td>P0/P1高风险动作必须人工确认和审计</td></tr>
+          <tr><td>长期价值</td><td>分析结束即结束</td><td>每次处置反哺FMEA、案例库和知识图谱</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

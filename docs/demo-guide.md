@@ -8,8 +8,9 @@
 2. 看中间证据链：总装一线、底盘合装、TQ-17拧紧枪、扭矩偏低、预紧力不足，说明Graph RAG不是只检索文本，而是沿设备-工艺-质量关系追溯。
 3. 看右侧飞书任务看板：AI把处置建议拆成可执行任务，并标注风险等级、影响VIN范围和待确认状态。
 4. 看下方飞书集成动作：展示多维表格记录、机器人卡片、Aily追问提示词和复盘回写。
-5. 运行 `python scripts/run_quality_agent.py`，证明异常评分、案例召回、证据链和处置建议不是静态文案。
-6. 运行 `python scripts/feishu_client.py --event-id E-20260717-001 --write-preview`，证明可生成飞书多维表格与Webhook payload。
+5. 打开 `app/innovation.html`，用一页展示“主动巡检、质量因果图谱、Graph RAG证据合约、飞书闭环、质量记忆飞轮”等创新点。
+6. 运行 `python scripts/run_quality_agent.py`，证明异常评分、案例召回、证据链和处置建议不是静态文案。
+7. 运行 `python scripts/feishu_client.py --event-id E-20260717-001 --write-preview`，证明可生成飞书多维表格与Webhook payload。
 
 ## 评委应看到的能力点
 
