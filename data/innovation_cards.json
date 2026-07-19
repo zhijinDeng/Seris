@@ -2,49 +2,49 @@
   {
     "id": "I-01",
     "name": "主动巡检数字员工",
-    "judge_hook": "不是人问AI答，而是AI主动找质量风险",
-    "proof": "run_quality_agent.py 可从异常事件直接输出风险、证据链和任务"
+    "highlight": "AI主动发现质量风险，并将异常转化为证据链和处置任务。",
+    "proof": "run_quality_agent.py 可从异常事件直接输出风险等级、证据链和任务。"
   },
   {
     "id": "I-02",
     "name": "质量因果图谱",
-    "judge_hook": "不是普通知识关系，而是设备-工艺-质量-处置的风险传导路径",
-    "proof": "quality_ontology.jsonld 和前端证据链展示设备、参数、缺陷和根因路径"
+    "highlight": "以设备-工艺-质量-处置关系表达风险传导路径。",
+    "proof": "quality_ontology.jsonld 和前端证据链展示设备、参数、缺陷和根因路径。"
   },
   {
     "id": "I-03",
     "name": "Graph RAG证据合约",
-    "judge_hook": "没有参数证据、图谱路径和历史案例，就不允许输出高风险建议",
-    "proof": "tightening-case-study.md 展示实时参数、图谱路径、历史案例和控制计划"
+    "highlight": "高风险结论必须具备参数证据、图谱路径、历史案例或控制计划依据。",
+    "proof": "tightening-case-study.md 展示实时参数、图谱路径、历史案例和控制计划。"
   },
   {
     "id": "I-04",
     "name": "VIN级影响范围计算",
-    "judge_hook": "从报警点位直接走到需要隔离/复检的车辆范围",
-    "proof": "factory_events.csv 和 end_to_end_trace.json 包含 VIN尾号8123-8125 的影响范围"
+    "highlight": "从报警点位定位到需要隔离和复检的车辆范围。",
+    "proof": "factory_events.csv 和 end_to_end_trace.json 包含 VIN尾号8123-8125 的影响范围。"
   },
   {
     "id": "I-05",
-    "name": "飞书质量闭环操作系统",
-    "judge_hook": "飞书不是通知，而是事件、证据、任务、SLA、复盘的闭环系统",
-    "proof": "feishu_client.py 可生成多维表格记录、任务记录、Webhook卡片和Aily提示词"
+    "name": "飞书质量闭环执行",
+    "highlight": "飞书承接事件、证据、任务、SLA和复盘，不只承担通知功能。",
+    "proof": "feishu_client.py 可生成多维表格记录、任务记录、Webhook卡片和Aily交互指令。"
   },
   {
     "id": "I-06",
     "name": "人机共治安全闸",
-    "judge_hook": "AI自主思考，但P0/P1关键动作必须人工确认",
-    "proof": "feishu-integration-guide.md 和前端飞书动作面板均保留待确认状态"
+    "highlight": "AI负责定位风险和组织证据，P0/P1关键动作由质量负责人确认。",
+    "proof": "feishu-integration-guide.md 和前端飞书动作面板均保留待确认状态。"
   },
   {
     "id": "I-07",
     "name": "质量记忆飞轮",
-    "judge_hook": "每次异常都会回写复盘知识、FMEA和图谱规则",
-    "proof": "end_to_end_trace.json 最后一阶段为复盘回写"
+    "highlight": "每次异常处置结果都会回写复盘知识、FMEA和图谱规则。",
+    "proof": "end_to_end_trace.json 最后一阶段为复盘回写。"
   },
   {
     "id": "I-08",
     "name": "三张卡机制",
-    "judge_hook": "把复杂质量问题压缩为风险卡、证据卡、任务卡",
-    "proof": "judge-one-pager.md 和 innovation-highlights.md 已形成答辩话术"
+    "highlight": "复杂质量问题被结构化为风险卡、证据卡和任务卡。",
+    "proof": "innovation-highlights.md 已形成完整机制说明。"
   }
 ]

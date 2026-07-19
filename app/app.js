@@ -93,7 +93,7 @@ function renderFeishu() {
     "异常摘要": `${selected.scene}：${selected.summary}`,
     "影响范围": selected.scope,
     "证据链": selected.evidence.join("；"),
-    "处置建议": selected.actions.join("；"),
+    "处置方案": selected.actions.join("；"),
     "状态": selected.risk === "P1" ? "待质量负责人确认" : "待当班工程师处理"
   };
   const actions = [

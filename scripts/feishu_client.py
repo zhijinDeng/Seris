@@ -64,7 +64,7 @@ def build_event_record(event: dict) -> dict:
             "工艺窗口": f"{event['lower']}-{event['upper']}{event['unit']}",
             "影响范围": event["vin_scope"],
             "质量风险": event["quality_risk"],
-            "处置建议": event["suggested_action"],
+            "处置方案": event["suggested_action"],
             "状态": "待确认",
         }
     }
@@ -103,7 +103,7 @@ def build_webhook_card(event: dict) -> dict:
                 {"tag": "div", "text": {"tag": "lark_md", "content": f"**设备**：{event['equipment']}"}},
                 {"tag": "div", "text": {"tag": "lark_md", "content": f"**异常**：{event['parameter']}={event['value']}{event['unit']}，窗口 {event['lower']}-{event['upper']}{event['unit']}"}},
                 {"tag": "div", "text": {"tag": "lark_md", "content": f"**影响范围**：{event['vin_scope']}"}},
-                {"tag": "div", "text": {"tag": "lark_md", "content": f"**建议**：{event['suggested_action']}"}},
+                {"tag": "div", "text": {"tag": "lark_md", "content": f"**处置方案**：{event['suggested_action']}"}},
             ],
         },
     }
@@ -127,8 +127,8 @@ def send_webhook(payload: dict) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="赛力斯质量AI飞书集成客户端")
     parser.add_argument("--event-id", default="E-20260717-001")
-    parser.add_argument("--send", action="store_true", help="真实调用飞书接口；默认只输出dry-run payload")
-    parser.add_argument("--write-preview", action="store_true", help="写出 output/feishu_payload_preview.json")
+    parser.add_argument("--send", action="store_true", help="真实调用飞书接口；默认只输出接口数据")
+    parser.add_argument("--write-interface-data", action="store_true", help="写出 output/feishu_interface_data.json")
     args = parser.parse_args()
 
     events = load_events()
@@ -136,21 +136,21 @@ def main():
     if event is None:
         raise SystemExit(f"未找到事件 {args.event_id}")
 
-    preview = {
+    interface_data = {
         "event_record": build_event_record(event),
         "task_records": build_task_records(event),
         "webhook_card": build_webhook_card(event),
-        "aily_prompt": f"@质量AI 解释事件 {event['event_id']}，列出证据链、影响范围、责任人和下一步处置。",
+        "aily_command": f"@质量AI 解释事件 {event['event_id']}，列出证据链、影响范围、责任人和下一步处置。",
     }
 
-    if args.write_preview:
-        out = ROOT / "output" / "feishu_payload_preview.json"
+    if args.write_interface_data:
+        out = ROOT / "output" / "feishu_interface_data.json"
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(preview, ensure_ascii=False, indent=2), encoding="utf-8")
+        out.write_text(json.dumps(interface_data, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"已写出 {out}")
 
     if not args.send:
-        print(json.dumps(preview, ensure_ascii=False, indent=2))
+        print(json.dumps(interface_data, ensure_ascii=False, indent=2))
         return
 
     token = get_tenant_access_token()
@@ -161,15 +161,15 @@ def main():
         raise RuntimeError("缺少 FEISHU_BITABLE_APP_TOKEN 或 FEISHU_BITABLE_EVENT_TABLE_ID")
 
     results = {
-        "event_record": create_bitable_record(token, app_token, event_table, preview["event_record"]),
+        "event_record": create_bitable_record(token, app_token, event_table, interface_data["event_record"]),
         "tasks": [],
         "webhook": None,
     }
     if task_table:
-        for record in preview["task_records"]:
+        for record in interface_data["task_records"]:
             results["tasks"].append(create_bitable_record(token, app_token, task_table, record))
     if os.getenv("FEISHU_WEBHOOK_URL"):
-        results["webhook"] = send_webhook(preview["webhook_card"])
+        results["webhook"] = send_webhook(interface_data["webhook_card"])
     print(json.dumps(results, ensure_ascii=False, indent=2))
 
 

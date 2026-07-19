@@ -27,7 +27,7 @@ $env:FEISHU_BITABLE_TASK_TABLE_ID="tbl_xxx"
 $env:FEISHU_WEBHOOK_URL="https://open.feishu.cn/open-apis/bot/v2/hook/xxx"
 ```
 
-默认脚本只做 dry-run，不会调用真实飞书接口。确认权限和字段后，再添加 `--send`。
+默认脚本以接口数据预览模式运行，不会调用真实飞书接口。确认权限和字段后，再添加 `--send` 执行真实写入。
 
 ## 4. 最小权限建议
 
