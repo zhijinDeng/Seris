@@ -1,19 +1,26 @@
-# 研究与资料依据
+# 命题理解与资料依据
 
-赛力斯超级工厂的公开资料显示，其质量管理已经具有强数据基础：全价值链数据互联互通、全过程质量数据采集、异常特征提取、控线、异常设备定位和一车一档。华为智慧园区案例进一步补足AIoT、生产网络、数字班组和AI检测点能力。由此可见，命题的突破点不是“有没有数据”，而是“数据能否主动组织成质量行动”。
+## 命题判断
 
-制造业质量风险具有强关系特征。一个扭矩异常会关联拧紧枪、套筒、工位、螺栓、角度补偿、VIN、FMEA、复检规范和放行状态；焊接电流异常会关联电极帽寿命、二次回路、焊核直径和结构强度。知识图谱适合把这些关系显式化，GraphRAG适合在图谱路径和工艺文档之间进行多跳检索，因果约束适合排除不符合工序顺序的根因。
+赛力斯命题的价值点不在于展示一个通用AI助手，而在于把高自动化工厂中最难被提前发现的设备质量风险管起来。新能源汽车生产中，质量风险常常先表现为设备退化、参数漂移、校准偏移、批次波动或人员处置延迟，最终才在检测、返修或客户质量问题中暴露。
 
-本方案从实际应用出发，把“知质·灵巡”设计为岗位化数字员工。它不是静态问答入口，而是围绕异常事件自动形成风险线程：捕捉信号、圈定影响范围、检索证据、生成处置任务、进入飞书协同、校验关闭条件、沉淀复盘知识。
+因此，本方案把问题定义为“设备质量风险的主动闭环”：系统需要在缺陷形成前识别苗头，在影响扩大前圈定范围，在人员处置前组织证据，在关闭后把经验沉淀为下一次识别能力。
+
+## 公开资料洞察
+
+赛力斯超级工厂公开资料强调全价值链质量数据、异常特征自动提取、判断并控线、异常设备定位和一车一档。华为智慧园区案例说明AI、联接、计算、存储、云、数字能源、AIoT检测和数字班组为智能制造提供底座。飞书Aily、多维表格和自定义机器人可承接跨角色任务流转。
+
+这些资料共同指向一个结论：赛力斯已经具备数据采集基础，方案应把重点放在质量知识组织、风险推理和协同执行。
+
+## 技术依据
+
+制造质量问题具有多跳关系：设备状态影响工艺参数，参数漂移影响质量特性，质量特性关联缺陷模式，缺陷模式对应根因、检测方法、控制计划和维修动作。知识图谱适合表达这种关系，GraphRAG适合结合图谱路径和文档证据，因果约束适合排除不符合工序方向的解释。
 
 ## 资料来源
 
-- 新华网：赛力斯超级工厂智能制造报道：https://www.xinhuanet.com/auto/20241218/569552f0399148ffb6172ba69f530ff3/c.html
-- 华为企业业务：赛力斯超级工厂智慧园区案例：https://e.huawei.com/cn/case-studies/solutions/campus/202509-seres
-- 飞书开放平台：多维表格新增记录：https://open.feishu.cn/document/server-docs/docs/bitable-v1/app-table-record/create?lang=zh-CN
-- 飞书开放平台：自定义机器人：https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot?lang=zh-CN
-- 飞书帮助中心：飞书 Aily：https://www.feishu.cn/hc/zh-CN/articles/790732948604-%E5%BF%AB%E9%80%9F%E4%BA%86%E8%A7%A3%E9%A3%9E%E4%B9%A6-aily
-- Interactive and Intelligent Root Cause Analysis in Manufacturing Processes：https://arxiv.org/pdf/2402.00043
-- Document GraphRAG: Manufacturing Domain：https://www.mdpi.com/2079-9292/14/11/2102
-- Fraunhofer: Graph RAG-Enhanced Intelligent Maintenance Chatbot：https://ceur-ws.org/Vol-4064/SKGi-paper3.pdf
-- Engineering: HCP Knowledge Graph for Quality Control：https://www.engineering.org.cn/engi/EN/10.1016/j.eng.2024.03.022
+- 新华网：《赛力斯超级工厂树立行业标杆 以智能制造加速发展新质生产力》。
+- 华为企业业务：《解码赛力斯超级工厂智慧园区，共启“智”造新时代》。
+- 飞书开放平台：多维表格记录接口、自定义机器人、Aily相关资料。
+- Interactive and Intelligent Root Cause Analysis in Manufacturing Processes。
+- Document GraphRAG: Knowledge Graph Enhanced Retrieval Augmented Generation for Document Question Answering Within the Manufacturing Domain。
+- An Intelligent Quality Control Method for Manufacturing Processes Based on a Human-Cyber-Physical Knowledge Graph。
