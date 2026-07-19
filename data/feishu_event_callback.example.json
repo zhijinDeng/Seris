@@ -1,20 +1,6 @@
 {
-  "schema": "2.0",
-  "header": {
-    "event_type": "im.message.receive_v1",
-    "tenant_key": "tenant_xxx"
-  },
-  "event": {
-    "message": {
-      "message_id": "om_xxx",
-      "chat_id": "oc_xxx",
-      "message_type": "text",
-      "content": "{\"text\":\"@质量AI 解释事件 E-20260717-001\"}"
-    },
-    "sender": {
-      "sender_id": {
-        "open_id": "ou_xxx"
-      }
-    }
-  }
+  "event_id": "CASE-TQ-20260719-01",
+  "operator": "总装质量工程师",
+  "status": "复检完成",
+  "result": "VIN尾号8123-8125复检合格，TQ-17完成校准并更换套筒"
 }

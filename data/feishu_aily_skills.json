@@ -1,42 +1,17 @@
 [
   {
-    "skill": "质量异常解释",
-    "trigger": "用户在飞书询问某个事件ID、VIN、设备或工位",
-    "tools": [
-      "query_quality_event",
-      "graph_rag_reason",
-      "list_evidence"
-    ],
-    "guardrail": "只解释证据链，不直接下达停线指令。"
+    "skill": "质量事件查询",
+    "input": "事件ID",
+    "output": "风险等级、影响范围、证据链、任务状态"
   },
   {
-    "skill": "主动风险播报",
-    "trigger": "质量事件达到P0/P1或同类异常连续出现",
-    "tools": [
-      "send_group_card",
-      "create_bitable_record",
-      "assign_task"
-    ],
-    "guardrail": "P0/P1处置必须带人工确认按钮和责任人。"
+    "skill": "处置任务更新",
+    "input": "事件ID、任务ID、状态",
+    "output": "多维表格任务状态"
   },
   {
-    "skill": "处置任务推进",
-    "trigger": "任务逾期、复检未完成或根因未填写",
-    "tools": [
-      "update_task_status",
-      "remind_owner",
-      "write_shift_report"
-    ],
-    "guardrail": "提醒频率受SLA和班次规则限制。"
-  },
-  {
-    "skill": "复盘知识沉淀",
-    "trigger": "任务关闭或质量负责人确认根因",
-    "tools": [
-      "write_retrospective",
-      "update_graph",
-      "update_fmea"
-    ],
-    "guardrail": "复盘知识需要质量工程师确认后进入正式知识库。"
+    "skill": "复盘提交",
+    "input": "根因、措施、复检结果",
+    "output": "知识图谱回写记录"
   }
 ]

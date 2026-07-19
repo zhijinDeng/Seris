@@ -1,50 +1,18 @@
 [
   {
-    "id": "I-01",
-    "name": "主动巡检数字员工",
-    "highlight": "AI主动发现质量风险，并将异常转化为证据链和处置任务。",
-    "proof": "run_quality_agent.py 可从异常事件直接输出风险等级、证据链和任务。"
+    "title": "岗位化数字员工",
+    "value": "主动巡检、证据解释、任务协同、关闭回写"
   },
   {
-    "id": "I-02",
-    "name": "质量因果图谱",
-    "highlight": "以设备-工艺-质量-处置关系表达风险传导路径。",
-    "proof": "quality_ontology.jsonld 和前端证据链展示设备、参数、缺陷和根因路径。"
+    "title": "风险线程",
+    "value": "把报警、VIN、证据、任务和复盘绑定为一条可追溯对象"
   },
   {
-    "id": "I-03",
-    "name": "Graph RAG证据合约",
-    "highlight": "高风险结论必须具备参数证据、图谱路径、历史案例或控制计划依据。",
-    "proof": "tightening-case-study.md 展示实时参数、图谱路径、历史案例和控制计划。"
+    "title": "GraphRAG+因果护栏",
+    "value": "图谱检索负责找证据，因果约束负责排除伪相关"
   },
   {
-    "id": "I-04",
-    "name": "VIN级影响范围计算",
-    "highlight": "从报警点位定位到需要隔离和复检的车辆范围。",
-    "proof": "factory_events.csv 和 end_to_end_trace.json 包含 VIN尾号8123-8125 的影响范围。"
-  },
-  {
-    "id": "I-05",
-    "name": "飞书质量闭环执行",
-    "highlight": "飞书承接事件、证据、任务、SLA和复盘，不只承担通知功能。",
-    "proof": "feishu_client.py 可生成多维表格记录、任务记录、Webhook卡片和Aily交互指令。"
-  },
-  {
-    "id": "I-06",
-    "name": "人机共治安全闸",
-    "highlight": "AI负责定位风险和组织证据，P0/P1关键动作由质量负责人确认。",
-    "proof": "feishu-integration-guide.md 和前端飞书动作面板均保留待确认状态。"
-  },
-  {
-    "id": "I-07",
-    "name": "质量记忆飞轮",
-    "highlight": "每次异常处置结果都会回写复盘知识、FMEA和图谱规则。",
-    "proof": "end_to_end_trace.json 最后一阶段为复盘回写。"
-  },
-  {
-    "id": "I-08",
-    "name": "三张卡机制",
-    "highlight": "复杂质量问题被结构化为风险卡、证据卡和任务卡。",
-    "proof": "innovation-highlights.md 已形成完整机制说明。"
+    "title": "飞书原生执行层",
+    "value": "Aily、多维表格、机器人卡片共同形成班组闭环"
   }
 ]
