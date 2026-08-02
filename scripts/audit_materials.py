@@ -16,6 +16,7 @@ required = [
     "提交材料/05_系统运行说明与完整案例.md",
     "提交材料/06_方案创新亮点.md",
     "提交材料/07_仿真工况与交互案例.md",
+    "提交材料/08_40强赛完整参赛方案.md",
     "docs/research-brief.md",
     "docs/architecture.md",
     "docs/digital-employee-profile.md",
