@@ -247,6 +247,36 @@ let selected = scenarios[0];
 let activeQuestion = "证据链是什么";
 let closed = false;
 
+const factoryFacts = [
+  { value: "3000+", label: "机器人协同", note: "支撑高节拍与多点位自动化" },
+  { value: "100%", label: "关键工序自动化", note: "适合事件流连续捕捉" },
+  { value: "一车一档", label: "车辆级追溯", note: "把设备风险映射到VIN" },
+  { value: "46类", label: "AI检测场景", note: "形成质量主动感知入口" }
+];
+
+const sourceSupport = [
+  {
+    title: "赛力斯超级工厂公开资料",
+    detail: "质量自动化管理系统已覆盖全过程数据采集、异常特征提取、控线、异常设备定位和一车一档。",
+    use: "方案把这些基础升级为主动研判、任务派发和知识回写。"
+  },
+  {
+    title: "华为智慧园区案例",
+    detail: "AI、联接、计算、存储、数字能源和云共同支撑园区数据资产汇聚，AIoT检测点进入制造流程。",
+    use: "方案采用事件流加知识图谱，将现场信号转化为可执行质量事件。"
+  },
+  {
+    title: "制造质量知识图谱研究",
+    detail: "HCP知识图谱、PPR-FMEA图谱和GraphRAG研究均指向多源知识组织、多跳检索和根因分析。",
+    use: "方案用设备-工艺-质量图谱承接根因假设、证据链和复盘沉淀。"
+  },
+  {
+    title: "飞书开放能力",
+    detail: "多维表格记录、机器人卡片和Aily入口可承接事件、任务、责任人、SLA和关闭依据。",
+    use: "当前演示保留字段映射；凭证接入后可写入在线表格和群消息。"
+  }
+];
+
 const $ = (id) => document.getElementById(id);
 
 function riskTag(risk) {
@@ -254,13 +284,17 @@ function riskTag(risk) {
 }
 
 function renderScenarioList() {
-  $("scenarioList").innerHTML = scenarios.map((item, index) => `
-    <div class="scenario ${item.id === selected.id ? "active" : ""}" data-index="${index}">
-      <div class="meta">${riskTag(item.risk)}<span class="tag">${item.equipment}</span></div>
-      <strong>${item.scene}</strong>
-      <p>${item.trend}</p>
-    </div>
-  `).join("");
+  const compact = window.innerWidth <= 760;
+  $("scenarioList").innerHTML = scenarios.map((item, index) => {
+    const trend = compact && item.trend.length > 18 ? `${item.trend.slice(0, 18)}...` : item.trend;
+    return `
+      <div class="scenario ${item.id === selected.id ? "active" : ""}" data-index="${index}">
+        <div class="meta">${riskTag(item.risk)}<span class="tag">${item.equipment}</span></div>
+        <strong>${item.scene}</strong>
+        <p>${trend}</p>
+      </div>
+    `;
+  }).join("");
   document.querySelectorAll(".scenario").forEach((node) => {
     node.addEventListener("click", () => {
       selected = scenarios[Number(node.dataset.index)];
@@ -272,11 +306,24 @@ function renderScenarioList() {
 }
 
 function renderHeader() {
-  $("caseTitle").textContent = `${selected.scene}｜${selected.parameter}异常`;
-  $("caseSummary").textContent = `知质·灵巡已捕捉到${selected.equipment}在${selected.station}出现${selected.trend}，处置决策为：${selected.decision}。`;
+  $("caseTitle").innerHTML = `<span>${selected.scene}</span><span>${selected.parameter}异常</span>`;
+  const compactHeader = window.innerWidth <= 760;
+  $("caseSummary").innerHTML = compactHeader
+    ? `<span>已捕捉：${selected.equipment} / ${selected.parameter}</span><span>处置：${selected.decision}。</span>`
+    : `<span>已捕捉：${selected.equipment}在${selected.station}出现${selected.trend}。</span><span>处置：${selected.decision}。</span>`;
   $("riskLevel").textContent = selected.risk;
   $("confidence").textContent = `${Math.round(selected.confidence * 100)}%`;
   $("scope").textContent = selected.scope;
+}
+
+function renderFactoryFacts() {
+  $("factoryFacts").innerHTML = factoryFacts.map((item) => `
+    <article>
+      <strong>${item.value}</strong>
+      <span>${item.label}</span>
+      <p>${item.note}</p>
+    </article>
+  `).join("");
 }
 
 function renderDialogue() {
@@ -313,6 +360,58 @@ function renderTasks() {
   `).join("");
 }
 
+function riskFactors() {
+  const range = `${selected.lower}-${selected.upper}${selected.unit}`;
+  const over = selected.value < selected.lower || selected.value > selected.upper ? "越界" : "接近边界";
+  const repeat = selected.trend.includes("连续") || selected.trend.includes("持续") || selected.trend.includes("漂移") ? "重复/持续" : "单次";
+  const impact = selected.risk === "P1" ? "关键质量项" : "可复测控制";
+  return [
+    { name: "工艺窗口", value: `${selected.value}${selected.unit} / ${range}`, level: over },
+    { name: "时空模式", value: selected.trend, level: repeat },
+    { name: "质量影响", value: selected.scope, level: impact },
+    { name: "知识命中", value: selected.rootCause, level: `${Math.round(selected.confidence * 100)}%` }
+  ];
+}
+
+function renderRiskFactors() {
+  $("riskFactors").innerHTML = riskFactors().map((item) => `
+    <article>
+      <div><b>${item.name}</b><span>${item.level}</span></div>
+      <p>${item.value}</p>
+    </article>
+  `).join("");
+}
+
+function timelineItems() {
+  return [
+    { time: "T+0s", title: "主动捕捉", detail: `${selected.equipment} / ${selected.parameter}触发事件流` },
+    { time: "T+5s", title: "图谱定位", detail: `${selected.station}关联工艺窗口、质量特性和历史案例` },
+    { time: "T+12s", title: "证据生成", detail: `${selected.evidence.length}条证据形成GraphRAG上下文` },
+    { time: "T+20s", title: "任务派发", detail: `${selected.tasks.length}个角色进入飞书协同任务` },
+    { time: closed ? "已关闭" : "进行中", title: "复盘回写", detail: closed ? "关闭依据完整，根因与措施回写知识图谱" : "等待复检、设备处理和责任确认" }
+  ];
+}
+
+function renderTimeline() {
+  $("actionTimeline").innerHTML = timelineItems().map((item) => `
+    <div>
+      <time>${item.time}</time>
+      <strong>${item.title}</strong>
+      <span>${item.detail}</span>
+    </div>
+  `).join("");
+}
+
+function renderSourceSupport() {
+  $("sourceSupport").innerHTML = sourceSupport.map((item) => `
+    <article>
+      <strong>${item.title}</strong>
+      <p>${item.detail}</p>
+      <span>${item.use}</span>
+    </article>
+  `).join("");
+}
+
 function renderBitable() {
   const record = {
     fields: {
@@ -321,12 +420,15 @@ function renderBitable() {
       "设备": selected.equipment,
       "工位": selected.station,
       "异常参数": `${selected.parameter}=${selected.value}${selected.unit}`,
+      "工艺窗口": `${selected.lower}-${selected.upper}${selected.unit}`,
       "影响范围": selected.scope,
       "根因假设": selected.rootCause,
       "处置决策": selected.decision,
       "证据链": selected.evidence.join("；"),
+      "责任任务数": selected.tasks.length,
       "任务状态": closed ? "已关闭并回写" : "处置中",
-      "Aily入口": `@知质灵巡 查询 ${selected.id}`
+      "Aily入口": `@知质灵巡 查询 ${selected.id}`,
+      "机器人卡片": `${selected.risk} ${selected.scene} ${selected.decision}`
     }
   };
   $("bitableRecord").textContent = JSON.stringify(record, null, 2);
@@ -335,10 +437,14 @@ function renderBitable() {
 function renderAll() {
   renderScenarioList();
   renderHeader();
+  renderFactoryFacts();
   renderDialogue();
   renderEvidence();
   renderTasks();
+  renderRiskFactors();
+  renderTimeline();
   renderBitable();
+  renderSourceSupport();
 }
 
 $("injectBtn").addEventListener("click", () => {

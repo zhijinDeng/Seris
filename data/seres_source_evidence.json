@@ -72,5 +72,37 @@
       "人-信息-物理系统质量知识图谱可支撑制造过程质量分析和辅助决策",
       "本体约束适合表达人员、设备、工艺、质量和环境之间的关系"
     ]
+  },
+  {
+    "name": "新华网：赛力斯研发与智能制造报道",
+    "url": "https://www.xinhuanet.com/auto/20250401/96ce416bd0ce4b52ade8a0133a0541b5/c.html",
+    "facts": [
+      "关键零部件100%自动化检测、AI焊点质量在线检测和整车静态质量自动化检测构成质量主动感知基础",
+      "研发投入和智能制造投入说明质量数字员工具备组织承接土壤"
+    ]
+  },
+  {
+    "name": "ProQ-KG：PPR-FMEA质量问题分析",
+    "url": "https://semantic-web-journal.net/content/proq-kg-integrated-cyber-physical-production-system-knowledge-graph-quality-issue-analysis",
+    "facts": [
+      "产品、过程、资源与FMEA统一建模适合复杂质量问题根因分析",
+      "多角色协同与知识演化机制可支撑质量事件复盘"
+    ]
+  },
+  {
+    "name": "Engineering：HCP制造质量知识图谱",
+    "url": "https://www.sciencedirect.com/science/article/pii/S2095809924003710",
+    "facts": [
+      "人、信息、物理三类数据融合可支撑质量监控、诊断、检测和维护策略",
+      "汽车产线与齿轮制造案例验证了模块化本体的复用价值"
+    ]
+  },
+  {
+    "name": "Microsoft GraphRAG 查询引擎",
+    "url": "https://microsoft.github.io/graphrag/query/overview/",
+    "facts": [
+      "Local Search适合围绕具体实体和原始文档组织回答",
+      "Global Search适合跨社区报告形成整体性问题回答"
+    ]
   }
 ]
