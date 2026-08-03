@@ -277,6 +277,22 @@ const sourceSupport = [
   }
 ];
 
+const feishuLive = {
+  status: "本机已完成Feishu CLI用户授权",
+  base: "larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b",
+  table: "赛力斯质量风险事件闭环",
+  tableId: "tblFo5Btaj0IBXiD",
+  lastRecordId: "recvrcdCDJe5bP",
+  script: "powershell -ExecutionPolicy Bypass -File D:\\赛力斯\\scripts\\sync_feishu_quality_event.ps1 -WriteRecord",
+  command: "@知质灵巡 查询 CASE-TQ-20260719-01",
+  flow: [
+    "异常事件写入质量事件表",
+    "P1/P2风险等级驱动责任任务",
+    "Aily问答返回证据链和关闭条件",
+    "复检与维修结果回写知识图谱"
+  ]
+};
+
 const $ = (id) => document.getElementById(id);
 
 function riskTag(risk) {
@@ -434,6 +450,20 @@ function renderBitable() {
   $("bitableRecord").textContent = JSON.stringify(record, null, 2);
 }
 
+function renderFeishuLive() {
+  $("feishuLive").innerHTML = `
+    <div class="live-grid">
+      <article><span>授权状态</span><strong>${feishuLive.status}</strong></article>
+      <article><span>目标Base</span><strong>${feishuLive.base}</strong></article>
+      <article><span>事件表</span><strong>${feishuLive.table}<br>${feishuLive.tableId}</strong></article>
+      <article><span>最新记录</span><strong>${feishuLive.lastRecordId}</strong></article>
+      <article><span>Aily入口</span><strong>${feishuLive.command}</strong></article>
+    </div>
+    <div class="live-command">${feishuLive.script}</div>
+    <ol class="live-flow">${feishuLive.flow.map((item) => `<li>${item}</li>`).join("")}</ol>
+  `;
+}
+
 function renderAll() {
   renderScenarioList();
   renderHeader();
@@ -444,6 +474,7 @@ function renderAll() {
   renderRiskFactors();
   renderTimeline();
   renderBitable();
+  renderFeishuLive();
   renderSourceSupport();
 }
 

@@ -1,0 +1,68 @@
+[
+  {
+    "type": "text",
+    "name": "事件ID",
+    "description": "质量风险事件的全局唯一编号"
+  },
+  {
+    "type": "select",
+    "name": "风险等级",
+    "multiple": false,
+    "options": [
+      { "name": "P1", "hue": "Red", "lightness": "Light" },
+      { "name": "P2", "hue": "Orange", "lightness": "Light" },
+      { "name": "P3", "hue": "Green", "lightness": "Light" }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "任务状态",
+    "multiple": false,
+    "options": [
+      { "name": "处置中", "hue": "Blue", "lightness": "Light" },
+      { "name": "已派发", "hue": "Purple", "lightness": "Light" },
+      { "name": "已关闭并回写", "hue": "Green", "lightness": "Light" }
+    ]
+  },
+  {
+    "type": "datetime",
+    "name": "事件时间",
+    "style": { "format": "yyyy-MM-dd HH:mm" }
+  },
+  {
+    "type": "text",
+    "name": "设备"
+  },
+  {
+    "type": "text",
+    "name": "工位"
+  },
+  {
+    "type": "text",
+    "name": "异常参数"
+  },
+  {
+    "type": "text",
+    "name": "影响范围"
+  },
+  {
+    "type": "text",
+    "name": "根因假设"
+  },
+  {
+    "type": "text",
+    "name": "证据链"
+  },
+  {
+    "type": "text",
+    "name": "处置方案"
+  },
+  {
+    "type": "text",
+    "name": "责任任务"
+  },
+  {
+    "type": "text",
+    "name": "Aily指令"
+  }
+]

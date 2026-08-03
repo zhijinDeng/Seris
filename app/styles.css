@@ -189,6 +189,22 @@ button.primary { background: var(--blue); color: #fff; border-color: var(--blue)
 .source-support strong { display: block; color: var(--blue); margin-bottom: 6px; }
 .source-support p { color: var(--ink); line-height: 1.5; margin-bottom: 8px; }
 .source-support span { color: var(--muted); line-height: 1.45; }
+.feishu-live { display: grid; gap: 12px; }
+.live-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.live-grid article { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fbfcfe; min-height: 86px; }
+.live-grid span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.live-grid strong { display: block; color: var(--blue); line-height: 1.35; font-size: 14px; }
+.live-command {
+  border: 1px solid #c9d6e8;
+  background: #f6f9fd;
+  color: #22304a;
+  border-radius: 8px;
+  padding: 11px 12px;
+  font-family: Consolas, "Courier New", monospace;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.live-flow { margin: 0; padding-left: 22px; line-height: 1.55; }
 .loop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .loop div { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fbfcfe; }
 .loop b { display: block; margin-bottom: 6px; color: var(--blue); }
@@ -215,5 +231,5 @@ pre {
   .avatar { width: 64px; height: 64px; }
   .avatar-ring { width: 46px; height: 46px; }
   .avatar-face { width: 38px; height: 34px; }
-  .status-grid, .loop, .kg-path, .metric-strip, .source-support { grid-template-columns: minmax(0, 1fr); }
+  .status-grid, .loop, .kg-path, .metric-strip, .source-support, .live-grid { grid-template-columns: minmax(0, 1fr); }
 }
