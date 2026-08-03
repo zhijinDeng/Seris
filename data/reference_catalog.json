@@ -1,0 +1,16 @@
+[
+  {"id":"S1","type":"企业官方","title":"赛力斯集团股份有限公司2024年年度报告","year":2025,"url":"https://cdn-web.seres.cn/uploads/20250401/5cb4a1a9711d4df2daabb14d964625a0.pdf","used_for":"产业大脑+超级工厂、全过程在线检测、AI创新应用"},
+  {"id":"S2","type":"企业官方","title":"赛力斯集团股份有限公司2025年半年度报告","year":2025,"url":"https://cdn-web.seres.cn/uploads/20250902/16d86a4ef54310af944762148f4e9c3a.pdf","used_for":"数字孪生、AI与物联网融合、关键工序和焊点质量自动检测"},
+  {"id":"S3","type":"企业官方","title":"赛力斯2024年环境、社会及管治报告","year":2025,"url":"https://cdn-web.seres.cn/uploads/20250401/527578cbe5eb235154a0b049fa778022.pdf","used_for":"全生命周期质量、AI监测、一件一档与一车一档"},
+  {"id":"F1","type":"飞书官方","title":"多维表格概述","year":2025,"url":"https://open.feishu.cn/document/server-docs/docs/bitable-v1/bitable-overview?lang=zh-CN","used_for":"事件台账、视图、权限、自动化流程"},
+  {"id":"F2","type":"飞书官方","title":"任务v2概述","year":2026,"url":"https://open.feishu.cn/document/task-v2/overview","used_for":"负责人、关注人、子任务、附件与幂等调用"},
+  {"id":"F3","type":"飞书官方","title":"配置卡片交互","year":2024,"url":"https://open.feishu.cn/document/common-capabilities/message-card/add-card-interaction/interaction-module","used_for":"群消息中的确认、选择与回传交互"},
+  {"id":"F4","type":"飞书官方","title":"文档OpenAPI概述","year":2025,"url":"https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/docx-overview","used_for":"复盘文档与知识沉淀"},
+  {"id":"Q1","type":"标准","title":"ISO 9001 explained","year":2026,"url":"https://www.iso.org/home/insights-news/resources/iso-9001-explained.html","used_for":"过程方法、风险思维、监测测量和持续改进"},
+  {"id":"A1","type":"可信AI","title":"NIST AI RMF Core","year":2023,"url":"https://airc.nist.gov/airmf-resources/airmf/5-sec-core/","used_for":"人机职责、监督、审计与风险治理"},
+  {"id":"P1","type":"论文","title":"Interactive and Intelligent Root Cause Analysis in Manufacturing with Causal Bayesian Networks and Knowledge Graphs","year":2024,"url":"https://arxiv.org/abs/2402.00043","used_for":"电动车制造、知识图谱、因果网络与专家反馈"},
+  {"id":"P2","type":"论文","title":"Root-KGD: A Novel Framework for Root Cause Diagnosis Based on Knowledge Graph and Industrial Data","year":2024,"url":"https://arxiv.org/abs/2406.13664","used_for":"工业数据与物理实体融合的在线可解释根因诊断"},
+  {"id":"P3","type":"论文","title":"Document GraphRAG: Knowledge Graph Enhanced Retrieval Augmented Generation for Document QA Within Manufacturing","year":2025,"url":"https://doi.org/10.3390/electronics14112102","used_for":"制造文档图结构增强检索"},
+  {"id":"P4","type":"论文","title":"ProQ-KG: Integrated Cyber-Physical Production System Knowledge Graph for Quality Issue Analysis","year":2025,"url":"https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5273075","used_for":"PPR-FMEA统一建模与汽车行业质量协同"},
+  {"id":"P5","type":"论文","title":"Data-driven causal knowledge graph construction for root cause analysis in quality problem solving","year":2023,"url":"https://doi.org/10.1080/00207543.2022.2137597","used_for":"从质量问题解决数据中挖掘因果知识"}
+]

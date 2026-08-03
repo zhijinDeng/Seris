@@ -1,0 +1,8 @@
+[
+  {"capability":"多维表格","business_role":"质量事件唯一台账","implemented":"已创建13字段在线事件表并完成写入回读","next":"增加事件、任务、知识条目三表关联"},
+  {"capability":"机器人消息/卡片","business_role":"分级通知与群内确认","implemented":"已形成消息内容、幂等键和回传动作规范","next":"配置机器人可用范围与卡片回调地址"},
+  {"capability":"飞书任务v2","business_role":"责任人、SLA、子任务、附件追踪","implemented":"本地编排脚本支持按事件ID幂等创建任务","next":"建立质量风险任务清单与角色映射"},
+  {"capability":"Aily","business_role":"自然语言查询证据链和关闭条件","implemented":"已定义查询、追溯、处置、复盘四类技能输入输出","next":"在Aily平台配置OpenAPI技能与知识数据源"},
+  {"capability":"云文档/知识库","business_role":"自动生成复盘和8D证据包","implemented":"编排脚本支持创建结构化复盘文档","next":"挂载到质量知识空间并关联Base记录"},
+  {"capability":"事件订阅","business_role":"回收消息交互和任务状态","implemented":"已验证CLI支持im.message.receive与task.task.update事件","next":"在开发者后台开启事件并部署长连接消费者"}
+]

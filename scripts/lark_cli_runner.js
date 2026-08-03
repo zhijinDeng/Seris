@@ -11,9 +11,11 @@ const payload = JSON.parse(fs.readFileSync(argsFile, "utf8"));
 const node = payload.node;
 const cli = payload.cli;
 const args = payload.args || [];
+const cwd = payload.cwd || process.cwd();
 
 const result = spawnSync(node, [cli, ...args], {
   encoding: "utf8",
+  cwd,
   env: {
     ...process.env,
     LARKSUITE_CLI_NO_UPDATE_NOTIFIER: "1",

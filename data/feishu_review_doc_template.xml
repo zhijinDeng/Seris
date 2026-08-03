@@ -1,0 +1,16 @@
+<title>{{DOCUMENT_TITLE}}</title>
+<p><b>事件编号：</b>{{EVENT_ID}}　<b>风险等级：</b>{{RISK}}</p>
+<h1>事件摘要</h1>
+<p>{{SCENE}}，{{SIGNAL}}。</p>
+<p><b>影响范围：</b>{{SCOPE}}</p>
+<h1>证据链</h1>
+<ol>{{EVIDENCE_ITEMS}}</ol>
+<h1>根因假设与处置</h1>
+<p><b>根因假设：</b>{{HYPOTHESIS}}。该结论需由现场点检与复检证实或证伪。</p>
+<p><b>处置方案：</b>{{DECISION}}。</p>
+{{TASK_BLOCK}}
+<h1>关闭条件</h1>
+<checkbox done="false">影响对象完成隔离与复检</checkbox>
+<checkbox done="false">设备恢复并通过首件确认</checkbox>
+<checkbox done="false">责任人与质量负责人确认</checkbox>
+<checkbox done="false">根因和措施回写知识底座</checkbox>

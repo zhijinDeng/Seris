@@ -32,9 +32,15 @@ function Invoke-LarkCli {
   $runtime = Join-Path $root "config\.runtime"
   New-Item -ItemType Directory -Path $runtime -Force | Out-Null
   $argsPath = Join-Path $runtime ("lark_args_" + [Guid]::NewGuid().ToString("N") + ".json")
-  Save-Json $argsPath ([ordered]@{ node = $node; cli = $cli; args = $CliArgs })
-  $out = & $node $runner $argsPath 2>&1
-  $exitCode = $LASTEXITCODE
+  Save-Json $argsPath ([ordered]@{ node = $node; cli = $cli; args = $CliArgs; cwd = $root })
+  $previousErrorAction = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  try {
+    $out = & $node $runner $argsPath 2>&1
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousErrorAction
+  }
   Remove-Item -LiteralPath $argsPath -Force -ErrorAction SilentlyContinue
   $text = $out -join [Environment]::NewLine
   if ($exitCode -ne 0) {
@@ -86,15 +92,49 @@ if ($CreateTable -or !$config.quality_event_table_id) {
 }
 
 $recordId = ""
+$duplicateCount = 0
 if ($WriteRecord) {
   $recordJson = [System.IO.File]::ReadAllText($recordPath, [System.Text.Encoding]::UTF8)
-  $record = Invoke-LarkCli -CliArgs @(
+  $recordFields = $recordJson | ConvertFrom-Json
+  $eventIdField = ([string][char]0x4E8B) + ([string][char]0x4EF6) + "ID"
+  $eventId = [string]$recordFields.$eventIdField
+  if (!$eventId) { throw "The Feishu record payload must contain an event ID." }
+
+  $filterObject = [ordered]@{
+    logic = "and"
+    conditions = @(, @($eventIdField, "==", $eventId))
+  }
+  $filterPath = Join-Path (Join-Path $root "config\.runtime") ("base_filter_" + [Guid]::NewGuid().ToString("N") + ".json")
+  $filterArg = "@config/.runtime/" + (Split-Path -Leaf $filterPath)
+  Save-Json $filterPath $filterObject
+  try {
+    $existing = Invoke-LarkCli -CliArgs @(
+      "base", "+record-list",
+      "--base-token", $baseToken,
+      "--table-id", $config.quality_event_table_id,
+      "--field-id", $eventIdField,
+      "--filter-json", $filterArg,
+      "--limit", "200",
+      "--format", "json",
+      "--as", "user"
+    )
+  } finally {
+    Remove-Item -LiteralPath $filterPath -Force -ErrorAction SilentlyContinue
+  }
+  $existingIds = @($existing.data.record_id_list)
+  $duplicateCount = [Math]::Max(0, $existingIds.Count - 1)
+
+  $upsertArgs = @(
     "base", "+record-upsert",
     "--base-token", $baseToken,
     "--table-id", $config.quality_event_table_id,
     "--json", $recordJson,
     "--as", "user"
   )
+  if ($existingIds.Count -gt 0) {
+    $upsertArgs += @("--record-id", [string]$existingIds[-1])
+  }
+  $record = Invoke-LarkCli -CliArgs $upsertArgs
   Save-Json $lastUpsertPath $record
   $recordId = $record.data.record.record_id
   if (!$recordId) {
@@ -109,6 +149,9 @@ if ($WriteRecord) {
   if (!$recordId -and $record.data.record_id_list) {
     $recordId = $record.data.record_id_list[0]
   }
+  if (!$recordId -and $existingIds.Count -gt 0) {
+    $recordId = [string]$existingIds[-1]
+  }
   $config.last_record_id = $recordId
 }
 
@@ -120,6 +163,7 @@ Save-Json $statusPath ([ordered]@{
   table_id = $config.quality_event_table_id
   table_name = $config.quality_event_table_name
   record_id = $recordId
+  duplicate_history_count = $duplicateCount
   updated_at = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
   note = "Local lark-cli auth is valid; quality event table and optional sample record are synced."
 })

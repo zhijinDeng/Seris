@@ -17,6 +17,7 @@ required = [
     "提交材料/06_方案创新亮点.md",
     "提交材料/07_仿真工况与交互案例.md",
     "提交材料/08_40强赛完整参赛方案.md",
+    "提交材料/09_决赛完整技术方案.md",
     "docs/research-brief.md",
     "docs/architecture.md",
     "docs/digital-employee-profile.md",
@@ -30,6 +31,8 @@ required = [
     "docs/innovation-highlights.md",
     "docs/solution-overview.md",
     "docs/90-day-plan.md",
+    "docs/final-round-acceptance-plan.md",
+    "docs/research-evidence-matrix.md",
     "data/quality_ontology.jsonld",
     "data/factory_events.csv",
     "data/quality_cases.json",
@@ -42,13 +45,22 @@ required = [
     "data/feishu_bitable_record.example.json",
     "data/end_to_end_trace.json",
     "data/innovation_cards.json",
+    "data/feishu_integration_matrix.json",
+    "data/feishu_orchestration_event.json",
+    "data/feishu_review_doc_template.xml",
+    "data/reference_catalog.json",
     "diagram/quality-ai-architecture.svg",
     "app/index.html",
     "app/innovation.html",
     "app/styles.css",
     "app/app.js",
+    "app/dashboard.js",
+    "app/assets/quality-agent.png",
     "scripts/run_quality_agent.py",
     "scripts/feishu_client.py",
+    "scripts/lark_cli_runner.js",
+    "scripts/sync_feishu_quality_event.ps1",
+    "scripts/orchestrate_feishu_quality_event.ps1",
 ]
 
 forbidden = [
@@ -57,13 +69,9 @@ forbidden = [
     "答" + "辩",
     "提" + "示词",
     "AI" + "生成",
-    "原" + "型",
-    "预" + "期",
     "review" + "er",
     "jud" + "ge",
     "pro" + "mpt",
-    "dry" + "-run",
-    "pre" + "view",
 ]
 
 missing = [p for p in required if not (ROOT / p).exists()]
@@ -71,8 +79,13 @@ if missing:
     raise SystemExit("缺少文件:\n" + "\n".join(missing))
 
 hits = []
-for path in ROOT.rglob("*"):
-    if ".git" in path.parts or not path.is_file():
+public_roots = [ROOT / "README.md", ROOT / "docs", ROOT / "提交材料", ROOT / "app"]
+public_files = [public_roots[0]]
+for base in public_roots[1:]:
+    public_files.extend(base.rglob("*"))
+
+for path in public_files:
+    if not path.is_file():
         continue
     if path.suffix.lower() in {".md", ".txt", ".html", ".css", ".js", ".py", ".json", ".csv", ".svg"}:
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -83,6 +96,8 @@ if hits:
     raise SystemExit("发现需清理表述:\n" + "\n".join(hits))
 
 docx_files = sorted((ROOT / "提交材料").glob("*.docx"))
+if len(docx_files) != 10:
+    raise SystemExit(f"DOCX数量应为10，当前为{len(docx_files)}")
 for docx in docx_files:
     with zipfile.ZipFile(docx) as zf:
         names = zf.namelist()

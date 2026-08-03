@@ -19,7 +19,7 @@
 powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\sync_feishu_quality_event.ps1 -CreateTable -WriteRecord
 ```
 
-后续只追加样例记录：
+后续按事件ID更新或创建记录：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\sync_feishu_quality_event.ps1 -WriteRecord
@@ -34,7 +34,11 @@ powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\sync_feishu_qualit
 
 1. 设备或工艺事件进入质量事件表，保留事件 ID、风险等级、时间、设备、工位、影响范围和证据链。
 2. 数字员工根据本体约束、GraphRAG 证据和历史案例生成根因假设与处置方案。
-3. P1/P2 风险通过 Aily 指令和机器人卡片进入责任人协同，形成责任任务、SLA 和状态字段。
+3. 当前由任务v2和复盘文档承接责任、SLA与证据；生产发布后由Aily查询和机器人卡片进入责任群协同。
 4. 复检、维修和关闭依据回写多维表格，再沉淀到质量知识图谱，支撑下一次主动识别。
 
 该接入保持“决策支持、人工确认、闭环复盘”的实施边界，不直接替代 DCS、PLC、MES 的安全控制和设备启停。
+
+## 幂等策略
+
+同步脚本先按“事件ID”过滤查询。命中时携带记录ID更新，未命中时创建；历史测试重复项只计数、不自动删除。2026-08-03在线复测中，同步前后记录数均为4，更新记录为`recvrcdCDJe5bP`，未新增重复项。

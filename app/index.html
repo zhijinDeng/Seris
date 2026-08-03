@@ -3,121 +3,220 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>知质·灵巡｜赛力斯质量风险主动管控工作台</title>
+  <meta name="description" content="知质·灵巡，面向赛力斯超级工厂的质量风险主动管控AI数字员工。" />
+  <title>知质·灵巡｜赛力斯质量风险主动管控指挥台</title>
+  <link rel="icon" href="assets/quality-agent.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">
-      <div class="mark">质</div>
-      <div>
-        <h1>知质·灵巡</h1>
-        <p>赛力斯设备质量风险主动管控数字员工</p>
-      </div>
-    </div>
+    <a class="brand" href="#command" aria-label="返回实时管控">
+      <span class="brand-mark">质</span>
+      <span class="brand-copy">
+        <strong>知质·灵巡</strong>
+        <small>赛力斯质量风险主动管控 AI 数字员工</small>
+      </span>
+    </a>
+
+    <nav class="primary-nav" aria-label="工作台导航">
+      <button class="nav-item active" data-target="command">实时管控</button>
+      <button class="nav-item" data-target="reasoning">知识推理</button>
+      <button class="nav-item" data-target="collaboration">飞书协同</button>
+      <button class="nav-item" data-target="value">价值验证</button>
+    </nav>
+
     <div class="top-actions">
-      <button id="injectBtn" class="primary">注入异常</button>
-      <button id="resolveBtn">关闭任务</button>
+      <span class="system-live"><i></i>生产事件流在线</span>
+      <button id="exportBtn" class="ghost-btn">导出事件包</button>
+      <button id="injectBtn" class="primary-btn">注入下一工况</button>
     </div>
   </header>
 
-  <main class="workspace">
-    <aside class="rail">
-      <div class="section-title">仿真工况</div>
-      <div id="scenarioList" class="scenario-list"></div>
-    </aside>
+  <section class="plant-strip" aria-label="工厂实时态势">
+    <div><span>总装一线</span><b class="normal">稳定</b></div>
+    <div><span>焊装二线</span><b class="watch">1项关注</b></div>
+    <div><span>涂装一线</span><b class="normal">稳定</b></div>
+    <div><span>压铸单元</span><b class="normal">稳定</b></div>
+    <div class="clock"><span>数据时间</span><b id="liveClock">--:--:--</b></div>
+  </section>
 
-    <section class="hero-panel">
-      <div class="employee-card">
-        <div class="avatar" aria-hidden="true">
-          <div class="avatar-ring"></div>
-          <div class="avatar-face">
-            <span></span><span></span>
-            <i></i>
+  <main>
+    <section id="command" class="command-layout anchor-section">
+      <aside class="scenario-rail panel-shell">
+        <div class="panel-heading">
+          <div><span class="kicker">EVENT QUEUE</span><h2>风险事件队列</h2></div>
+          <span id="eventCount" class="count-badge">4</span>
+        </div>
+        <div id="scenarioList" class="scenario-list"></div>
+        <div class="coverage-block">
+          <div class="coverage-head"><span>知识底座覆盖</span><b>首期试点</b></div>
+          <div class="coverage-row"><span>设备 / 工位</span><strong>26 / 18</strong></div>
+          <div class="coverage-row"><span>质量关系</span><strong>1,248</strong></div>
+          <div class="coverage-row"><span>历史案例</span><strong>320</strong></div>
+          <div class="coverage-row"><span>控制规则</span><strong>186</strong></div>
+        </div>
+      </aside>
+
+      <section class="incident-column">
+        <article class="incident-focus panel-shell">
+          <div class="agent-identity">
+            <div class="agent-portrait">
+              <img src="assets/quality-agent.png" alt="知质·灵巡数字员工形象" />
+              <span class="agent-scan"></span>
+            </div>
+            <div class="agent-copy">
+              <span class="kicker">AUTONOMOUS QUALITY AGENT · 值守中</span>
+              <h1 id="caseTitle">质量风险研判中</h1>
+              <p id="caseSummary"></p>
+              <div class="identity-tags">
+                <span>设备质量专员</span><span>GraphRAG</span><span>人机共决</span>
+              </div>
+            </div>
+            <div id="riskSeal" class="risk-seal"><small>风险等级</small><b>P1</b><span>需人工确认</span></div>
           </div>
+
+          <div class="incident-kpis">
+            <div><span>根因置信度</span><strong id="confidence">--</strong><i><em id="confidenceBar"></em></i></div>
+            <div><span>影响对象</span><strong id="scopeCount">--</strong><small id="scopeDetail"></small></div>
+            <div><span>预计止损窗口</span><strong id="containmentWindow">--</strong><small>按当前节拍估算</small></div>
+            <div><span>处置状态</span><strong id="phaseLabel">感知中</strong><small id="phaseDetail">等待事件编排</small></div>
+          </div>
+
+          <div class="signal-console">
+            <div class="signal-heading">
+              <div><span class="kicker">PROCESS SIGNAL</span><h3 id="signalTitle">工艺参数实时窗</h3></div>
+              <div class="legend"><span class="limit">控制界限</span><span class="actual">实时值</span></div>
+            </div>
+            <div class="chart-wrap">
+              <svg id="trendChart" viewBox="0 0 760 180" role="img" aria-label="工艺参数趋势图"></svg>
+              <div class="chart-value"><span>当前值</span><strong id="signalValue">--</strong><small id="signalRange">--</small></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="conversation panel-shell">
+          <div class="panel-heading compact">
+            <div><span class="kicker">HUMAN–AI COPILOT</span><h2>数字员工协同窗口</h2></div>
+            <span class="trust-boundary">建议可解释 · 决策需确认</span>
+          </div>
+          <div id="dialogue" class="dialogue" aria-live="polite"></div>
+          <div id="quickQuestions" class="quick-questions"></div>
+          <form id="askForm" class="ask-form">
+            <input id="askInput" type="text" maxlength="120" placeholder="追问根因、影响范围、关闭条件或飞书任务..." aria-label="向数字员工提问" />
+            <button type="submit" class="primary-btn">发送</button>
+          </form>
+        </article>
+      </section>
+
+      <aside class="action-column panel-shell">
+        <div class="panel-heading">
+          <div><span class="kicker">ACTION ORCHESTRATION</span><h2>处置编排</h2></div>
+          <span id="slaBadge" class="sla-badge">SLA 30min</span>
         </div>
-        <div>
-          <div class="eyebrow">Autonomous Quality Agent</div>
-          <h2 id="caseTitle"></h2>
-          <p id="caseSummary"></p>
+        <div class="decision-brief">
+          <span>Agent 建议</span>
+          <strong id="decisionText"></strong>
+          <p id="rootCauseText"></p>
         </div>
+        <div class="approval-gate">
+          <div><span>安全门</span><b id="gateStatus">待质量负责人确认</b></div>
+          <p>不直接修改 PLC 参数，不替代车辆放行，不自动关闭 P1 事件。</p>
+        </div>
+        <div id="taskBoard" class="task-board"></div>
+        <div class="action-buttons">
+          <button id="dispatchBtn" class="primary-btn">派发飞书闭环</button>
+          <button id="confirmBtn" class="secondary-btn">人工确认处置</button>
+          <button id="resolveBtn" class="ghost-btn" disabled>验证并关闭</button>
+        </div>
+        <div id="actionLog" class="action-log"></div>
+      </aside>
+    </section>
+
+    <section id="reasoning" class="intelligence-section anchor-section">
+      <div class="section-intro">
+        <div><span class="kicker">EVIDENCE-FIRST REASONING</span><h2>知识推理与影响圈定</h2></div>
+        <p>以设备—工位—参数—质量特性—缺陷模式—历史案例为主链，文档证据用于校验，不让大模型脱离现场关系自由生成。</p>
       </div>
 
-      <div class="status-grid">
-        <article>
-          <span>风险等级</span>
-          <strong id="riskLevel"></strong>
+      <div class="intelligence-grid">
+        <article class="knowledge-panel panel-shell">
+          <div class="panel-heading compact"><h3>GraphRAG 证据路径</h3><button id="evidenceDrawerBtn" class="text-btn">查看完整证据</button></div>
+          <div id="kgPath" class="kg-network"></div>
+          <ol id="evidenceList" class="evidence-list"></ol>
         </article>
-        <article>
-          <span>置信度</span>
-          <strong id="confidence"></strong>
-        </article>
-        <article>
-          <span>影响范围</span>
-          <strong id="scope"></strong>
-        </article>
-      </div>
 
-      <div class="factory-context">
-        <div class="section-title">企业现场基础</div>
-        <div id="factoryFacts" class="metric-strip"></div>
-      </div>
+        <article class="impact-panel panel-shell">
+          <div class="panel-heading compact"><h3>一车一因果链</h3><span id="impactMode" class="mini-badge">VIN 追溯</span></div>
+          <div id="impactChain" class="impact-chain"></div>
+          <p class="panel-note">从最后合格校验点向异常时间窗双向收敛，并随复检结果动态扩展或缩小。</p>
+        </article>
 
-      <div class="chat-panel">
-        <div id="dialogue" class="dialogue"></div>
-        <div id="quickQuestions" class="quick-questions"></div>
+        <article class="factor-panel panel-shell">
+          <div class="panel-heading compact"><h3>风险评分拆解</h3><span class="mini-badge">规则 + 图谱 + 时序</span></div>
+          <div id="riskFactors" class="factor-grid"></div>
+        </article>
+
+        <article class="timeline-panel panel-shell">
+          <div class="panel-heading compact"><h3>自主闭环时间线</h3><span id="elapsedTime" class="mini-badge">T+0s</span></div>
+          <div id="actionTimeline" class="timeline"></div>
+        </article>
       </div>
     </section>
 
-    <section class="analysis-grid">
-      <div class="panel">
-        <div class="section-title">GraphRAG证据链</div>
-        <div id="kgPath" class="kg-path"></div>
-        <ol id="evidenceList" class="evidence-list"></ol>
+    <section id="collaboration" class="collaboration-section anchor-section">
+      <div class="section-intro">
+        <div><span class="kicker">FEISHU EXECUTION FABRIC</span><h2>飞书在线协同闭环</h2></div>
+        <p>一个事件 ID 贯穿多维表格、机器人卡片、任务中心与复盘文档；通过幂等键防止重复派单，通过事件订阅回收任务状态。</p>
       </div>
 
-      <div class="panel">
-        <div class="section-title">飞书协同任务</div>
-        <div id="taskBoard" class="task-board"></div>
-      </div>
+      <div class="feishu-grid">
+        <article class="feishu-status panel-shell">
+          <div class="online-hero">
+            <div><span class="online-dot"></span><strong>Feishu CLI 在线</strong><small>用户身份已授权 · Token 有效</small></div>
+            <a id="baseLink" class="secondary-btn" href="https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD" target="_blank" rel="noreferrer">打开质量台账</a>
+          </div>
+          <div id="feishuPipeline" class="feishu-pipeline"></div>
+          <div id="liveProof" class="live-proof"></div>
+        </article>
 
-      <div class="panel">
-        <div class="section-title">风险因子拆解</div>
-        <div id="riskFactors" class="factor-grid"></div>
-      </div>
+        <article class="capability-panel panel-shell">
+          <div class="panel-heading compact"><h3>飞书能力矩阵</h3><span class="mini-badge">6 项可落地能力</span></div>
+          <div id="capabilityMatrix" class="capability-matrix"></div>
+        </article>
 
-      <div class="panel">
-        <div class="section-title">行动时间线</div>
-        <div id="actionTimeline" class="timeline"></div>
+        <article class="record-panel panel-shell">
+          <div class="panel-heading compact"><h3>统一事件记录</h3><button id="copyRecordBtn" class="text-btn">复制 JSON</button></div>
+          <pre id="bitableRecord"></pre>
+        </article>
       </div>
+    </section>
 
-      <div class="panel wide">
-        <div class="section-title">处置闭环</div>
-        <div class="loop">
-          <div><b>感知</b><span>设备告警、工艺参数、视觉检测、MES过站</span></div>
-          <div><b>推理</b><span>本体约束、GraphRAG检索、因果路径、FMEA规则</span></div>
-          <div><b>行动</b><span>拦截放行、隔离车辆、派发任务、同步班组</span></div>
-          <div><b>学习</b><span>复检结果、设备维修、知识图谱回写、阈值更新</span></div>
-        </div>
+    <section id="value" class="value-section anchor-section">
+      <div class="section-intro">
+        <div><span class="kicker">PILOT VALUE CONTRACT</span><h2>落地价值与验收口径</h2></div>
+        <p>以下均为试点目标，不包装为既成收益；只有被现场采纳且完成闭环的事件才进入统计。</p>
       </div>
-
-      <div class="panel wide">
-        <div class="section-title">多维表格记录</div>
-        <pre id="bitableRecord"></pre>
-      </div>
-
-      <div class="panel wide">
-        <div class="section-title">在线飞书闭环</div>
-        <div id="feishuLive" class="feishu-live"></div>
-      </div>
-
-      <div class="panel wide">
-        <div class="section-title">资料依据映射</div>
+      <div id="valueCards" class="value-cards"></div>
+      <div class="sources-panel panel-shell">
+        <div class="panel-heading compact"><h3>公开证据与技术依据</h3><span class="mini-badge">企业官方 / 标准 / 论文 / 飞书官方</span></div>
         <div id="sourceSupport" class="source-support"></div>
       </div>
     </section>
   </main>
 
+  <footer>
+    <div><strong>智造知行队</strong><span>知质·灵巡 · 赛力斯质量风险主动管控 AI 数字员工</span></div>
+    <span>当前运行数据为脱敏仿真数据；现场控制与最终放行权归属企业授权岗位。</span>
+  </footer>
+
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <aside id="evidenceDrawer" class="evidence-drawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="kicker">EVIDENCE PACKAGE</span><h2>完整证据包</h2></div><button id="drawerCloseBtn" class="close-btn" aria-label="关闭">×</button></div>
+    <div id="drawerContent" class="drawer-content"></div>
+  </aside>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <script src="app.js"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>

@@ -19,6 +19,8 @@ DOCS = [
     "05_系统运行说明与完整案例",
     "06_方案创新亮点",
     "07_仿真工况与交互案例",
+    "08_40强赛完整参赛方案",
+    "09_决赛完整技术方案",
 ]
 
 
@@ -43,6 +45,10 @@ def p(text: str = "", style: str | None = None, runs: list[str] | None = None, k
     ppr = f"<w:pPr>{''.join(props)}</w:pPr>" if props else ""
     content = "".join(runs) if runs is not None else r(text)
     return f"<w:p>{ppr}{content}</w:p>"
+
+
+def page_break() -> str:
+    return '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
 
 
 def list_p(text: str, num_id: int, level: int = 0) -> str:
@@ -119,6 +125,34 @@ def maybe_kv_table(lines: list[str], start: int) -> tuple[str | None, int]:
     return None, start
 
 
+def markdown_row(line: str) -> list[str]:
+    return [part.strip() for part in line.strip().strip("|").split("|")]
+
+
+def is_table_separator(line: str) -> bool:
+    cells = markdown_row(line)
+    return bool(cells) and all(re.fullmatch(r":?-{3,}:?", item) for item in cells)
+
+
+def maybe_markdown_table(lines: list[str], start: int) -> tuple[str | None, int]:
+    if start + 1 >= len(lines) or not lines[start].strip().startswith("|"):
+        return None, start
+    if not is_table_separator(lines[start + 1].strip()):
+        return None, start
+    rows = [markdown_row(lines[start])]
+    index = start + 2
+    while index < len(lines) and lines[index].strip().startswith("|"):
+        row = markdown_row(lines[index])
+        if len(row) == len(rows[0]):
+            rows.append(row)
+        index += 1
+    column_count = len(rows[0])
+    base = 9360 // column_count
+    widths = [base] * column_count
+    widths[-1] += 9360 - sum(widths)
+    return table(rows, widths, header=True), index
+
+
 def build_body(md: str) -> str:
     lines = md.strip().splitlines()
     title = "参赛材料"
@@ -134,6 +168,16 @@ def build_body(md: str) -> str:
             body.append(p())
             i += 1
             continue
+        if line == "<!-- pagebreak -->":
+            body.append(page_break())
+            i += 1
+            continue
+        md_table, new_i = maybe_markdown_table(lines, i)
+        if md_table:
+            body.append(md_table)
+            body.append(p("", "SmallSpace"))
+            i = new_i
+            continue
         kv, new_i = maybe_kv_table(lines, i)
         if kv:
             body.append(kv)
@@ -147,10 +191,10 @@ def build_body(md: str) -> str:
         elif line.startswith("- "):
             body.append(list_p(line[2:].strip(), num_id=1))
         elif re.match(r"^\d+\.\s+", line):
-            body.append(list_p(re.sub(r"^\d+\.\s+", "", line), num_id=2))
+            body.append(p(line, "ListParagraph"))
         elif "：" in line and len(line) < 70:
             key, value = line.split("：", 1)
-            body.append(p(runs=[r(key + "：", bold=True, color="1F4D78"), r(value)]))
+            body.append(p(runs=[r(key + "：", bold=True, color="9E1B32"), r(value)]))
         else:
             body.append(p(line, "BodyText"))
         i += 1
@@ -161,10 +205,10 @@ def styles_xml() -> str:
     return """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:after="120" w:line="264" w:lineRule="auto"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:color w:val="172033"/></w:rPr></w:style>
-  <w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:pPr><w:spacing w:before="0" w:after="160"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="36"/><w:szCs w:val="36"/><w:color w:val="0B2545"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:pPr><w:spacing w:before="0" w:after="160"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="36"/><w:szCs w:val="36"/><w:color w:val="171C22"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="Subtitle"><w:name w:val="Subtitle"/><w:pPr><w:spacing w:after="240"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:color w:val="657086"/></w:rPr></w:style>
-  <w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:pPr><w:keepNext/><w:spacing w:before="320" w:after="160"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="32"/><w:szCs w:val="32"/><w:color w:val="2E74B5"/></w:rPr></w:style>
-  <w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="26"/><w:szCs w:val="26"/><w:color w:val="2E74B5"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:pPr><w:keepNext/><w:spacing w:before="320" w:after="160"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="32"/><w:szCs w:val="32"/><w:color w:val="9E1B32"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="26"/><w:szCs w:val="26"/><w:color w:val="34424F"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="BodyText"><w:name w:val="Body Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="120" w:line="264" w:lineRule="auto"/></w:pPr></w:style>
   <w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/><w:pPr><w:ind w:left="720"/><w:spacing w:after="120" w:line="280" w:lineRule="auto"/></w:pPr></w:style>
   <w:style w:type="paragraph" w:styleId="SmallSpace"><w:name w:val="Small Space"/><w:pPr><w:spacing w:after="80"/></w:pPr></w:style>

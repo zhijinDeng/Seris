@@ -548,22 +548,14 @@ P3：轻微波动或观察项；进入趋势跟踪，不立即拦截。
 
 
 def main() -> None:
-    write("README.md", readme)
-    submit_map = {
-        "提交材料/00_报名表填写文本.md": submit_00,
-        "提交材料/01_开题报告.md": submit_01,
-        "提交材料/02_整体解决方案书.md": submit_02,
-        "提交材料/03_平台运行说明.md": submit_03,
-        "提交材料/04_参考文献与数据依据.md": submit_04,
-        "提交材料/05_系统运行说明与完整案例.md": submit_05,
-        "提交材料/06_方案创新亮点.md": submit_06,
-        "提交材料/07_仿真工况与交互案例.md": submit_07,
-    }
-    for rel, text in submit_map.items():
-        write(rel, text)
-    for rel, text in docs.items():
-        write(rel, text)
-    print("FINAL_REFINEMENT_DONE")
+    # Final-round Markdown is maintained directly. This legacy entry point now
+    # delegates to the formatter so it cannot overwrite approved submission text.
+    import subprocess
+    import sys
+
+    formatter = ROOT / "scripts" / "format_submission_docx.py"
+    subprocess.run([sys.executable, str(formatter)], check=True)
+    print("FINAL_DOCUMENTS_FORMATTED")
 
 
 if __name__ == "__main__":

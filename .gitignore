@@ -1,4 +1,13 @@
 config/.runtime/
+.playwright-cli/
+__pycache__/
 config/feishu_live_base.json
 data/feishu_live_connection.status.json
 data/feishu_last_record_upsert_response.json
+data/feishu_orchestration.status.json
+data/*-desktop.png
+data/*-mobile.png
+data/playwright-*.png
+data/baseline.png
+data/http-*.log
+app/assets/*-chroma.png

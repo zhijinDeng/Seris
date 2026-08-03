@@ -243,6 +243,11 @@ const scenarios = [
   }
 ];
 
+window.qualityScenarios = scenarios;
+
+// Compatibility renderer retained for the original lightweight demo.
+// The enterprise dashboard in dashboard.js is the active experience.
+if (false) {
 let selected = scenarios[0];
 let activeQuestion = "证据链是什么";
 let closed = false;
@@ -493,3 +498,4 @@ $("resolveBtn").addEventListener("click", () => {
 });
 
 renderAll();
+}
