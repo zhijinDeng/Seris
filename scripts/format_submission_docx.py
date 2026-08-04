@@ -161,6 +161,7 @@ def build_body(md: str) -> str:
         lines = lines[1:]
     body = cover_block(title)
     i = 0
+    in_reference_section = False
     while i < len(lines):
         raw = lines[i].rstrip()
         line = raw.strip()
@@ -185,13 +186,15 @@ def build_body(md: str) -> str:
             i = new_i
             continue
         if line.startswith("## "):
-            body.append(p(line[3:].strip(), "Heading1", keep_next=True))
+            heading = line[3:].strip()
+            in_reference_section = "参考文献" in heading or "参考资料" in heading
+            body.append(p(heading, "Heading1", keep_next=True))
         elif line.startswith("### "):
             body.append(p(line[4:].strip(), "Heading2", keep_next=True))
         elif line.startswith("- "):
             body.append(list_p(line[2:].strip(), num_id=1))
         elif re.match(r"^\d+\.\s+", line):
-            body.append(p(line, "ListParagraph"))
+            body.append(p(line, "ReferenceList" if in_reference_section else "ListParagraph"))
         elif "：" in line and len(line) < 70:
             key, value = line.split("：", 1)
             body.append(p(runs=[r(key + "：", bold=True, color="9E1B32"), r(value)]))
@@ -211,6 +214,7 @@ def styles_xml() -> str:
   <w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:pPr><w:keepNext/><w:spacing w:before="240" w:after="120"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:b/><w:sz w:val="26"/><w:szCs w:val="26"/><w:color w:val="34424F"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="BodyText"><w:name w:val="Body Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="120" w:line="264" w:lineRule="auto"/></w:pPr></w:style>
   <w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/><w:pPr><w:ind w:left="720"/><w:spacing w:after="120" w:line="280" w:lineRule="auto"/></w:pPr></w:style>
+  <w:style w:type="paragraph" w:styleId="ReferenceList"><w:name w:val="Reference List"/><w:basedOn w:val="Normal"/><w:pPr><w:ind w:left="360" w:hanging="240"/><w:spacing w:after="50" w:line="220" w:lineRule="auto"/></w:pPr><w:rPr><w:rFonts w:ascii="Calibri" w:eastAsia="Microsoft YaHei" w:hAnsi="Calibri"/><w:sz w:val="18"/><w:szCs w:val="18"/><w:color w:val="172033"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="SmallSpace"><w:name w:val="Small Space"/><w:pPr><w:spacing w:after="80"/></w:pPr></w:style>
 </w:styles>"""
 

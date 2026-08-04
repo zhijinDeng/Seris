@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import zipfile
+import json
 from pathlib import Path
 
 
@@ -32,11 +33,13 @@ required = [
     "docs/solution-overview.md",
     "docs/90-day-plan.md",
     "docs/final-round-acceptance-plan.md",
+    "docs/active-detection-and-causal-assurance.md",
     "docs/research-evidence-matrix.md",
     "data/quality_ontology.jsonld",
     "data/factory_events.csv",
     "data/quality_cases.json",
     "data/interactive_scenarios.json",
+    "data/decision_assurance.json",
     "data/seres_source_evidence.json",
     "data/feishu_bitable_schema.csv",
     "data/feishu_env_template.json",
@@ -57,6 +60,7 @@ required = [
     "app/dashboard.js",
     "app/assets/quality-agent.png",
     "scripts/run_quality_agent.py",
+    "scripts/qa_browser.js",
     "scripts/feishu_client.py",
     "scripts/lark_cli_runner.js",
     "scripts/sync_feishu_quality_event.ps1",
@@ -105,5 +109,22 @@ for docx in docx_files:
             raise SystemExit(f"{docx.name} 不是有效docx")
         if "word/footer1.xml" in names or "word/header1.xml" in names:
             raise SystemExit(f"{docx.name} 含页眉页脚，请清理")
+
+contract = json.loads((ROOT / "data/decision_assurance.json").read_text(encoding="utf-8"))
+profiles = contract.get("profiles", {})
+if len(profiles) != 4:
+    raise SystemExit(f"主动检测场景应为4个，当前为{len(profiles)}")
+for event_id, profile in profiles.items():
+    if profile.get("lead_minutes", 0) <= 0:
+        raise SystemExit(f"{event_id} 缺少有效前置量")
+    if len(profile.get("top_hypotheses", [])) != 3:
+        raise SystemExit(f"{event_id} 根因假设不是Top-3")
+if len(contract.get("causal_guardrails", [])) != 5 or len(contract.get("deterministic_close_gate", [])) != 5:
+    raise SystemExit("因果护栏与确定性关闭门必须各为5项")
+
+html = (ROOT / "app/index.html").read_text(encoding="utf-8")
+for element_id in ["leadTime", "warningStages", "traceSelector", "causalHypotheses", "guardrailChecks", "validationGate", "replicationMatrix"]:
+    if f'id="{element_id}"' not in html:
+        raise SystemExit(f"工作台缺少关键交互节点：{element_id}")
 
 print(f"材料检查通过：{len(required)} 个核心文件，{len(docx_files)} 个docx。")

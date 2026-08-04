@@ -1,5 +1,6 @@
 config/.runtime/
 .playwright-cli/
+output/
 __pycache__/
 config/feishu_live_base.json
 data/feishu_live_connection.status.json

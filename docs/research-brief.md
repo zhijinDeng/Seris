@@ -8,7 +8,7 @@
 
 ## 二、技术研究依据
 
-Wehner等针对电动车制造根因分析提出知识图谱、因果贝叶斯网络和专家反馈结合的方法，说明专家知识能缩小因果搜索空间并减少伪因果。Root-KGD将工业数据特征与设备、物流等实体结合，用知识图谱定位根因并提供物理实体解释。Document GraphRAG通过文档结构图和语义连接改善制造领域检索精度。ProQ-KG统一产品、过程、资源和FMEA知识，并在汽车工业伙伴案例中验证跨角色质量问题分析价值。Xu和Dang则从历史质量问题解决数据中挖掘因果知识，为复盘知识回写提供方法依据。
+Wehner等针对电动车制造根因分析提出知识图谱、因果贝叶斯网络和专家反馈结合的方法，说明专家知识能缩小因果搜索空间并减少伪因果。Root-KGD将工业数据特征与设备、物流等实体结合，用知识图谱定位根因并提供物理实体解释。Fraunhofer研究进一步将异常检测、时间有效因果图和反事实干预组合，使候选根因具有可验证、可证伪路径。制造问题求解GraphRAG研究把在线异常检测、FMEA贝叶斯网络、历史8D图谱和混合检索串联，为本方案的“发现—推理—行动”提供技术依据。Document GraphRAG和ProQ-KG分别支撑制造文档结构检索及产品—过程—资源—FMEA统一建模。
 
 ## 三、质量管理与可信AI依据
 
@@ -34,5 +34,8 @@ ISO 9001强调过程方法、风险思维、监视测量、形成文件的信息
 12. 飞书开放平台. 任务v2概述[EB/OL]. https://open.feishu.cn/document/task-v2/overview.
 13. 飞书开放平台. 配置卡片交互[EB/OL]. https://open.feishu.cn/document/common-capabilities/message-card/add-card-interaction/interaction-module.
 14. 飞书开放平台. 文档OpenAPI概述[EB/OL]. https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/docx-overview.
+15. Rehak J, Sommer A, Becker M, et al. Counterfactual Root Cause Analysis via Anomaly Detection and Causal Graphs[C]. IEEE INDIN, 2023. https://doi.org/10.1109/INDIN51400.2023.10218245.
+16. Rehak J, Youssef S, Beyerer J. Root cause analysis using anomaly detection and temporal informed causal graphs[C]. ML4CPS, 2024. https://doi.org/10.24406/publica-3069.
+17. Kropatschek S, et al. Retrieval-Augmented Generation using Knowledge Graphs for Manufacturing Problem-Solving[C]. 2025. https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10.
 
 结构化参考目录保存在`data/reference_catalog.json`，每条来源标注其在方案中的使用位置。企业公开数字只作为场景依据，仿真参数不声称来自赛力斯真实产线。

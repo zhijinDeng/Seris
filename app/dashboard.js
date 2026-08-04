@@ -72,6 +72,18 @@ const references = [
     title: "ProQ-KG：PPR-FMEA质量知识图谱",
     detail: "统一产品、过程、资源与FMEA知识，在汽车行业案例中支撑跨角色质量问题分析。",
     url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5273075"
+  },
+  {
+    type: "研究论文",
+    title: "异常检测与因果图的反事实根因分析",
+    detail: "将异常检测、因果图与反事实验证组合，用可检验干预区分相关性线索和可行动根因。",
+    url: "https://publica.fraunhofer.de/entities/publication/6127ab3d-d45b-4fc1-a57c-2dae8ed2082f"
+  },
+  {
+    type: "研究论文",
+    title: "制造问题求解的知识图谱增强RAG",
+    detail: "把在线异常检测、FMEA因果网络、历史8D图谱和混合检索串成制造问题求解链。",
+    url: "https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10"
   }
 ];
 
@@ -85,10 +97,73 @@ const feishuCapabilities = [
 ];
 
 const valueTargets = [
+  { label: "缺陷显性化前置量", value: "不少于 10 分钟", note: "以风险线程首次达到派单阈值至下游检验理论发现时点的时间差验收。" },
   { label: "异常定位时间", value: "下降 40%–60%", note: "对比人工跨MES、设备、维修与FMEA查询耗时。" },
   { label: "P1任务派发", value: "小于 1 分钟", note: "从风险触发到飞书任务和卡片生成的系统时间戳。" },
   { label: "根因 Top-3 命中", value: "不低于 80%", note: "以质量工程师最终复盘根因为金标准进行盲测。" },
   { label: "复盘知识沉淀", value: "不低于 90%", note: "关闭事件的根因、措施、复检与责任确认字段完整率。" }
+];
+
+const assuranceProfiles = {
+  "CASE-TQ-20260719-01": {
+    leadMinutes: 22,
+    consensus: "4/4",
+    weakSignal: "EWMA均值偏移",
+    weakSignalDetail: "连续6周期偏离基线0.8σ",
+    escalationBasis: "CUSUM + 连续VIN + FMEA",
+    stages: [["14:02", "稳定基线", "过程能力窗内"], ["14:08", "弱漂移", "EWMA先于硬阈值触发"], ["14:16", "风险收敛", "连续VIN与案例关系命中"], ["14:30", "理论显性点", "下游路试/抽检可能发现"]],
+    hypotheses: [
+      { name: "套筒磨损叠加校准漂移", score: 86, support: "同点位复现、角度补偿同步、C-009命中", conflict: "套筒账面寿命尚未到阈值", test: "更换套筒并用标准件复校；若扭矩恢复则增强" },
+      { name: "螺纹摩擦系数批次异常", score: 57, support: "扭矩与角度关系存在偏离", conflict: "不同零件批次仍集中于同一设备", test: "抽取三件测摩擦系数并交叉换枪复拧" },
+      { name: "拧紧程序或配方错配", score: 34, support: "异常表现可由目标值错配造成", conflict: "PLC配方哈希与已批准版本一致", test: "复核VIN配置、程序版本和参数下发日志" }
+    ],
+    guards: [["时序先行", "通过", "设备漂移早于扭矩越界"], ["机制一致", "通过", "磨损可解释扭矩/角度联动"], ["同位复现", "通过", "同枪同点位连续3车"], ["反证检查", "待验证", "需更换套筒交叉复拧"], ["数据完整", "通过", "MES、PLC、校准与案例可追溯"]],
+    traces: [
+      { id: "VIN 8123", state: "复检待办", detail: "14:18过站 · 86.4N·m · TQ-17/程序v5.2 · 已隔离" },
+      { id: "VIN 8124", state: "待下线", detail: "14:22过站 · 88.1N·m · 同点位复现 · 禁止自动放行" },
+      { id: "VIN 8125", state: "路试拦截", detail: "14:26过站 · 89.0N·m · 路试前拦截 · 待复检" }
+    ]
+  },
+  "CASE-WD-20260719-02": {
+    leadMinutes: 31, consensus: "3/4", weakSignal: "电流CUSUM下移", weakSignalDetail: "12分钟缓慢漂移，未触发停机", escalationBasis: "CUSUM + 电极寿命 + 焊核风险",
+    stages: [["09:41", "稳定基线", "电流处于规范中心"], ["09:48", "弱漂移", "CUSUM持续下移"], ["09:53", "风险收敛", "电极寿命与回路阻抗共同命中"], ["10:24", "理论显性点", "焊核抽检可能发现"]],
+    hypotheses: [
+      { name: "电极帽磨损", score: 79, support: "寿命92%、电流补偿失败", conflict: "尚无焊核实测结果", test: "更换电极帽后做破坏性焊核对照" },
+      { name: "二次回路接触电阻升高", score: 68, support: "点检趋势与电流下探同窗", conflict: "机器人其他焊点暂未同步异常", test: "测量回路阻抗并复紧连接点" },
+      { name: "板材搭接间隙波动", score: 39, support: "可造成局部热输入不足", conflict: "异常跨多个车身重复", test: "抽检搭接间隙并与相邻工位对照" }
+    ],
+    guards: [["时序先行", "通过", "寿命/阻抗变化早于电流越界"], ["机制一致", "通过", "热输入不足机制成立"], ["同位复现", "通过", "RB-42关键区域持续复现"], ["反证检查", "待验证", "等待换帽后焊核对照"], ["数据完整", "通过", "焊接、寿命、MES记录齐全"]],
+    traces: [{ id: "VIN 8151", state: "焊核抽检", detail: "09:53过站 · 首个收敛对象 · 已锁定" }, { id: "VIN 8159", state: "批次隔离", detail: "10:01过站 · 漂移中段 · 禁止转序" }, { id: "VIN 8168", state: "范围边界", detail: "10:12过站 · 末个影响对象 · 待抽检" }]
+  },
+  "CASE-PA-20260719-03": {
+    leadMinutes: 18, consensus: "3/4", weakSignal: "风门响应残差", weakSignalDetail: "指令-反馈延迟连续扩大", escalationBasis: "残差 + 温度窗口 + 过站时间窗",
+    stages: [["16:06", "稳定基线", "温控回路响应正常"], ["16:11", "弱漂移", "风门响应残差扩大"], ["16:19", "风险收敛", "温度低限与MES窗口关联"], ["16:37", "理论显性点", "附着力复测可能发现"]],
+    hypotheses: [
+      { name: "风门执行机构响应滞后", score: 72, support: "指令-反馈残差与温度同窗", conflict: "尚未完成执行器行程点检", test: "阶跃测试风门响应时间并复测温升" },
+      { name: "温控PID调节不足", score: 55, support: "低温持续且回升缓慢", conflict: "历史同配方运行稳定", test: "比对PID输出与同型烘房基线" },
+      { name: "车身负载突变", score: 28, support: "负载变化可影响热平衡", conflict: "生产节拍和车型组合未突变", test: "核对进炉序列与热负载模型" }
+    ],
+    guards: [["时序先行", "通过", "反馈残差早于低温事件"], ["机制一致", "通过", "风量不足可解释固化风险"], ["同位复现", "通过", "三区连续8分钟"], ["反证检查", "待验证", "需执行器阶跃试验"], ["数据完整", "通过", "温度、风门、MES记录齐全"]],
+    traces: [{ id: "VIN 8201", state: "复测队列", detail: "16:19进炉 · 时间窗起点 · 附着力复测" }, { id: "VIN 8208", state: "隔离", detail: "16:25进炉 · 低温核心段 · 暂缓放行" }, { id: "VIN 8216", state: "范围边界", detail: "16:33进炉 · 温度恢复前末车" }]
+  },
+  "CASE-DC-20260719-04": {
+    leadMinutes: 46, consensus: "4/4", weakSignal: "水路流量残差", weakSignalDetail: "局部支路波动先于模温差扩大", escalationBasis: "残差 + 模温差 + 结构件严重度",
+    stages: [["11:07", "稳定基线", "水路与模温平衡"], ["11:18", "弱漂移", "局部支路残差异常"], ["11:29", "风险收敛", "模温差与缩孔关系命中"], ["12:15", "理论显性点", "X光/尺寸检测可能发现"]],
+    hypotheses: [
+      { name: "冷却水路局部堵塞", score: 81, support: "支路流量波动与模温差同步", conflict: "过滤器压差未超过硬阈值", test: "分支流量旁路测试与水路冲洗前后对照" },
+      { name: "温控阀响应异常", score: 63, support: "阀位变化未带来预期流量", conflict: "控制器无显性报警", test: "手动阶跃阀位并记录响应曲线" },
+      { name: "喷涂/脱模剂热边界变化", score: 31, support: "可影响局部热交换", conflict: "配方和喷涂周期未变化", test: "核查喷涂日志与热像分布" }
+    ],
+    guards: [["时序先行", "通过", "流量残差早于模温差扩大"], ["机制一致", "通过", "冷却不均可导致缩孔/变形"], ["同位复现", "通过", "同模次相邻件持续"], ["反证检查", "待验证", "等待旁路与冲洗对照"], ["数据完整", "通过", "压铸、流量、热像记录齐全"]],
+    traces: [{ id: "件 DC-01", state: "X光待检", detail: "11:29出模 · 风险窗起点 · 批次冻结" }, { id: "件 DC-03", state: "尺寸复核", detail: "11:37出模 · 模温差峰值段" }, { id: "件 DC-06", state: "范围边界", detail: "11:49出模 · 水路恢复前末件" }]
+  }
+};
+
+const replicationAssets = [
+  ["总装拧紧", "扭矩/角度适配器", "拧紧-FMEA本体", "复拧+标准件", "可演示"],
+  ["焊装点焊", "电流/寿命/阻抗", "焊点-强度本体", "焊核抽检", "可演示"],
+  ["涂装烘干", "温度/风门/过站", "固化-附着力本体", "膜厚+附着力", "可演示"],
+  ["一体压铸", "模温/流量/热像", "凝固-缺陷本体", "X光+尺寸", "可演示"]
 ];
 
 const phases = [
@@ -106,9 +181,11 @@ let confirmed = false;
 let closed = false;
 let runTimer = null;
 let taskProgress = 0;
+let traceIndex = 0;
 
 const $ = (id) => document.getElementById(id);
 const selected = () => qualityScenarios[selectedIndex];
+const assurance = () => assuranceProfiles[selected().id];
 
 function riskTag(risk) {
   return `<span class="tag ${risk}">${risk}</span>`;
@@ -149,6 +226,7 @@ function renderScenarioList() {
 
 function selectScenario(index) {
   selectedIndex = index;
+  traceIndex = 0;
   phaseIndex = 2;
   activeQuestion = "证据链是什么";
   confirmed = false;
@@ -177,7 +255,22 @@ function renderIncident() {
   $("gateStatus").textContent = closed ? "已验证关闭" : confirmed ? "处置已确认" : "待质量负责人确认";
   $("confirmBtn").disabled = confirmed || closed;
   $("resolveBtn").disabled = !confirmed || closed;
+  renderEarlyWarning();
   renderChart();
+}
+
+function renderEarlyWarning() {
+  const profile = assurance();
+  $("warningConsensus").textContent = `多引擎共识 ${profile.consensus}`;
+  $("leadTime").textContent = `${profile.leadMinutes} 分钟`;
+  $("weakSignal").textContent = profile.weakSignal;
+  $("weakSignalDetail").textContent = profile.weakSignalDetail;
+  $("escalationBasis").textContent = profile.escalationBasis;
+  $("warningStages").innerHTML = profile.stages.map(([time, title, detail], index) => `
+    <div class="warning-stage ${index <= Math.min(phaseIndex, 2) || closed ? "active" : ""} ${index === 3 ? "future" : ""}">
+      <time>${time}</time><b>${title}</b><span>${detail}</span>
+    </div>
+  `).join("");
 }
 
 function createSignalSeries(item) {
@@ -218,8 +311,11 @@ function renderChart() {
 
 function dialogueAnswer(question) {
   const item = selected();
+  const profile = assurance();
   const direct = item.chat[question];
   if (direct) return direct;
+  if (/提前|前置|弱信号|显性/.test(question)) return `系统先在${profile.weakSignal}阶段发现偏离，再由${profile.escalationBasis}收敛风险。按本仿真时间窗，比下游检验理论发现时点前置${profile.leadMinutes}分钟。`;
+  if (/护栏|反证|可信|假设/.test(question)) return `当前保留${profile.hypotheses.length}个候选根因，不把相关性直接写成因果。Top-1为“${profile.hypotheses[0].name}”，必须执行“${profile.hypotheses[0].test}”后才能增强或降级。`;
   if (/根因|原因|为什么/.test(question)) return `当前Top-1根因假设为“${item.rootCause}”。该结论由参数越界、时空复现、设备状态和历史案例共同支持，仍需现场点检与复检确认。`;
   if (/影响|VIN|批次|范围/.test(question)) return `当前圈定范围为：${item.scope}。系统会以最后合格校验点和MES过站时间窗为边界，随复检结果扩展或收敛。`;
   if (/关闭|放行|条件/.test(question)) return "关闭至少需要：影响对象复检合格、设备或工艺恢复、首件确认、责任人签收、质量负责人确认。P1事件不允许AI自动放行。";
@@ -238,7 +334,7 @@ function renderDialogue(customQuestion) {
     <div class="bubble agent">${dialogueAnswer(question)}</div>
     ${closed ? `<div class="bubble system">事件已关闭：复检、设备处理、责任确认和知识回写字段完整。</div>` : ""}
   `;
-  const questions = ["为什么升级P1", "影响哪些VIN", "证据链是什么", "如何派发飞书任务", "关闭后如何复盘"];
+  const questions = ["如何提前发现", "为什么升级P1", "因果结论可信吗", "影响哪些VIN", "如何派发飞书任务", "关闭条件是什么"];
   $("quickQuestions").innerHTML = questions.map((question) => `<button data-question="${question}">${question}</button>`).join("");
   document.querySelectorAll("#quickQuestions button").forEach((button) => button.addEventListener("click", () => renderDialogue(button.dataset.question)));
 }
@@ -258,6 +354,7 @@ function renderTasks() {
 
 function renderKnowledge() {
   const item = selected();
+  const profile = assurance();
   const labels = ["产线", "工位", "设备", "参数", "质量风险", "案例", "根因"];
   const relations = ["包含", "配置", "产生", "影响", "命中", "指向"];
   $("kgPath").innerHTML = item.kgPath.map((node, index) => `
@@ -265,15 +362,50 @@ function renderKnowledge() {
     ${index < item.kgPath.length - 1 ? `<div class="kg-edge"><span>${relations[index] || "关联"}</span></div>` : ""}
   `).join("");
   $("evidenceList").innerHTML = item.evidence.map((evidence, index) => `<li><b>E${index + 1}</b> ${evidence}</li>`).join("");
-  const entity = item.id.includes("DC") ? "零件批次" : "VIN/车辆";
+  const trace = profile.traces[Math.min(traceIndex, profile.traces.length - 1)];
+  const entity = item.id.includes("DC") ? "零件/批次" : "VIN/车辆";
   $("impactMode").textContent = item.id.includes("DC") ? "批次追溯" : "VIN 追溯";
+  $("traceSelector").innerHTML = profile.traces.map((entry, index) => `<button class="${index === traceIndex ? "active" : ""}" data-trace-index="${index}">${entry.id}</button>`).join("");
+  document.querySelectorAll("#traceSelector button").forEach((button) => button.addEventListener("click", () => {
+    traceIndex = Number(button.dataset.traceIndex);
+    renderKnowledge();
+  }));
   $("impactChain").innerHTML = [
     ["触发点", `${item.station} / ${item.equipment}`],
+    [entity, `${trace.id} · ${trace.state}`],
+    ["过程档案", trace.detail],
     ["时间窗", item.trend],
-    [entity, item.scope],
     ["风险", item.decision],
     ["关闭门", "复检合格 + 设备恢复 + 责任确认"]
   ].map(([key, value]) => `<div class="impact-step"><b>${key}</b><span>${value}</span></div>`).join("");
+}
+
+function renderAssurance() {
+  const profile = assurance();
+  $("causalHypotheses").innerHTML = profile.hypotheses.map((hypothesis, index) => `
+    <article class="hypothesis ${index === 0 ? "primary" : ""}">
+      <div><span>H${index + 1}</span><strong>${hypothesis.name}</strong><b>${hypothesis.score}%</b></div>
+      <p><i>支持</i>${hypothesis.support}</p>
+      <p><i>冲突</i>${hypothesis.conflict}</p>
+      <p><i>证伪</i>${hypothesis.test}</p>
+    </article>
+  `).join("");
+  $("guardrailChecks").innerHTML = profile.guards.map(([name, status, detail]) => `
+    <div class="guardrail ${status === "通过" ? "pass" : "pending"}"><span>${name}</span><b>${status}</b><small>${detail}</small></div>
+  `).join("");
+
+  const checks = [
+    ["源数据完整", true, "MES、设备、检测与知识版本可追溯"],
+    ["影响范围锁定", phaseIndex >= 2 || closed, `已关联${scopeNumber(selected())}及最后合格校验点`],
+    ["物理复检通过", closed, confirmed ? "执行中：等待复检与首件结果" : "待处置确认后启动"],
+    ["授权人员确认", confirmed || closed, confirmed || closed ? "质量负责人已确认" : "P1禁止自动放行"],
+    ["任务与知识回写", closed, closed ? "证据、结论与时间戳已关联" : "关闭后写回台账与知识库"]
+  ];
+  const passed = checks.filter((check) => check[1]).length;
+  $("validationSummary").textContent = closed ? "5/5 已通过" : `${passed}/5 已通过`;
+  $("validationGate").innerHTML = checks.map(([name, pass, detail], index) => `
+    <div class="validation-item ${pass ? "pass" : "pending"}"><span>${pass ? "✓" : index + 1}</span><div><b>${name}</b><small>${detail}</small></div></div>
+  `).join("");
 }
 
 function factorData(item) {
@@ -314,9 +446,13 @@ function buildRecord() {
       "设备": item.equipment,
       "工位": item.station,
       "异常参数": `${item.parameter}=${item.value}${item.unit}`,
+      "缺陷显性化前置量": `${assurance().leadMinutes}分钟（仿真）`,
+      "检测共识": assurance().consensus,
       "工艺窗口": `${item.lower}-${item.upper}${item.unit}`,
       "影响范围": item.scope,
       "根因假设": item.rootCause,
+      "候选根因Top3": assurance().hypotheses.map((hypothesis) => `${hypothesis.score}%:${hypothesis.name}`).join("；"),
+      "反证动作": assurance().hypotheses[0].test,
       "证据链": item.evidence.join("；"),
       "处置方案": item.decision,
       "责任任务": item.tasks.map((task) => `${task.owner}:${task.action}`).join("；"),
@@ -345,6 +481,10 @@ function renderFeishu() {
 
 function renderValueAndSources() {
   $("valueCards").innerHTML = valueTargets.map((target) => `<article class="value-card"><span>${target.label}</span><strong>${target.value}</strong><p>${target.note}</p></article>`).join("");
+  $("replicationMatrix").innerHTML = `
+    <div class="replication-row header"><b>工序模板</b><b>感知适配</b><b>知识模块</b><b>确定性验证</b><b>成熟度</b></div>
+    ${replicationAssets.map((row) => `<div class="replication-row">${row.map((cell, index) => index === 4 ? `<span class="ready">${cell}</span>` : `<span>${cell}</span>`).join("")}</div>`).join("")}
+  `;
   $("sourceSupport").innerHTML = references.map((reference) => `
     <article class="source-item"><strong>${reference.type}｜${reference.title}</strong><p>${reference.detail}</p><a href="${reference.url}" target="_blank" rel="noreferrer">查看来源</a></article>
   `).join("");
@@ -352,10 +492,12 @@ function renderValueAndSources() {
 
 function renderDrawer() {
   const item = selected();
+  const profile = assurance();
   $("drawerContent").innerHTML = `
     <section class="drawer-group"><h3>事件摘要</h3><p>${item.id} · ${item.scene} · ${item.risk}</p><p>${item.decision}</p></section>
     <section class="drawer-group"><h3>原始与派生证据</h3><ol>${item.evidence.map((evidence) => `<li>${evidence}</li>`).join("")}</ol></section>
     <section class="drawer-group"><h3>根因假设</h3><p>${item.rootCause}</p><p>置信度 ${Math.round(item.confidence * 100)}%，必须由点检、复检和维修结果证实或证伪。</p></section>
+    <section class="drawer-group"><h3>候选根因与反证动作</h3><ol>${profile.hypotheses.map((hypothesis) => `<li><b>${hypothesis.score}% ${hypothesis.name}</b>：${hypothesis.test}</li>`).join("")}</ol></section>
     <section class="drawer-group"><h3>关闭条件</h3><ol><li>影响车辆或零件完成隔离与复检</li><li>设备/工艺恢复并通过首件确认</li><li>责任任务、时间戳和附件齐全</li><li>质量负责人确认放行或继续升级</li><li>根因与措施写回知识图谱和复盘文档</li></ol></section>
   `;
 }
@@ -367,6 +509,7 @@ function renderAll() {
   renderTasks();
   renderKnowledge();
   renderFactors();
+  renderAssurance();
   renderTimeline();
   renderFeishu();
   renderValueAndSources();
@@ -379,6 +522,7 @@ function simulateRun() {
   confirmed = false;
   closed = false;
   taskProgress = 0;
+  traceIndex = 0;
   renderAll();
   showToast(`已注入 ${selected().id}，开始主动研判`);
   runTimer = window.setInterval(() => {
@@ -424,6 +568,7 @@ function downloadEvent() {
   const payload = {
     generatedAt: new Date().toISOString(),
     scenario: selected(),
+    assurance: assurance(),
     feishuRecord: buildRecord(),
     governance: { humanConfirmed: confirmed, closed, boundary: "decision-support" }
   };

@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "measurement_note": "前置量为脱敏仿真案例中风险线程达到派单阈值至下游检验理论发现时点的时间差，不代表实车生产收益。",
+  "profiles": {
+    "CASE-TQ-20260719-01": {
+      "lead_minutes": 22,
+      "detector_consensus": "4/4",
+      "weak_signal": "EWMA均值偏移",
+      "detectors": ["工艺硬规则", "EWMA", "CUSUM", "图谱关系约束"],
+      "top_hypotheses": [
+        {"rank": 1, "cause": "套筒磨损叠加校准漂移", "confidence": 0.86, "falsification": "更换套筒并用标准件复校，比较干预前后扭矩与角度关系"},
+        {"rank": 2, "cause": "螺纹摩擦系数批次异常", "confidence": 0.57, "falsification": "抽样测摩擦系数并交叉换枪复拧"},
+        {"rank": 3, "cause": "拧紧程序或配方错配", "confidence": 0.34, "falsification": "核对VIN配置、程序版本与参数下发日志"}
+      ]
+    },
+    "CASE-WD-20260719-02": {
+      "lead_minutes": 31,
+      "detector_consensus": "3/4",
+      "weak_signal": "电流CUSUM下移",
+      "detectors": ["工艺硬规则", "CUSUM", "电极寿命规则", "焊点知识关系"],
+      "top_hypotheses": [
+        {"rank": 1, "cause": "电极帽磨损", "confidence": 0.79, "falsification": "换帽后执行破坏性焊核对照"},
+        {"rank": 2, "cause": "二次回路接触电阻升高", "confidence": 0.68, "falsification": "测量回路阻抗并复紧连接点"},
+        {"rank": 3, "cause": "板材搭接间隙波动", "confidence": 0.39, "falsification": "抽检搭接间隙并与相邻工位对照"}
+      ]
+    },
+    "CASE-PA-20260719-03": {
+      "lead_minutes": 18,
+      "detector_consensus": "3/4",
+      "weak_signal": "风门响应残差",
+      "detectors": ["温度窗口", "响应残差", "MES时间窗", "固化知识关系"],
+      "top_hypotheses": [
+        {"rank": 1, "cause": "风门执行机构响应滞后", "confidence": 0.72, "falsification": "执行风门阶跃试验并复测温升"},
+        {"rank": 2, "cause": "温控PID调节不足", "confidence": 0.55, "falsification": "比对PID输出与同型烘房基线"},
+        {"rank": 3, "cause": "车身负载突变", "confidence": 0.28, "falsification": "核对进炉序列与热负载模型"}
+      ]
+    },
+    "CASE-DC-20260719-04": {
+      "lead_minutes": 46,
+      "detector_consensus": "4/4",
+      "weak_signal": "水路流量残差",
+      "detectors": ["模温硬规则", "流量残差", "热像关系", "结构件严重度"],
+      "top_hypotheses": [
+        {"rank": 1, "cause": "冷却水路局部堵塞", "confidence": 0.81, "falsification": "执行支路旁路测试与冲洗前后对照"},
+        {"rank": 2, "cause": "温控阀响应异常", "confidence": 0.63, "falsification": "手动阶跃阀位并记录响应曲线"},
+        {"rank": 3, "cause": "喷涂或脱模剂热边界变化", "confidence": 0.31, "falsification": "核查喷涂日志与热像分布"}
+      ]
+    }
+  },
+  "causal_guardrails": [
+    "原因信号在时间上早于质量偏离",
+    "候选原因与设备和工艺机理一致",
+    "同设备、同工位或同批次具有可复现性",
+    "每个Top-3假设必须绑定反证动作",
+    "数据版本、时间戳、对象范围和来源完整可追溯"
+  ],
+  "deterministic_close_gate": [
+    "源数据完整",
+    "影响范围锁定",
+    "物理复检通过",
+    "授权人员确认",
+    "任务与知识回写完成"
+  ]
+}
