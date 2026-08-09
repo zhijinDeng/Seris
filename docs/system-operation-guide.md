@@ -21,10 +21,13 @@
 - 因果保障：查看Top-3支持/冲突证据、反证动作、五项护栏和确定性关闭门。
 - 飞书在线证明：直接跳转事件表、任务和复盘文档。
 
+反事实实验采用两步操作：先选择干预并查看必填实测与验收准则，再点击“提交脱敏实测并签署”。签署后Top-3后验、因果护栏、关闭门和事件护照同步更新。运行模式与故障演练会真实控制动作权限：L0和数据延迟时派单按钮禁用，飞书中断时任务进入Outbox待补偿。
+
 ## 命令行验证
 
 ```powershell
 py D:\赛力斯\scripts\run_quality_agent.py
+py D:\赛力斯\scripts\run_quality_agent.py --event CASE-TQ-20260719-01 --intervention socket-replace --mode collaborative --json
 powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\orchestrate_feishu_quality_event.ps1 -WriteBase -CreateTask -CreateReviewDoc -DryRun
 node --check D:\赛力斯\app\app.js
 node --check D:\赛力斯\app\dashboard.js
@@ -34,3 +37,5 @@ py D:\赛力斯\scripts\audit_materials.py
 ## 现场边界
 
 演示数据为脱敏仿真数据，数值用于说明系统机制，不代表赛力斯真实工艺参数。生产接入时由企业确认数据字典、质量等级、工艺窗口、责任角色和放行权限。系统支持降级为只读监测：当数据延迟、关键点位缺失、模型连续低置信或人工结论冲突时，停止自动派单并保留审计记录。
+
+飞书区域中的Base、任务和文档为已核验对象，授权状态必须在调用前检查。页面中的检测岗位身份为脱敏演示身份。系统不直接写PLC/SCADA，不替代质量放行。

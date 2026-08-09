@@ -4,7 +4,7 @@
 
 ## 当前接入范围
 
-- 授权身份：用户身份，已具备 Base 表格、记录、字段、文档、任务、IM 等相关范围。
+- 授权身份：用户身份曾完成Base、文档和任务调用；Token具有时效性，运行前以`lark-cli auth status`结果为准。
 - 目标多维表格：`https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b`
 - 在线事件表：`赛力斯质量风险事件闭环`
 - 本地执行脚本：`D:\赛力斯\scripts\sync_feishu_quality_event.ps1`

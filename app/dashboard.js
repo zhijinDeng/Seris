@@ -50,6 +50,30 @@ const references = [
     url: "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
   },
   {
+    type: "制造标准",
+    title: "ISO 23247-2 制造数字孪生参考架构",
+    detail: "从制造域实体与功能实体两个视角定义数字孪生参考架构，支撑设备、过程、产品与应用的分层建模。",
+    url: "https://www.iso.org/standard/78743.html"
+  },
+  {
+    type: "互操作标准",
+    title: "OPC UA for ISA-95 Common Object Model",
+    detail: "为设备、物料、人员与企业/控制系统信息交换提供统一语义，支持从现场层到MES/ERP的受控数据通道。",
+    url: "https://reference.opcfoundation.org/specs/OPC-10030/4.1"
+  },
+  {
+    type: "OT安全",
+    title: "NIST SP 800-82 Rev.3",
+    detail: "工业控制系统安全指南要求结合可用性、安全性与性能约束实施网络分区、访问控制、监测与恢复。",
+    url: "https://csrc.nist.gov/pubs/sp/800/82/r3/final"
+  },
+  {
+    type: "质量方法",
+    title: "AIAG Control Plan",
+    detail: "控制计划指南覆盖高度自动化制造、安全投产与反应计划，为复检准则、首件确认和系统性纠正提供方法依据。",
+    url: "https://www.aiag.org/training-and-resources/manuals/details/CP-1"
+  },
+  {
     type: "研究论文",
     title: "Interactive RCA in EV Manufacturing",
     detail: "电动车制造研究验证了知识图谱、因果网络和专家反馈结合可减少伪因果并形成可交互根因闭环。",
@@ -122,6 +146,11 @@ const assuranceProfiles = {
       { id: "VIN 8123", state: "复检待办", detail: "14:18过站 · 86.4N·m · TQ-17/程序v5.2 · 已隔离" },
       { id: "VIN 8124", state: "待下线", detail: "14:22过站 · 88.1N·m · 同点位复现 · 禁止自动放行" },
       { id: "VIN 8125", state: "路试拦截", detail: "14:26过站 · 89.0N·m · 路试前拦截 · 待复检" }
+    ],
+    signal: { baselineMean: 100, baselineStd: 1.5, downstreamTime: "14:38", points: [["14:02",100.2,0],["14:04",99.8,0],["14:06",99.4,0],["14:08",98.8,0],["14:10",98.1,0],["14:12",97.4,0],["14:14",96.7,0],["14:16",95.8,1],["14:18",86.4,1]] },
+    interventions: [
+      { id: "socket-replace", label: "更换套筒 + 标准件复校", measurement: "标准件扭矩、角度残差、量具校准状态", criterion: "扭矩92-108N·m且角度残差回到基线", signer: "检测岗位 QC-03", result: "复校后标准件扭矩回到99.1N·m，角度残差收敛至基线内。", conclusion: "干预方向与机理一致，Top-1得到增强；仍须完成影响VIN复检。", posterior: [93,31,14] },
+      { id: "cross-tool", label: "交叉换枪复拧", measurement: "原枪/替代枪复拧扭矩与角度", criterion: "替代枪合格且原枪可复现偏差", signer: "检测岗位 QC-03", result: "同批螺栓换枪后恢复，原枪复现偏低；零件批次效应减弱。", conclusion: "设备侧原因增强，螺纹摩擦批次假设降级。", posterior: [89,22,18] }
     ]
   },
   "CASE-WD-20260719-02": {
@@ -133,7 +162,12 @@ const assuranceProfiles = {
       { name: "板材搭接间隙波动", score: 39, support: "可造成局部热输入不足", conflict: "异常跨多个车身重复", test: "抽检搭接间隙并与相邻工位对照" }
     ],
     guards: [["时序先行", "通过", "寿命/阻抗变化早于电流越界"], ["机制一致", "通过", "热输入不足机制成立"], ["同位复现", "通过", "RB-42关键区域持续复现"], ["反证检查", "待验证", "等待换帽后焊核对照"], ["数据完整", "通过", "焊接、寿命、MES记录齐全"]],
-    traces: [{ id: "VIN 8151", state: "焊核抽检", detail: "09:53过站 · 首个收敛对象 · 已锁定" }, { id: "VIN 8159", state: "批次隔离", detail: "10:01过站 · 漂移中段 · 禁止转序" }, { id: "VIN 8168", state: "范围边界", detail: "10:12过站 · 末个影响对象 · 待抽检" }]
+    traces: [{ id: "VIN 8151", state: "焊核抽检", detail: "09:53过站 · 首个收敛对象 · 已锁定" }, { id: "VIN 8159", state: "批次隔离", detail: "10:01过站 · 漂移中段 · 禁止转序" }, { id: "VIN 8168", state: "范围边界", detail: "10:12过站 · 末个影响对象 · 待抽检" }],
+    signal: { baselineMean: 7.82, baselineStd: 0.12, downstreamTime: "10:24", points: [["09:41",7.84,0],["09:44",7.80,0],["09:47",7.76,0],["09:48",7.70,0],["09:50",7.62,0],["09:51",7.54,0],["09:52",7.46,0],["09:53",7.38,1],["09:56",7.10,1]] },
+    interventions: [
+      { id: "cap-change", label: "更换电极帽 + 焊核对照", measurement: "焊接电流、焊核直径、检测设备校准状态", criterion: "电流7.4-8.2kA且焊核满足控制计划", signer: "焊装检测岗位 BIW-QC-02", result: "换帽后电流回归7.81kA，破坏性焊核直径达到控制计划要求。", conclusion: "Top-1增强，但批次仅可在全部抽检与首件确认后解冻。", posterior: [91,34,12] },
+      { id: "loop-test", label: "二次回路阻抗阶跃检查", measurement: "复紧前后回路阻抗和电流补偿量", criterion: "阻抗回到点检基线且电流恢复", signer: "焊装检测岗位 BIW-QC-02", result: "复紧连接点后阻抗下降18%，电流补偿恢复。", conclusion: "Top-2上升并与电极帽磨损形成并发原因，需拆分纠正措施。", posterior: [68,82,10] }
+    ]
   },
   "CASE-PA-20260719-03": {
     leadMinutes: 18, consensus: "3/4", weakSignal: "风门响应残差", weakSignalDetail: "指令-反馈延迟连续扩大", escalationBasis: "残差 + 温度窗口 + 过站时间窗",
@@ -144,7 +178,12 @@ const assuranceProfiles = {
       { name: "车身负载突变", score: 28, support: "负载变化可影响热平衡", conflict: "生产节拍和车型组合未突变", test: "核对进炉序列与热负载模型" }
     ],
     guards: [["时序先行", "通过", "反馈残差早于低温事件"], ["机制一致", "通过", "风量不足可解释固化风险"], ["同位复现", "通过", "三区连续8分钟"], ["反证检查", "待验证", "需执行器阶跃试验"], ["数据完整", "通过", "温度、风门、MES记录齐全"]],
-    traces: [{ id: "VIN 8201", state: "复测队列", detail: "16:19进炉 · 时间窗起点 · 附着力复测" }, { id: "VIN 8208", state: "隔离", detail: "16:25进炉 · 低温核心段 · 暂缓放行" }, { id: "VIN 8216", state: "范围边界", detail: "16:33进炉 · 温度恢复前末车" }]
+    traces: [{ id: "VIN 8201", state: "复测队列", detail: "16:19进炉 · 时间窗起点 · 附着力复测" }, { id: "VIN 8208", state: "隔离", detail: "16:25进炉 · 低温核心段 · 暂缓放行" }, { id: "VIN 8216", state: "范围边界", detail: "16:33进炉 · 温度恢复前末车" }],
+    signal: { baselineMean: 156, baselineStd: 1.2, downstreamTime: "16:37", points: [["16:06",156.2,0],["16:08",155.8,0],["16:10",155.4,0],["16:11",154.8,0],["16:14",154.0,0],["16:17",153.2,0],["16:19",152.5,1],["16:22",151.6,1],["16:25",148.0,1]] },
+    interventions: [
+      { id: "damper-step", label: "风门阶跃试验 + 温升复测", measurement: "执行器响应时间、三区温度、附着力复测", criterion: "响应不高于4s且温度进入152-160℃", signer: "涂装检测岗位 PA-QC-01", result: "执行器响应由8.6s恢复至3.1s，三区温度重新进入154-157℃。", conclusion: "Top-1增强；车辆仍需完成膜厚与附着力复测。", posterior: [90,29,8] },
+      { id: "pid-compare", label: "同型烘房 PID 基线对照", measurement: "PID输出、风门反馈和同型烘房基线", criterion: "PID输出偏差在批准容差内", signer: "涂装检测岗位 PA-QC-01", result: "PID输出与基线一致，但风门反馈仍滞后。", conclusion: "Top-2被削弱，执行机构假设继续保持首位。", posterior: [84,18,11] }
+    ]
   },
   "CASE-DC-20260719-04": {
     leadMinutes: 46, consensus: "4/4", weakSignal: "水路流量残差", weakSignalDetail: "局部支路波动先于模温差扩大", escalationBasis: "残差 + 模温差 + 结构件严重度",
@@ -155,7 +194,12 @@ const assuranceProfiles = {
       { name: "喷涂/脱模剂热边界变化", score: 31, support: "可影响局部热交换", conflict: "配方和喷涂周期未变化", test: "核查喷涂日志与热像分布" }
     ],
     guards: [["时序先行", "通过", "流量残差早于模温差扩大"], ["机制一致", "通过", "冷却不均可导致缩孔/变形"], ["同位复现", "通过", "同模次相邻件持续"], ["反证检查", "待验证", "等待旁路与冲洗对照"], ["数据完整", "通过", "压铸、流量、热像记录齐全"]],
-    traces: [{ id: "件 DC-01", state: "X光待检", detail: "11:29出模 · 风险窗起点 · 批次冻结" }, { id: "件 DC-03", state: "尺寸复核", detail: "11:37出模 · 模温差峰值段" }, { id: "件 DC-06", state: "范围边界", detail: "11:49出模 · 水路恢复前末件" }]
+    traces: [{ id: "件 DC-01", state: "X光待检", detail: "11:29出模 · 风险窗起点 · 批次冻结" }, { id: "件 DC-03", state: "尺寸复核", detail: "11:37出模 · 模温差峰值段" }, { id: "件 DC-06", state: "范围边界", detail: "11:49出模 · 水路恢复前末件" }],
+    signal: { baselineMean: 8, baselineStd: 1.2, downstreamTime: "12:15", points: [["11:07",8.1,0],["11:10",8.3,0],["11:14",8.7,0],["11:18",9.1,0],["11:21",9.8,0],["11:24",10.5,0],["11:27",11.2,0],["11:29",11.8,1],["11:33",18.0,1]] },
+    interventions: [
+      { id: "bypass-flush", label: "支路旁路 + 冲洗前后对照", measurement: "支路流量、三模次模温差、X光与尺寸", criterion: "流量不低于基线95%且模温差不高于12℃", signer: "压铸检测岗位 DC-QC-02", result: "支路流量恢复到基线97%，相邻三模次模温差降至9.4℃。", conclusion: "Top-1增强；结构件仍须完成X光和尺寸双检。", posterior: [94,27,9] },
+      { id: "valve-step", label: "温控阀手动阶跃", measurement: "阀位指令、反馈、支路流量残差", criterion: "阀位响应正常且流量残差可解释", signer: "压铸检测岗位 DC-QC-02", result: "阀位响应正常，流量残差未消失。", conclusion: "Top-2被反证并降级，水路局部堵塞进一步增强。", posterior: [88,16,14] }
+    ]
   }
 };
 
@@ -182,10 +226,69 @@ let closed = false;
 let runTimer = null;
 let taskProgress = 0;
 let traceIndex = 0;
+let runMode = "collaborative";
+let selectedIntervention = null;
+let interventionAccepted = false;
+let resilienceState = "normal";
+let outboxQueued = false;
 
 const $ = (id) => document.getElementById(id);
 const selected = () => qualityScenarios[selectedIndex];
 const assurance = () => assuranceProfiles[selected().id];
+const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character]));
+
+function minutesBetween(start, end) {
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  return (eh * 60 + em) - (sh * 60 + sm);
+}
+
+function analyzeSignal(profile = assurance()) {
+  const lambda = 0.3;
+  const k = 0.25 * profile.signal.baselineStd;
+  const h = 1.5 * profile.signal.baselineStd;
+  let ewma = profile.signal.baselineMean;
+  let upperCusum = 0;
+  let lowerCusum = 0;
+  let firstWeak = null;
+  let actionable = null;
+  const points = profile.signal.points.map(([time, value, relation]) => {
+    ewma = lambda * value + (1 - lambda) * ewma;
+    upperCusum = Math.max(0, upperCusum + value - profile.signal.baselineMean - k);
+    lowerCusum = Math.min(0, lowerCusum + value - profile.signal.baselineMean + k);
+    const ewmaHit = Math.abs(ewma - profile.signal.baselineMean) >= 0.3 * profile.signal.baselineStd;
+    const cusumHit = Math.max(upperCusum, Math.abs(lowerCusum)) >= h;
+    if (!firstWeak && (ewmaHit || cusumHit)) firstWeak = time;
+    if (!actionable && relation && (ewmaHit || cusumHit)) actionable = time;
+    return { time, value, relation: Boolean(relation), ewmaHit, cusumHit };
+  });
+  actionable ||= points.at(-1).time;
+  return {
+    points,
+    firstWeak: firstWeak || points[0].time,
+    actionable,
+    downstream: profile.signal.downstreamTime,
+    leadMinutes: minutesBetween(actionable, profile.signal.downstreamTime),
+    hardBreach: points.find((point) => point.value < selected().lower || point.value > selected().upper)?.time || "未越界"
+  };
+}
+
+function eventPassport() {
+  const versions = "QG-2026.08|KG-17.4|FS-2.0|QO-2.1";
+  const input = `${selected().id}|${assurance().signal.points.map((point) => point.join("/")).join("|")}|${runMode}|${selectedIntervention || "none"}|${interventionAccepted}|${confirmed}|${closed}|${versions}`;
+  let hash = 2166136261;
+  for (const char of input) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+  return `EV-${(hash >>> 0).toString(16).toUpperCase().padStart(8, "0")}`;
+}
+
+function policyDecision(action) {
+  if (["dispatch", "confirm", "close"].includes(action) && runMode === "shadow") return { allowed: false, reason: "L0影子验证只允许回放和评估，不产生外部写入或关闭结论。" };
+  if (["dispatch", "confirm", "close"].includes(action) && resilienceState === "data-delay") return { allowed: false, reason: "核心数据已过期，策略服务冻结新增派单、确认和关闭。" };
+  if (action === "close" && resilienceState === "graph-down") return { allowed: false, reason: "知识快照不可用，关闭申请转人工复核。" };
+  if (action === "close" && !interventionAccepted) return { allowed: false, reason: "缺少已签署的反事实或物理复检证据。" };
+  if (action === "close" && !confirmed) return { allowed: false, reason: "缺少质量负责人实名确认。" };
+  return { allowed: true, queue: action === "dispatch" && resilienceState === "feishu-down" };
+}
 
 function riskTag(risk) {
   return `<span class="tag ${risk}">${risk}</span>`;
@@ -232,6 +335,10 @@ function selectScenario(index) {
   confirmed = false;
   closed = false;
   taskProgress = 0;
+  selectedIntervention = null;
+  interventionAccepted = false;
+  resilienceState = "normal";
+  outboxQueued = false;
   window.clearInterval(runTimer);
   renderAll();
 }
@@ -253,39 +360,37 @@ function renderIncident() {
   $("rootCauseText").textContent = `首要根因假设：${item.rootCause}（置信度 ${Math.round(item.confidence * 100)}%）`;
   $("slaBadge").textContent = item.risk === "P1" ? "SLA 30min" : "SLA 当班";
   $("gateStatus").textContent = closed ? "已验证关闭" : confirmed ? "处置已确认" : "待质量负责人确认";
-  $("confirmBtn").disabled = confirmed || closed;
-  $("resolveBtn").disabled = !confirmed || closed;
+  $("dispatchBtn").disabled = !policyDecision("dispatch").allowed || closed;
+  $("confirmBtn").disabled = !policyDecision("confirm").allowed || confirmed || closed;
+  $("resolveBtn").disabled = !policyDecision("close").allowed || closed;
   renderEarlyWarning();
   renderChart();
 }
 
 function renderEarlyWarning() {
   const profile = assurance();
+  const analysis = analyzeSignal(profile);
   $("warningConsensus").textContent = `多引擎共识 ${profile.consensus}`;
-  $("leadTime").textContent = `${profile.leadMinutes} 分钟`;
+  $("leadTime").textContent = `${analysis.leadMinutes} 分钟`;
   $("weakSignal").textContent = profile.weakSignal;
   $("weakSignalDetail").textContent = profile.weakSignalDetail;
   $("escalationBasis").textContent = profile.escalationBasis;
-  $("warningStages").innerHTML = profile.stages.map(([time, title, detail], index) => `
+  const stages = [
+    [profile.signal.points[0][0], "稳定基线", "过程能力窗内"],
+    [analysis.firstWeak, "弱信号", "EWMA/CUSUM先于硬阈值触发"],
+    [analysis.actionable, "可行动风险", "统计漂移与知识关系形成最小证据共识"],
+    [analysis.downstream, "理论显性点", "下游检验或质量门可能发现"]
+  ];
+  $("warningStages").innerHTML = stages.map(([time, title, detail], index) => `
     <div class="warning-stage ${index <= Math.min(phaseIndex, 2) || closed ? "active" : ""} ${index === 3 ? "future" : ""}">
       <time>${time}</time><b>${title}</b><span>${detail}</span>
     </div>
   `).join("");
 }
 
-function createSignalSeries(item) {
-  const span = Math.max(item.upper - item.lower, 1);
-  const direction = item.value < item.lower ? -1 : 1;
-  const baseline = direction < 0 ? item.lower + span * 0.35 : item.upper - span * 0.35;
-  const offsets = [0.08, -0.03, 0.05, -0.08, 0.02, -0.03, 0.04, -0.06, 0.02, 0.0, -0.05, 0.03];
-  const points = offsets.map((offset, index) => baseline + span * offset + direction * span * Math.max(0, index - 6) * 0.035);
-  points.push(item.value);
-  return points;
-}
-
 function renderChart() {
   const item = selected();
-  const values = createSignalSeries(item);
+  const values = analyzeSignal().points.map((point) => point.value);
   const min = Math.min(...values, item.lower) - Math.max((item.upper - item.lower) * .25, 1);
   const max = Math.max(...values, item.upper) + Math.max((item.upper - item.lower) * .25, 1);
   const x = (i) => 28 + (i / (values.length - 1)) * 704;
@@ -312,9 +417,10 @@ function renderChart() {
 function dialogueAnswer(question) {
   const item = selected();
   const profile = assurance();
+  const analysis = analyzeSignal(profile);
   const direct = item.chat[question];
   if (direct) return direct;
-  if (/提前|前置|弱信号|显性/.test(question)) return `系统先在${profile.weakSignal}阶段发现偏离，再由${profile.escalationBasis}收敛风险。按本仿真时间窗，比下游检验理论发现时点前置${profile.leadMinutes}分钟。`;
+  if (/提前|前置|弱信号|显性/.test(question)) return `系统于${analysis.firstWeak}识别${profile.weakSignal}，并在${analysis.actionable}由${profile.escalationBasis}形成可行动风险。相对${analysis.downstream}下游理论显性点，前置${analysis.leadMinutes}分钟。`;
   if (/护栏|反证|可信|假设/.test(question)) return `当前保留${profile.hypotheses.length}个候选根因，不把相关性直接写成因果。Top-1为“${profile.hypotheses[0].name}”，必须执行“${profile.hypotheses[0].test}”后才能增强或降级。`;
   if (/根因|原因|为什么/.test(question)) return `当前Top-1根因假设为“${item.rootCause}”。该结论由参数越界、时空复现、设备状态和历史案例共同支持，仍需现场点检与复检确认。`;
   if (/影响|VIN|批次|范围/.test(question)) return `当前圈定范围为：${item.scope}。系统会以最后合格校验点和MES过站时间窗为边界，随复检结果扩展或收敛。`;
@@ -326,12 +432,13 @@ function dialogueAnswer(question) {
 function renderDialogue(customQuestion) {
   const item = selected();
   const question = customQuestion || activeQuestion;
+  const answer = dialogueAnswer(question);
   activeQuestion = question;
   $("dialogue").innerHTML = `
     <div class="bubble system">${item.id} · 已完成本体约束、图谱检索和工艺窗口校验</div>
     <div class="bubble agent">我判断该事件进入 ${item.risk} 处置。首要根因假设为：${item.rootCause}。该结论是可证伪假设，不替代现场确认。</div>
-    <div class="bubble user">${question}</div>
-    <div class="bubble agent">${dialogueAnswer(question)}</div>
+    <div class="bubble user">${escapeHtml(question)}</div>
+    <div class="bubble agent">${escapeHtml(answer)}</div>
     ${closed ? `<div class="bubble system">事件已关闭：复检、设备处理、责任确认和知识回写字段完整。</div>` : ""}
   `;
   const questions = ["如何提前发现", "为什么升级P1", "因果结论可信吗", "影响哪些VIN", "如何派发飞书任务", "关闭条件是什么"];
@@ -343,13 +450,13 @@ function renderTasks() {
   const item = selected();
   $("taskBoard").innerHTML = item.tasks.map((task, index) => {
     const done = closed || taskProgress > index;
-    const state = done ? "已完成" : phaseIndex >= 3 ? (index === 0 ? "处理中" : "已派发") : task.status;
+    const state = done ? "已完成" : outboxQueued ? "待补偿" : phaseIndex >= 3 ? (index === 0 ? "处理中" : "已派发") : task.status;
     return `<div class="task ${done ? "done" : ""}">
       <div class="meta"><span class="tag">TASK-${index + 1}</span><span class="tag">${task.sla}</span><span class="tag">${state}</span></div>
       <strong>${task.action}</strong><span>${task.owner}</span>
     </div>`;
   }).join("");
-  $("actionLog").textContent = closed ? "事件关闭并回写知识图谱；复盘文档进入知识库。" : phaseIndex >= 3 ? `已用 ${item.id} 作为幂等键生成协同对象，等待责任人更新。` : "协同编排尚未启动；当前处于证据推理阶段。";
+  $("actionLog").textContent = closed ? "事件关闭；已生成待审核的PFMEA/控制计划变更单。" : outboxQueued ? `飞书中断：${item.id} 已进入Outbox，恢复后按同一幂等键补偿。` : phaseIndex >= 3 ? `已用 ${item.id} 作为幂等键生成协同对象，等待责任人更新。` : "协同编排尚未启动；当前处于证据推理阶段。";
 }
 
 function renderKnowledge() {
@@ -382,7 +489,9 @@ function renderKnowledge() {
 
 function renderAssurance() {
   const profile = assurance();
-  $("causalHypotheses").innerHTML = profile.hypotheses.map((hypothesis, index) => `
+  const intervention = profile.interventions.find((item) => item.id === selectedIntervention);
+  const ranked = profile.hypotheses.map((hypothesis, index) => ({ ...hypothesis, score: interventionAccepted ? intervention.posterior[index] : hypothesis.score })).sort((left, right) => right.score - left.score);
+  $("causalHypotheses").innerHTML = ranked.map((hypothesis, index) => `
     <article class="hypothesis ${index === 0 ? "primary" : ""}">
       <div><span>H${index + 1}</span><strong>${hypothesis.name}</strong><b>${hypothesis.score}%</b></div>
       <p><i>支持</i>${hypothesis.support}</p>
@@ -390,15 +499,36 @@ function renderAssurance() {
       <p><i>证伪</i>${hypothesis.test}</p>
     </article>
   `).join("");
-  $("guardrailChecks").innerHTML = profile.guards.map(([name, status, detail]) => `
-    <div class="guardrail ${status === "通过" ? "pass" : "pending"}"><span>${name}</span><b>${status}</b><small>${detail}</small></div>
+  $("guardrailChecks").innerHTML = profile.guards.map(([name, status, detail], index) => {
+    const resolvedStatus = index === 3 && interventionAccepted ? "通过" : status;
+    const resolvedDetail = index === 3 && interventionAccepted ? `已验收：${intervention.label}` : detail;
+    return `<div class="guardrail ${resolvedStatus === "通过" ? "pass" : "pending"}"><span>${name}</span><b>${resolvedStatus}</b><small>${resolvedDetail}</small></div>`;
+  }).join("");
+
+  $("interventionOptions").innerHTML = profile.interventions.map((item) => `
+    <button class="${item.id === selectedIntervention ? "active" : ""}" data-intervention="${item.id}">${item.label}</button>
   `).join("");
+  document.querySelectorAll("#interventionOptions button").forEach((button) => button.addEventListener("click", () => {
+    selectedIntervention = button.dataset.intervention;
+    interventionAccepted = false;
+    renderAll();
+    showToast("干预方案已装载，等待提交实测值和检测岗位签署");
+  }));
+  $("interventionStatus").textContent = interventionAccepted ? "实测已签署并验收" : intervention ? "待实测签署" : "待选择干预";
+  $("interventionResult").innerHTML = intervention ? (interventionAccepted ? `
+    <div class="intervention-evidence"><div><span>已签署观测结果</span><strong>${intervention.result}</strong><small>验收准则：${intervention.criterion} · 签署：${intervention.signer}</small><small>${intervention.conclusion}</small></div><div><span>后验置信度更新</span><div class="posterior-bars">${intervention.posterior.map((score, index) => `<div class="posterior-row"><b>H${index + 1}</b><i><em style="width:${score}%"></em></i><strong>${score}%</strong></div>`).join("")}</div></div></div>
+  ` : `<div class="intervention-evidence"><div><span>待执行动作</span><strong>${intervention.label}</strong><small>必填实测：${intervention.measurement}</small><small>验收准则：${intervention.criterion}</small></div><div><span>证据状态</span><strong>等待检测岗位签署</strong><button id="completeInterventionBtn" class="secondary-btn">提交脱敏实测并签署</button></div></div>`) : `<div class="intervention-empty">选择一项现场对照动作，系统将依据观测结果增强、降级或重排Top-3假设。</div>`;
+  $("completeInterventionBtn")?.addEventListener("click", () => {
+    interventionAccepted = true;
+    renderAll();
+    showToast("实测值、验收准则和检测岗位签署已进入证据护照");
+  });
 
   const checks = [
     ["源数据完整", true, "MES、设备、检测与知识版本可追溯"],
     ["影响范围锁定", phaseIndex >= 2 || closed, `已关联${scopeNumber(selected())}及最后合格校验点`],
-    ["物理复检通过", closed, confirmed ? "执行中：等待复检与首件结果" : "待处置确认后启动"],
-    ["授权人员确认", confirmed || closed, confirmed || closed ? "质量负责人已确认" : "P1禁止自动放行"],
+    ["物理复检通过", interventionAccepted, interventionAccepted ? `实测与准则已签署：${intervention.label}` : "等待对照试验、实测值、验收准则和检测签署"],
+    ["授权人员确认", confirmed || closed, confirmed || closed ? "质量负责人已实名确认" : "P1禁止自动放行"],
     ["任务与知识回写", closed, closed ? "证据、结论与时间戳已关联" : "关闭后写回台账与知识库"]
   ];
   const passed = checks.filter((check) => check[1]).length;
@@ -427,7 +557,7 @@ function renderFactors() {
 
 function renderTimeline() {
   const item = selected();
-  const times = ["T+0s", "T+5s", "T+12s", "T+20s", closed ? "T+复盘" : "待验证"];
+  const times = ["S0", "S1", "S2", "S3", closed ? "S4" : "待验证"];
   $("elapsedTime").textContent = closed ? "闭环完成" : times[Math.min(phaseIndex, times.length - 1)];
   $("actionTimeline").innerHTML = phases.map((phase, index) => `
     <div class="timeline-step ${index <= phaseIndex || closed ? "active" : ""}">
@@ -438,6 +568,9 @@ function renderTimeline() {
 
 function buildRecord() {
   const item = selected();
+  const analysis = analyzeSignal();
+  const intervention = assurance().interventions.find((entry) => entry.id === selectedIntervention);
+  const ranked = assurance().hypotheses.map((hypothesis, index) => ({ ...hypothesis, score: interventionAccepted ? intervention.posterior[index] : hypothesis.score })).sort((left, right) => right.score - left.score);
   return {
     fields: {
       "事件ID": item.id,
@@ -446,17 +579,23 @@ function buildRecord() {
       "设备": item.equipment,
       "工位": item.station,
       "异常参数": `${item.parameter}=${item.value}${item.unit}`,
-      "缺陷显性化前置量": `${assurance().leadMinutes}分钟（仿真）`,
+      "缺陷显性化前置量": `${analysis.leadMinutes}分钟（脱敏仿真计算）`,
+      "弱信号时刻": analysis.firstWeak,
+      "可行动时刻": analysis.actionable,
+      "下游理论显性时刻": analysis.downstream,
       "检测共识": assurance().consensus,
       "工艺窗口": `${item.lower}-${item.upper}${item.unit}`,
       "影响范围": item.scope,
       "根因假设": item.rootCause,
-      "候选根因Top3": assurance().hypotheses.map((hypothesis) => `${hypothesis.score}%:${hypothesis.name}`).join("；"),
+      "候选根因Top3": ranked.map((hypothesis) => `${hypothesis.score}%:${hypothesis.name}`).join("；"),
       "反证动作": assurance().hypotheses[0].test,
+      "干预结果": interventionAccepted ? `${intervention.label}｜${intervention.result}｜${intervention.signer}` : "待实测签署",
       "证据链": item.evidence.join("；"),
       "处置方案": item.decision,
       "责任任务": item.tasks.map((task) => `${task.owner}:${task.action}`).join("；"),
       "人工确认": confirmed ? "已确认" : "待确认",
+      "运行模式": runMode,
+      "事件护照": eventPassport(),
       "幂等键": item.id,
       "Aily指令": `@知质灵巡 查询 ${item.id}`
     }
@@ -488,6 +627,42 @@ function renderValueAndSources() {
   $("sourceSupport").innerHTML = references.map((reference) => `
     <article class="source-item"><strong>${reference.type}｜${reference.title}</strong><p>${reference.detail}</p><a href="${reference.url}" target="_blank" rel="noreferrer">查看来源</a></article>
   `).join("");
+  renderRuntimeAssurance();
+}
+
+function renderRuntimeRibbon() {
+  const permissions = { shadow: "L0 只读回放", collaborative: "L2 建议+派单", controlled: "L3 受控执行" };
+  document.querySelectorAll("#modeSelector button").forEach((button) => button.classList.toggle("active", button.dataset.mode === runMode));
+  $("permissionLevel").textContent = permissions[runMode];
+  $("eventPassport").textContent = eventPassport();
+  $("freshnessValue").textContent = resilienceState === "data-delay" ? "失效 >30s" : "2.4s";
+}
+
+function renderRuntimeAssurance() {
+  const drills = [
+    { id: "data-delay", label: "数据延迟", title: "冻结新增推理，保留规则告警", detail: "核心点位超过30秒未更新时标记证据过期，停止自动派单，P1保持隔离。" },
+    { id: "graph-down", label: "图谱不可用", title: "切换规则与控制计划只读包", detail: "不生成唯一根因，仅输出已验证硬规则、影响范围和人工排查清单。" },
+    { id: "feishu-down", label: "飞书中断", title: "写入本地Outbox并幂等补偿", detail: "事件包落盘，恢复后按事件ID补偿同步，不重复建单、不丢失审计时间戳。" }
+  ];
+  $("resilienceOptions").innerHTML = drills.map((drill) => `<button class="${drill.id === resilienceState ? "active" : ""}" data-resilience="${drill.id}">${drill.label}</button>`).join("");
+  document.querySelectorAll("#resilienceOptions button").forEach((button) => button.addEventListener("click", () => {
+    resilienceState = resilienceState === button.dataset.resilience ? "normal" : button.dataset.resilience;
+    renderRuntimeRibbon();
+    renderRuntimeAssurance();
+    renderIncident();
+  }));
+  const current = drills.find((drill) => drill.id === resilienceState);
+  $("resilienceStatus").textContent = current ? "已进入安全降级" : "全链路可用";
+  $("resilienceOutcome").className = `resilience-outcome ${current ? "warning" : ""}`;
+  $("resilienceOutcome").innerHTML = current ? `<strong>${current.title}</strong><span>${current.detail}</span>${current.id === "feishu-down" && outboxQueued ? `<span>Outbox：1条待补偿 · 幂等键 ${selected().id}</span>` : ""}` : `<strong>规则、图谱、协同链路健康</strong><span>任何单点失效均不得绕过P1隔离、人工确认与确定性关闭门。</span>${outboxQueued ? `<span>Outbox已按幂等键补偿完成，未重复建单。</span>` : ""}`;
+  const rows = [
+    ["数字员工", "弱信号检测、证据收敛、任务草拟", "无放行权"],
+    ["质量工程师", "确认风险受理与隔离范围", "实名签收"],
+    ["检测人员", "提交实测值、量具状态与复检结论", "证据签署"],
+    ["设备/工艺", "执行纠正措施与首件确认", "任务签署"],
+    ["质量负责人", "审核关闭依据并决定放行/升级", "最终授权"]
+  ];
+  $("responsibilityMatrix").innerHTML = `<div class="responsibility-row header"><b>角色</b><b>责任</b><b>权限</b></div>${rows.map((row) => `<div class="responsibility-row"><b>${row[0]}</b><span>${row[1]}</span><em>${row[2]}</em></div>`).join("")}`;
 }
 
 function renderDrawer() {
@@ -495,6 +670,7 @@ function renderDrawer() {
   const profile = assurance();
   $("drawerContent").innerHTML = `
     <section class="drawer-group"><h3>事件摘要</h3><p>${item.id} · ${item.scene} · ${item.risk}</p><p>${item.decision}</p></section>
+    <section class="drawer-group"><h3>事件护照</h3><p>${eventPassport()}</p><p>规则 QG-2026.08 · 知识 KG-17.4 · 特征 FS-2.0 · 本体 QO-2.1</p><p>弱信号 ${analyzeSignal().firstWeak} · 可行动 ${analyzeSignal().actionable} · 下游理论显性 ${analyzeSignal().downstream}</p></section>
     <section class="drawer-group"><h3>原始与派生证据</h3><ol>${item.evidence.map((evidence) => `<li>${evidence}</li>`).join("")}</ol></section>
     <section class="drawer-group"><h3>根因假设</h3><p>${item.rootCause}</p><p>置信度 ${Math.round(item.confidence * 100)}%，必须由点检、复检和维修结果证实或证伪。</p></section>
     <section class="drawer-group"><h3>候选根因与反证动作</h3><ol>${profile.hypotheses.map((hypothesis) => `<li><b>${hypothesis.score}% ${hypothesis.name}</b>：${hypothesis.test}</li>`).join("")}</ol></section>
@@ -503,6 +679,7 @@ function renderDrawer() {
 }
 
 function renderAll() {
+  renderRuntimeRibbon();
   renderScenarioList();
   renderIncident();
   renderDialogue();
@@ -521,6 +698,9 @@ function simulateRun() {
   phaseIndex = 0;
   confirmed = false;
   closed = false;
+  selectedIntervention = null;
+  interventionAccepted = false;
+  outboxQueued = false;
   taskProgress = 0;
   traceIndex = 0;
   renderAll();
@@ -537,13 +717,25 @@ function simulateRun() {
 }
 
 function dispatchFeishu() {
+  const decision = policyDecision("dispatch");
+  if (!decision.allowed) {
+    showToast(`派发被策略服务阻断：${decision.reason}`);
+    return;
+  }
   phaseIndex = Math.max(3, phaseIndex);
   taskProgress = 0;
+  outboxQueued = Boolean(decision.queue);
   renderAll();
-  showToast(`已按幂等键 ${selected().id} 编排 Base、卡片和飞书任务`);
+  const action = decision.queue ? `飞书不可用，事件已进入Outbox：${selected().id}` : `已按幂等键 ${selected().id} 编排 Base、卡片和飞书任务`;
+  showToast(action);
 }
 
 function confirmAction() {
+  const decision = policyDecision("confirm");
+  if (!decision.allowed) {
+    showToast(`确认被策略服务阻断：${decision.reason}`);
+    return;
+  }
   if (phaseIndex < 3) dispatchFeishu();
   confirmed = true;
   taskProgress = 1;
@@ -552,8 +744,9 @@ function confirmAction() {
 }
 
 function closeEvent() {
-  if (!confirmed) {
-    showToast("P1事件需要质量负责人先确认处置");
+  const decision = policyDecision("close");
+  if (!decision.allowed) {
+    showToast(`关闭被策略服务阻断：${decision.reason}`);
     return;
   }
   closed = true;
@@ -561,7 +754,7 @@ function closeEvent() {
   taskProgress = selected().tasks.length;
   activeQuestion = "关闭后如何复盘";
   renderAll();
-  showToast("关闭条件校验通过，复盘结果已进入知识沉淀链路");
+  showToast("关闭条件校验通过，已生成待审核的FMEA/控制计划变更单");
 }
 
 function downloadEvent() {
@@ -570,7 +763,7 @@ function downloadEvent() {
     scenario: selected(),
     assurance: assurance(),
     feishuRecord: buildRecord(),
-    governance: { humanConfirmed: confirmed, closed, boundary: "decision-support" }
+    governance: { runMode, humanConfirmed: confirmed, intervention: selectedIntervention, interventionAccepted, resilienceState, outboxQueued, closed, boundary: "decision-support", passport: eventPassport() }
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -622,6 +815,11 @@ function bindEvents() {
       showToast("浏览器未开放剪贴板权限，可在记录框中手动选择");
     }
   });
+  document.querySelectorAll("#modeSelector button").forEach((button) => button.addEventListener("click", () => {
+    runMode = button.dataset.mode;
+    renderAll();
+    showToast(`已切换为${button.textContent}；权限边界与写入策略同步更新`);
+  }));
   document.querySelectorAll(".nav-item").forEach((button) => button.addEventListener("click", () => {
     document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
     button.classList.add("active");

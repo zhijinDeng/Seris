@@ -14,6 +14,10 @@ Wehner等针对电动车制造根因分析提出知识图谱、因果贝叶斯�
 
 ISO 9001强调过程方法、风险思维、监视测量、形成文件的信息和持续改进。本方案据此把每次异常组织为包含风险、措施、验证、责任和回写的闭环。NIST AI RMF要求明确人机角色、监督机制、文档和审计，本方案据此设置P1人工确认、低置信降级、数据缺失停派和全链路审计。
 
+ISO 23247-2从制造域实体和功能实体两个视角规定数字孪生参考架构，为设备、过程、产品和应用分层建模提供依据。OPC UA for ISA-95为设备、物料、人员及企业/控制系统信息交换提供统一语义。本方案据此定义OT现场、边缘、事件、知识、Agent和协同层，并固定阻断数字员工到PLC的控制写入路径。
+
+NIST SP 800-82 Rev.3强调OT环境的可用性、安全性、网络分区、访问控制、监测与恢复。本方案据此设置OT控制区、边缘区、工业DMZ和IT应用区，只读采集、身份与序列号、数据质量隔离、模式权限、Outbox补偿和恢复演练。AIAG Control Plan与AIAG-VDA FMEA为过程功能、失效后果、失效模式、失效原因、预防/探测控制、行动优先级、反应计划和有效性验证提供汽车质量语义依据。
+
 ## 四、飞书能力依据
 
 飞书开放平台多维表格支持表、字段、记录、视图、仪表盘、角色权限和自动化流程；任务v2支持负责人、关注人、子任务、评论、附件和幂等调用；消息卡片支持按钮、选择器和回传交互；文档OpenAPI支持创建和编辑结构化文档；任务与消息事件支持状态监听。由此形成“Base台账—卡片通知—任务执行—文档复盘—事件回写”的执行织网。
@@ -37,5 +41,12 @@ ISO 9001强调过程方法、风险思维、监视测量、形成文件的信息
 15. Rehak J, Sommer A, Becker M, et al. Counterfactual Root Cause Analysis via Anomaly Detection and Causal Graphs[C]. IEEE INDIN, 2023. https://doi.org/10.1109/INDIN51400.2023.10218245.
 16. Rehak J, Youssef S, Beyerer J. Root cause analysis using anomaly detection and temporal informed causal graphs[C]. ML4CPS, 2024. https://doi.org/10.24406/publica-3069.
 17. Kropatschek S, et al. Retrieval-Augmented Generation using Knowledge Graphs for Manufacturing Problem-Solving[C]. 2025. https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10.
+18. ISO. ISO 23247-2:2021 Automation systems and integration - Digital twin framework for manufacturing - Part 2: Reference architecture[EB/OL]. https://www.iso.org/standard/78743.html.
+19. OPC Foundation. OPC Unified Architecture - Common Object Model: ISA-95[EB/OL]. https://reference.opcfoundation.org/specs/OPC-10030/4.1.
+20. National Institute of Standards and Technology. Guide to Operational Technology Security: NIST SP 800-82 Rev.3[EB/OL]. 2023. https://csrc.nist.gov/pubs/sp/800/82/r3/final.
+21. Automotive Industry Action Group. Control Plan 1st Edition[EB/OL]. https://www.aiag.org/training-and-resources/manuals/details/CP-1.
+22. Automotive Industry Action Group. AIAG & VDA FMEA Handbook[EB/OL]. https://www.aiag.org/training-and-resources/manuals/details/FMEAAV-1.
+23. 飞书开放平台. 事件概述[EB/OL]. https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN.
+24. 飞书开放平台. 多维表格记录变更事件[EB/OL]. https://open.feishu.cn/document/docs/bitable-v1/events/bitable_record_changed.
 
 结构化参考目录保存在`data/reference_catalog.json`，每条来源标注其在方案中的使用位置。企业公开数字只作为场景依据，仿真参数不声称来自赛力斯真实产线。

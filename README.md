@@ -8,7 +8,7 @@
 
 ## 已实现成果
 
-- 企业级互动工作台：实时事件队列、缺陷显性化前主动预警、数字员工对话、GraphRAG路径、Top-3因果假设与反证、一车一因果链、确定性关闭门、飞书在线证明和价值指标。
+- 企业级互动工作台：时间序列主动预警、GraphRAG路径、Top-3、反事实实测签署与重排、一车一因果链、双重确定性校验、三态运行模式、故障降级、事件护照、人机责任链和飞书在线证明。
 - 四类仿真工况：总装关键螺栓拧紧、焊装侧围点焊、涂装中涂烘干、一体化压铸冷却。
 - 质量知识底座样例：本体、历史案例、交互场景、工厂事件和端到端证据轨迹。
 - 飞书在线闭环：13字段质量事件Base、事件ID幂等任务、结构化复盘文档，均已完成真实创建与回验。
@@ -16,12 +16,13 @@
 
 ## 直接运行
 
-打开`D:\赛力斯\app\index.html`。依次点击“注入下一工况”“派发飞书闭环”“人工确认处置”“验证并关闭”，即可查看从感知到行动再到知识回写的完整状态变化。数字员工窗口支持快捷追问和自定义问题，证据包可导出为JSON。
+打开`D:\赛力斯\app\index.html`。选择工况后先查看由EWMA/CUSUM计算的弱信号和前置量，在反事实实验台选择动作、提交脱敏实测与检测签署，再执行飞书派发、质量负责人确认和关闭校验。影子模式会阻断外部写入；数据延迟、图谱不可用和飞书中断会触发冻结、规则只读或Outbox补偿。证据包可导出为JSON。
 
 命令行验证：
 
 ```powershell
 py D:\赛力斯\scripts\run_quality_agent.py
+py D:\赛力斯\scripts\run_quality_agent.py --event CASE-TQ-20260719-01 --intervention socket-replace --mode collaborative --json
 powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\orchestrate_feishu_quality_event.ps1 -WriteBase -CreateTask -CreateReviewDoc -DryRun
 node --check D:\赛力斯\app\app.js
 node --check D:\赛力斯\app\dashboard.js
@@ -41,11 +42,12 @@ py D:\赛力斯\scripts\audit_materials.py
 - `app/`：互动工作台与数字员工视觉资产。
 - `data/`：本体、场景、事件、主动检测与因果保障合同、飞书字段、编排样例和参考文献目录。
 - `docs/`：架构、研究依据、飞书生产蓝图、90天计划、运行与验收说明。
+- `docs/production-decision-assurance-contract.md`：OT/IT边界、事件契约、状态机、角色签署、降级与上线验收合同。
 - `scripts/`：推理、飞书编排、材料生成与审计脚本。
 - `提交材料/`：决赛提交用Markdown与DOCX文件。
 
 ## 工程与治理边界
 
-演示工艺参数为脱敏仿真数据，不代表赛力斯真实工艺窗口。系统首期只做决策支持和协同执行，不直接修改PLC/SCADA参数，不替代质量负责人放行，不自动关闭P1事件。公共仓库不提交app secret、access token、refresh token和企业内部人员映射。
+演示工艺参数、检测签署身份和时间序列为脱敏仿真数据，不代表赛力斯真实工艺窗口或现网收益。飞书区域中的Base、任务和文档是已核验对象，当前授权状态须在调用前检查。系统首期只做决策支持和协同执行，不直接修改PLC/SCADA参数，不替代质量负责人放行，不自动关闭P1事件。公共仓库不提交app secret、access token、refresh token和企业内部人员映射。
 
 GitHub：<https://github.com/zhijinDeng/Seris>

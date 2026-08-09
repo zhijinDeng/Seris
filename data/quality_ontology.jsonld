@@ -6,7 +6,16 @@
     "produces": "http://seres.example/kg/produces",
     "affects": "http://seres.example/kg/affects",
     "matchedCase": "http://seres.example/kg/matchedCase",
-    "assignedTo": "http://seres.example/kg/assignedTo"
+    "assignedTo": "http://seres.example/kg/assignedTo",
+    "hasFunction": "http://seres.example/kg/hasFunction",
+    "hasFailureEffect": "http://seres.example/kg/hasFailureEffect",
+    "hasFailureCause": "http://seres.example/kg/hasFailureCause",
+    "preventedBy": "http://seres.example/kg/preventedBy",
+    "detectedBy": "http://seres.example/kg/detectedBy",
+    "verifiedBy": "http://seres.example/kg/verifiedBy",
+    "approvedBy": "http://seres.example/kg/approvedBy",
+    "version": "http://seres.example/kg/version",
+    "evidenceHash": "http://seres.example/kg/evidenceHash"
   },
   "@graph": [
     {
@@ -35,7 +44,55 @@
     },
     {
       "@id": "FMEA",
-      "name": "FMEA条目"
+      "name": "PFMEA条目"
+    },
+    {
+      "@id": "Function",
+      "name": "过程功能与要求"
+    },
+    {
+      "@id": "FailureEffect",
+      "name": "失效后果"
+    },
+    {
+      "@id": "FailureCause",
+      "name": "失效原因"
+    },
+    {
+      "@id": "PreventionControl",
+      "name": "预防控制"
+    },
+    {
+      "@id": "DetectionControl",
+      "name": "探测控制"
+    },
+    {
+      "@id": "ActionPriority",
+      "name": "行动优先级与S/O/D"
+    },
+    {
+      "@id": "SpecialCharacteristic",
+      "name": "特殊特性"
+    },
+    {
+      "@id": "ControlPlan",
+      "name": "控制计划与反应计划"
+    },
+    {
+      "@id": "MeasurementSystem",
+      "name": "量具、校准与测量系统状态"
+    },
+    {
+      "@id": "Evidence",
+      "name": "带来源、时间戳、版本和哈希的证据"
+    },
+    {
+      "@id": "Intervention",
+      "name": "反事实干预与对照结果"
+    },
+    {
+      "@id": "ApprovalRecord",
+      "name": "实名授权与电子签署记录"
     },
     {
       "@id": "Vehicle",
@@ -47,7 +104,7 @@
     },
     {
       "@id": "ReviewRecord",
-      "name": "复盘记录"
+      "name": "复盘记录与有效性观察"
     }
   ]
 }

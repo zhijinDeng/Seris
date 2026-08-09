@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import argparse
+from datetime import datetime
 from pathlib import Path
 
 
@@ -21,6 +22,65 @@ def load_cases():
 def load_assurance_profiles():
     payload = json.loads((ROOT / "data" / "decision_assurance.json").read_text(encoding="utf-8"))
     return payload["profiles"], payload
+
+
+def _minutes_between(start: str, end: str) -> int:
+    start_time = datetime.strptime(start, "%H:%M")
+    end_time = datetime.strptime(end, "%H:%M")
+    return int((end_time - start_time).total_seconds() // 60)
+
+
+def analyze_signal(profile: dict, parameters: dict) -> dict:
+    signal = profile["signal"]
+    mean = float(signal["baseline_mean"])
+    std = float(signal["baseline_std"])
+    ewma = mean
+    upper_cusum = 0.0
+    lower_cusum = 0.0
+    first_weak = None
+    actionable = None
+    trace = []
+    for time, raw_value, relation in signal["points"]:
+        value = float(raw_value)
+        ewma = parameters["ewma_lambda"] * value + (1 - parameters["ewma_lambda"]) * ewma
+        k = parameters["cusum_k_sigma"] * std
+        upper_cusum = max(0.0, upper_cusum + value - mean - k)
+        lower_cusum = min(0.0, lower_cusum + value - mean + k)
+        ewma_hit = abs(ewma - mean) >= parameters["ewma_sigma"] * std
+        cusum_hit = max(upper_cusum, abs(lower_cusum)) >= parameters["cusum_h_sigma"] * std
+        if first_weak is None and (ewma_hit or cusum_hit):
+            first_weak = time
+        if actionable is None and relation and (ewma_hit or cusum_hit):
+            actionable = time
+        trace.append({
+            "time": time,
+            "value": value,
+            "relation_hit": bool(relation),
+            "ewma": round(ewma, 4),
+            "ewma_hit": ewma_hit,
+            "cusum_positive": round(upper_cusum, 4),
+            "cusum_negative": round(lower_cusum, 4),
+            "cusum_hit": cusum_hit,
+        })
+    actionable = actionable or trace[-1]["time"]
+    downstream = signal["downstream_time"]
+    return {
+        "first_weak_time": first_weak or trace[0]["time"],
+        "actionable_time": actionable,
+        "downstream_time": downstream,
+        "lead_minutes": _minutes_between(actionable, downstream),
+        "trace": trace,
+    }
+
+
+def apply_intervention(profile: dict, intervention_id: str | None) -> dict | None:
+    if not intervention_id:
+        return None
+    intervention = next((item for item in profile.get("interventions", []) if item["id"] == intervention_id), None)
+    if intervention is None:
+        available = ", ".join(item["id"] for item in profile.get("interventions", []))
+        raise SystemExit(f"未知干预动作 {intervention_id}，可选值：{available}")
+    return intervention
 
 
 def risk_score(event):
@@ -52,7 +112,20 @@ def retrieve_case(event, cases):
     return best
 
 
-def build_result(event, case, risk, profile, assurance_contract):
+def build_result(event, case, risk, profile, assurance_contract, intervention_id=None, mode="shadow"):
+    detection = analyze_signal(profile, assurance_contract["detector_parameters"])
+    intervention = apply_intervention(profile, intervention_id)
+    hypotheses = [
+        {
+            **hypothesis,
+            "original_rank": hypothesis["rank"],
+            "posterior": intervention["posterior"][index] if intervention else hypothesis["confidence"],
+        }
+        for index, hypothesis in enumerate(profile["top_hypotheses"])
+    ]
+    hypotheses.sort(key=lambda item: item["posterior"], reverse=True)
+    for rank, hypothesis in enumerate(hypotheses, 1):
+        hypothesis["rank"] = rank
     evidence = [
         f"{event['parameter']}={event['value']}{event['unit']}，工艺窗口为{event['lower']}-{event['upper']}{event['unit']}",
         f"异常位置：{event['line']} / {event['station']} / {event['equipment']}",
@@ -67,12 +140,17 @@ def build_result(event, case, risk, profile, assurance_contract):
             "weak_signal": profile["weak_signal"],
             "detectors": profile["detectors"],
             "detector_consensus": profile["detector_consensus"],
-            "lead_minutes": profile["lead_minutes"],
+            "first_weak_time": detection["first_weak_time"],
+            "actionable_time": detection["actionable_time"],
+            "downstream_time": detection["downstream_time"],
+            "lead_minutes": detection["lead_minutes"],
             "measurement_note": assurance_contract["measurement_note"],
+            "trace": detection["trace"],
         },
-        "top_hypotheses": profile["top_hypotheses"],
+        "top_hypotheses": hypotheses,
+        "intervention": intervention,
         "causal_guardrails": [
-            {"check": check, "status": "通过" if index != 3 else "待现场反证"}
+            {"check": check, "status": "通过" if index != 3 or intervention else "待现场反证"}
             for index, check in enumerate(assurance_contract["causal_guardrails"])
         ],
         "deterministic_close_gate": [
@@ -88,10 +166,21 @@ def build_result(event, case, risk, profile, assurance_contract):
             "工位": event["station"],
             "影响范围": event["vin_scope"],
             "根因假设": case["root_cause"],
-            "前置量": f"{profile['lead_minutes']}分钟（仿真）",
+            "前置量": f"{detection['lead_minutes']}分钟（脱敏仿真计算）",
+            "弱信号时刻": detection["first_weak_time"],
+            "可行动时刻": detection["actionable_time"],
+            "下游理论显性时刻": detection["downstream_time"],
             "检测共识": profile["detector_consensus"],
             "反证动作": profile["top_hypotheses"][0]["falsification"],
+            "干预结果": intervention["result"] if intervention else "待执行",
+            "运行模式": mode,
             "任务状态": "处置中",
+        },
+        "governance": {
+            "mode": mode,
+            "mode_contract": assurance_contract["operating_modes"][mode],
+            "versions": assurance_contract["governance_versions"],
+            "fail_safe": assurance_contract["fail_safe"],
         },
     }
 
@@ -100,6 +189,8 @@ def main():
     parser = argparse.ArgumentParser(description="运行质量风险主动管控数字员工仿真")
     parser.add_argument("--event", help="只运行指定事件ID")
     parser.add_argument("--json", action="store_true", help="输出结构化JSON")
+    parser.add_argument("--intervention", help="执行指定反事实干预并更新Top-3后验")
+    parser.add_argument("--mode", choices=["shadow", "collaborative", "controlled"], default="shadow", help="运行权限模式")
     args = parser.parse_args()
     events = load_events()
     cases = load_cases()
@@ -113,7 +204,7 @@ def main():
         risk = risk_score(event)
         case = retrieve_case(event, cases)
         profile = profiles[event["event_id"]]
-        results.append(build_result(event, case, risk, profile, assurance_contract))
+        results.append(build_result(event, case, risk, profile, assurance_contract, args.intervention, args.mode))
     if args.json:
         print(json.dumps(results, ensure_ascii=False, indent=2))
         return
@@ -122,10 +213,12 @@ def main():
         print("=" * 72)
         print(f"事件ID：{result['event_id']} | 风险等级：{result['risk']}")
         detection = result["active_detection"]
-        print(f"主动发现：{detection['weak_signal']} | 多引擎共识 {detection['detector_consensus']} | 前置 {detection['lead_minutes']} 分钟（仿真）")
+        print(f"主动发现：{detection['weak_signal']} | 弱信号 {detection['first_weak_time']} | 可行动 {detection['actionable_time']} | 前置 {detection['lead_minutes']} 分钟（仿真计算）")
         print("Top-3根因与反证动作：")
         for hypothesis in result["top_hypotheses"]:
-            print(f"- H{hypothesis['rank']} {hypothesis['confidence']:.0%} {hypothesis['cause']}；反证：{hypothesis['falsification']}")
+            print(f"- H{hypothesis['rank']} {hypothesis['posterior']:.0%} {hypothesis['cause']}；反证：{hypothesis['falsification']}")
+        if result["intervention"]:
+            print(f"干预结果：{result['intervention']['label']}；{result['intervention']['result']}")
         print("证据链：")
         for item in result["evidence_chain"]:
             print(f"- {item}")

@@ -26,7 +26,7 @@
     </nav>
 
     <div class="top-actions">
-      <span class="system-live"><i></i>生产事件流在线</span>
+      <span class="system-live"><i></i>脱敏仿真事件流</span>
       <button id="exportBtn" class="ghost-btn">导出事件包</button>
       <button id="injectBtn" class="primary-btn">注入下一工况</button>
     </div>
@@ -38,6 +38,24 @@
     <div><span>涂装一线</span><b class="normal">稳定</b></div>
     <div><span>压铸单元</span><b class="normal">稳定</b></div>
     <div class="clock"><span>数据时间</span><b id="liveClock">--:--:--</b></div>
+  </section>
+
+  <section class="runtime-ribbon" aria-label="数字员工运行保障">
+    <div class="mode-control">
+      <span>运行模式</span>
+      <div class="segmented" id="modeSelector" role="group" aria-label="选择运行模式">
+        <button data-mode="shadow">影子验证</button>
+        <button data-mode="collaborative" class="active">协同执行</button>
+        <button data-mode="controlled">生产受控</button>
+      </div>
+    </div>
+    <div class="runtime-facts">
+      <span><i class="healthy"></i>回放新鲜度 <b id="freshnessValue">2.4s</b></span>
+      <span>规则包 <b id="ruleVersion">QG-2026.08</b></span>
+      <span>知识版本 <b id="knowledgeVersion">KG-17.4</b></span>
+      <span>权限等级 <b id="permissionLevel">L2 建议+派单</b></span>
+      <span>事件护照 <b id="eventPassport">--</b></span>
+    </div>
   </section>
 
   <main>
@@ -171,6 +189,13 @@
           <div id="guardrailChecks" class="guardrail-checks"></div>
         </article>
 
+        <article class="counterfactual-panel panel-shell">
+          <div class="panel-heading compact"><div><span class="kicker">COUNTERFACTUAL TEST</span><h3>反事实验证台</h3></div><span id="interventionStatus" class="mini-badge">待选择干预</span></div>
+          <p class="panel-note">不把相关性直接写成根因。选择现场可执行的对照动作，观察证据是否按机理方向变化，再更新候选根因排序。</p>
+          <div id="interventionOptions" class="intervention-options"></div>
+          <div id="interventionResult" class="intervention-result"></div>
+        </article>
+
         <article class="validation-panel panel-shell">
           <div class="panel-heading compact"><h3>确定性关闭校验</h3><span id="validationSummary" class="mini-badge">--</span></div>
           <div id="validationGate" class="validation-gate"></div>
@@ -198,7 +223,7 @@
       <div class="feishu-grid">
         <article class="feishu-status panel-shell">
           <div class="online-hero">
-            <div><span class="online-dot"></span><strong>Feishu CLI 在线</strong><small>用户身份已授权 · Token 有效</small></div>
+            <div><span class="online-dot"></span><strong>飞书对象已验证</strong><small>Base、任务与复盘文档可核验 · 授权状态运行前检查</small></div>
             <a id="baseLink" class="secondary-btn" href="https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD" target="_blank" rel="noreferrer">打开质量台账</a>
           </div>
           <div id="feishuPipeline" class="feishu-pipeline"></div>
@@ -223,6 +248,17 @@
         <p>以下均为试点目标，不包装为既成收益；只有被现场采纳且完成闭环的事件才进入统计。</p>
       </div>
       <div id="valueCards" class="value-cards"></div>
+      <div class="assurance-grid">
+        <article class="resilience-panel panel-shell">
+          <div class="panel-heading compact"><div><span class="kicker">FAIL-SAFE DRILL</span><h3>运行保障与降级演练</h3></div><span id="resilienceStatus" class="mini-badge">全链路可用</span></div>
+          <div id="resilienceOptions" class="resilience-options"></div>
+          <div id="resilienceOutcome" class="resilience-outcome"></div>
+        </article>
+        <article class="responsibility-panel panel-shell">
+          <div class="panel-heading compact"><div><span class="kicker">ACCOUNTABILITY CHAIN</span><h3>人机责任链</h3></div><span class="mini-badge">身份·时间·依据留痕</span></div>
+          <div id="responsibilityMatrix" class="responsibility-matrix"></div>
+        </article>
+      </div>
       <div class="replication-panel panel-shell">
         <div class="panel-heading compact"><h3>跨工序复制资产包</h3><span class="mini-badge">同一骨架 · 场景化配置</span></div>
         <div id="replicationMatrix" class="replication-matrix"></div>

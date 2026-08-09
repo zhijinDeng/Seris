@@ -22,6 +22,13 @@ def load_events():
         return list(csv.DictReader(f))
 
 
+def suggested_action(event: dict) -> str:
+    configured = event.get("suggested_action", "").strip()
+    if configured:
+        return configured
+    return f"隔离{event['vin_scope']}；复检{event['quality_risk']}；核查{event['equipment']}并完成首件确认"
+
+
 def post_json(url: str, payload: dict, headers: dict | None = None) -> dict:
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req_headers = {"Content-Type": "application/json; charset=utf-8"}
@@ -53,6 +60,7 @@ def get_tenant_access_token() -> str:
 
 
 def build_event_record(event: dict) -> dict:
+    action = suggested_action(event)
     return {
         "fields": {
             "事件ID": event["event_id"],
@@ -64,21 +72,23 @@ def build_event_record(event: dict) -> dict:
             "工艺窗口": f"{event['lower']}-{event['upper']}{event['unit']}",
             "影响范围": event["vin_scope"],
             "质量风险": event["quality_risk"],
-            "处置方案": event["suggested_action"],
+            "处置方案": action,
             "状态": "待确认",
         }
     }
 
 
 def build_task_records(event: dict) -> list[dict]:
-    actions = [item.strip() for item in event["suggested_action"].replace("，", ";").replace("。", "").split(";") if item.strip()]
+    action_text = suggested_action(event)
+    actions = [item.strip() for item in action_text.replace("，", ";").replace("；", ";").replace("。", "").split(";") if item.strip()]
     if not actions:
-        actions = [event["suggested_action"]]
+        actions = [action_text]
     records = []
+    event_slug = event["event_id"].replace("-", "")[-6:]
     for index, action in enumerate(actions, 1):
         records.append({
             "fields": {
-                "任务ID": f"TASK-{event['event_id'][-3:]}-{index}",
+                "任务ID": f"TASK-{event_slug}-{index}",
                 "关联事件": event["event_id"],
                 "任务内容": action,
                 "负责人角色": "质量工程师" if index == 1 else "设备工程师",
@@ -89,7 +99,47 @@ def build_task_records(event: dict) -> list[dict]:
     return records
 
 
+def build_assurance_records(event: dict) -> dict:
+    return {
+        "reinspection_record": {
+            "fields": {
+                "复检对象": event["vin_scope"],
+                "复检项目与准则": f"{event['parameter']}应处于{event['lower']}-{event['upper']}{event['unit']}，并满足控制计划反应规则",
+                "实测值": "待检测岗位实名提交",
+                "量具与校准状态": "待填写量具ID、校准有效期与MSA状态",
+                "检测人员": "待企业身份映射",
+                "检测结论": "需扩大范围",
+            }
+        },
+        "maintenance_record": {
+            "fields": {
+                "设备与措施": f"{event['equipment']}：{suggested_action(event)}",
+                "首件结果": "待上传恢复后首件记录",
+            }
+        },
+        "approval_record": {
+            "fields": {
+                "审批角色": "质量工程师",
+                "审批人": "待企业身份映射",
+                "审批范围": f"事件{event['event_id']}风险受理、证据确认与最终放行",
+                "审批意见": "待签署，不由数字员工代签",
+                "审批时间": "待原生审批回写",
+            }
+        },
+        "knowledge_record": {
+            "fields": {
+                "根因与措施": f"待关闭后固化；当前质量风险：{event['quality_risk']}",
+                "PFMEA版本": "待工程变更评审后回写",
+                "控制计划版本": "待工程变更评审后回写",
+                "有效性观察期": "建议连续3个班次或企业批准窗口",
+                "关闭依据": "源数据、范围锁定、物理复检、授权确认、任务与知识回写五项证据待齐套",
+            }
+        },
+    }
+
+
 def build_webhook_card(event: dict) -> dict:
+    action = suggested_action(event)
     return {
         "msg_type": "interactive",
         "card": {
@@ -103,7 +153,7 @@ def build_webhook_card(event: dict) -> dict:
                 {"tag": "div", "text": {"tag": "lark_md", "content": f"**设备**：{event['equipment']}"}},
                 {"tag": "div", "text": {"tag": "lark_md", "content": f"**异常**：{event['parameter']}={event['value']}{event['unit']}，窗口 {event['lower']}-{event['upper']}{event['unit']}"}},
                 {"tag": "div", "text": {"tag": "lark_md", "content": f"**影响范围**：{event['vin_scope']}"}},
-                {"tag": "div", "text": {"tag": "lark_md", "content": f"**处置方案**：{event['suggested_action']}"}},
+                {"tag": "div", "text": {"tag": "lark_md", "content": f"**处置方案**：{action}"}},
             ],
         },
     }
@@ -126,7 +176,7 @@ def send_webhook(payload: dict) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="赛力斯质量AI飞书集成客户端")
-    parser.add_argument("--event-id", default="E-20260717-001")
+    parser.add_argument("--event-id", default="CASE-TQ-20260719-01")
     parser.add_argument("--send", action="store_true", help="真实调用飞书接口；默认只输出接口数据")
     parser.add_argument("--write-interface-data", action="store_true", help="写出 output/feishu_interface_data.json")
     args = parser.parse_args()
@@ -142,6 +192,7 @@ def main():
         "webhook_card": build_webhook_card(event),
         "aily_command": f"@质量AI 解释事件 {event['event_id']}，列出证据链、影响范围、责任人和下一步处置。",
     }
+    interface_data.update(build_assurance_records(event))
 
     if args.write_interface_data:
         out = ROOT / "output" / "feishu_interface_data.json"
@@ -156,18 +207,36 @@ def main():
     token = get_tenant_access_token()
     app_token = os.getenv("FEISHU_BITABLE_APP_TOKEN")
     event_table = os.getenv("FEISHU_BITABLE_EVENT_TABLE_ID")
-    task_table = os.getenv("FEISHU_BITABLE_TASK_TABLE_ID")
+    table_ids = {
+        "tasks": os.getenv("FEISHU_BITABLE_TASK_TABLE_ID"),
+        "reinspection": os.getenv("FEISHU_BITABLE_REINSPECTION_TABLE_ID"),
+        "maintenance": os.getenv("FEISHU_BITABLE_MAINTENANCE_TABLE_ID"),
+        "approval": os.getenv("FEISHU_BITABLE_APPROVAL_TABLE_ID"),
+        "knowledge": os.getenv("FEISHU_BITABLE_KNOWLEDGE_TABLE_ID"),
+    }
     if not app_token or not event_table:
         raise RuntimeError("缺少 FEISHU_BITABLE_APP_TOKEN 或 FEISHU_BITABLE_EVENT_TABLE_ID")
 
     results = {
         "event_record": create_bitable_record(token, app_token, event_table, interface_data["event_record"]),
         "tasks": [],
+        "reinspection": None,
+        "maintenance": None,
+        "approval": None,
+        "knowledge": None,
         "webhook": None,
     }
-    if task_table:
+    if table_ids["tasks"]:
         for record in interface_data["task_records"]:
-            results["tasks"].append(create_bitable_record(token, app_token, task_table, record))
+            results["tasks"].append(create_bitable_record(token, app_token, table_ids["tasks"], record))
+    for key, payload_key in [
+        ("reinspection", "reinspection_record"),
+        ("maintenance", "maintenance_record"),
+        ("approval", "approval_record"),
+        ("knowledge", "knowledge_record"),
+    ]:
+        if table_ids[key]:
+            results[key] = create_bitable_record(token, app_token, table_ids[key], interface_data[payload_key])
     if os.getenv("FEISHU_WEBHOOK_URL"):
         results["webhook"] = send_webhook(interface_data["webhook_card"])
     print(json.dumps(results, ensure_ascii=False, indent=2))

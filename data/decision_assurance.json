@@ -1,12 +1,19 @@
 {
-  "schema_version": "1.0",
-  "measurement_note": "前置量为脱敏仿真案例中风险线程达到派单阈值至下游检验理论发现时点的时间差，不代表实车生产收益。",
+  "schema_version": "2.0",
+  "measurement_note": "前置量由脱敏仿真时间序列计算：可行动时刻为统计弱信号与知识关系首次形成最小证据共识的时间，下游时刻为现行质量门理论可检出的时间，不代表实车生产收益。",
+  "detector_parameters": {"ewma_lambda": 0.3, "ewma_sigma": 0.3, "cusum_k_sigma": 0.25, "cusum_h_sigma": 1.5, "actionable_rule": "统计检测器至少一项触发且知识关系命中"},
+  "governance_versions": {"rule_set": "QG-2026.08", "knowledge_snapshot": "KG-17.4", "feature_schema": "FS-2.0", "ontology": "QO-2.1"},
   "profiles": {
     "CASE-TQ-20260719-01": {
       "lead_minutes": 22,
       "detector_consensus": "4/4",
       "weak_signal": "EWMA均值偏移",
       "detectors": ["工艺硬规则", "EWMA", "CUSUM", "图谱关系约束"],
+      "signal": {"baseline_mean": 100, "baseline_std": 1.5, "downstream_time": "14:38", "points": [["14:02",100.2,0],["14:04",99.8,0],["14:06",99.4,0],["14:08",98.8,0],["14:10",98.1,0],["14:12",97.4,0],["14:14",96.7,0],["14:16",95.8,1],["14:18",86.4,1]]},
+      "interventions": [
+        {"id":"socket-replace","label":"更换套筒 + 标准件复校","measurement":"标准件扭矩、角度残差、量具校准状态","criterion":"扭矩92-108N·m且角度残差回到基线","signer":"检测岗位 QC-03","result":"复校后标准件扭矩回到99.1N·m，角度残差收敛至基线内。","posterior":[0.93,0.31,0.14]},
+        {"id":"cross-tool","label":"交叉换枪复拧","measurement":"原枪/替代枪复拧扭矩与角度","criterion":"替代枪合格且原枪可复现偏差","signer":"检测岗位 QC-03","result":"同批螺栓换枪后恢复，原枪复现偏低；零件批次效应减弱。","posterior":[0.89,0.22,0.18]}
+      ],
       "top_hypotheses": [
         {"rank": 1, "cause": "套筒磨损叠加校准漂移", "confidence": 0.86, "falsification": "更换套筒并用标准件复校，比较干预前后扭矩与角度关系"},
         {"rank": 2, "cause": "螺纹摩擦系数批次异常", "confidence": 0.57, "falsification": "抽样测摩擦系数并交叉换枪复拧"},
@@ -18,6 +25,11 @@
       "detector_consensus": "3/4",
       "weak_signal": "电流CUSUM下移",
       "detectors": ["工艺硬规则", "CUSUM", "电极寿命规则", "焊点知识关系"],
+      "signal": {"baseline_mean": 7.82, "baseline_std": 0.12, "downstream_time": "10:24", "points": [["09:41",7.84,0],["09:44",7.80,0],["09:47",7.76,0],["09:48",7.70,0],["09:50",7.62,0],["09:51",7.54,0],["09:52",7.46,0],["09:53",7.38,1],["09:56",7.10,1]]},
+      "interventions": [
+        {"id":"cap-change","label":"更换电极帽 + 焊核对照","measurement":"焊接电流、焊核直径、检测设备校准状态","criterion":"电流7.4-8.2kA且焊核满足控制计划","signer":"焊装检测岗位 BIW-QC-02","result":"换帽后电流回归7.81kA，破坏性焊核直径达到控制计划要求。","posterior":[0.91,0.34,0.12]},
+        {"id":"loop-test","label":"二次回路阻抗阶跃检查","measurement":"复紧前后回路阻抗和电流补偿量","criterion":"阻抗回到点检基线且电流恢复","signer":"焊装检测岗位 BIW-QC-02","result":"复紧连接点后阻抗下降18%，电流补偿恢复。","posterior":[0.68,0.82,0.10]}
+      ],
       "top_hypotheses": [
         {"rank": 1, "cause": "电极帽磨损", "confidence": 0.79, "falsification": "换帽后执行破坏性焊核对照"},
         {"rank": 2, "cause": "二次回路接触电阻升高", "confidence": 0.68, "falsification": "测量回路阻抗并复紧连接点"},
@@ -29,6 +41,11 @@
       "detector_consensus": "3/4",
       "weak_signal": "风门响应残差",
       "detectors": ["温度窗口", "响应残差", "MES时间窗", "固化知识关系"],
+      "signal": {"baseline_mean": 156, "baseline_std": 1.2, "downstream_time": "16:37", "points": [["16:06",156.2,0],["16:08",155.8,0],["16:10",155.4,0],["16:11",154.8,0],["16:14",154.0,0],["16:17",153.2,0],["16:19",152.5,1],["16:22",151.6,1],["16:25",148.0,1]]},
+      "interventions": [
+        {"id":"damper-step","label":"风门阶跃试验 + 温升复测","measurement":"执行器响应时间、三区温度、附着力复测","criterion":"响应不高于4s且温度进入152-160℃","signer":"涂装检测岗位 PA-QC-01","result":"执行器响应由8.6s恢复至3.1s，三区温度重新进入154-157℃。","posterior":[0.90,0.29,0.08]},
+        {"id":"pid-compare","label":"同型烘房 PID 基线对照","measurement":"PID输出、风门反馈和同型烘房基线","criterion":"PID输出偏差在批准容差内","signer":"涂装检测岗位 PA-QC-01","result":"PID输出与基线一致，但风门反馈仍滞后。","posterior":[0.84,0.18,0.11]}
+      ],
       "top_hypotheses": [
         {"rank": 1, "cause": "风门执行机构响应滞后", "confidence": 0.72, "falsification": "执行风门阶跃试验并复测温升"},
         {"rank": 2, "cause": "温控PID调节不足", "confidence": 0.55, "falsification": "比对PID输出与同型烘房基线"},
@@ -40,6 +57,11 @@
       "detector_consensus": "4/4",
       "weak_signal": "水路流量残差",
       "detectors": ["模温硬规则", "流量残差", "热像关系", "结构件严重度"],
+      "signal": {"baseline_mean": 8, "baseline_std": 1.2, "downstream_time": "12:15", "points": [["11:07",8.1,0],["11:10",8.3,0],["11:14",8.7,0],["11:18",9.1,0],["11:21",9.8,0],["11:24",10.5,0],["11:27",11.2,0],["11:29",11.8,1],["11:33",18.0,1]]},
+      "interventions": [
+        {"id":"bypass-flush","label":"支路旁路 + 冲洗前后对照","measurement":"支路流量、三模次模温差、X光与尺寸","criterion":"流量不低于基线95%且模温差不高于12℃","signer":"压铸检测岗位 DC-QC-02","result":"支路流量恢复到基线97%，相邻三模次模温差降至9.4℃。","posterior":[0.94,0.27,0.09]},
+        {"id":"valve-step","label":"温控阀手动阶跃","measurement":"阀位指令、反馈、支路流量残差","criterion":"阀位响应正常且流量残差可解释","signer":"压铸检测岗位 DC-QC-02","result":"阀位响应正常，流量残差未消失。","posterior":[0.88,0.16,0.14]}
+      ],
       "top_hypotheses": [
         {"rank": 1, "cause": "冷却水路局部堵塞", "confidence": 0.81, "falsification": "执行支路旁路测试与冲洗前后对照"},
         {"rank": 2, "cause": "温控阀响应异常", "confidence": 0.63, "falsification": "手动阶跃阀位并记录响应曲线"},
@@ -60,5 +82,15 @@
     "物理复检通过",
     "授权人员确认",
     "任务与知识回写完成"
-  ]
+  ],
+  "operating_modes": {
+    "shadow": {"permission":"L0","external_write":false,"purpose":"离线回放与误报标定"},
+    "collaborative": {"permission":"L2","external_write":true,"purpose":"飞书派单与人机协同，不触碰控制层"},
+    "controlled": {"permission":"L3","external_write":true,"purpose":"经企业审批的受控执行，仍不具备PLC写入和质量放行权"}
+  },
+  "fail_safe": {
+    "data_delay":"冻结新增推理，保留规则告警并维持隔离",
+    "graph_unavailable":"切换规则与控制计划只读包，不输出唯一根因",
+    "feishu_unavailable":"写入本地Outbox，恢复后按事件ID幂等补偿"
+  }
 }

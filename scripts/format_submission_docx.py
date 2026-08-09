@@ -8,6 +8,8 @@ from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parents[1]
 SUBMIT = ROOT / "提交材料"
+ARCHITECTURE_PNG = ROOT / "diagram" / "quality-ai-architecture.png"
+ARCHITECTURE_DOCS = {"01_开题报告", "02_整体解决方案书", "08_40强赛完整参赛方案", "09_决赛完整技术方案"}
 
 
 DOCS = [
@@ -51,6 +53,22 @@ def page_break() -> str:
     return '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
 
 
+def image_p(rel_id: str = "rId3", width_inches: float = 7.2, height_inches: float = 4.05) -> str:
+    cx = int(width_inches * 914400)
+    cy = int(height_inches * 914400)
+    return f'''<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:drawing>
+    <wp:inline distT="0" distB="0" distL="0" distR="0">
+      <wp:extent cx="{cx}" cy="{cy}"/><wp:docPr id="1" name="质量风险主动管控总体架构"/>
+      <wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>
+      <a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+        <pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="quality-ai-architecture.png"/><pic:cNvPicPr/></pic:nvPicPr>
+        <pic:blipFill><a:blip r:embed="{rel_id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>
+        <pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>
+        </pic:pic>
+      </a:graphicData></a:graphic>
+    </wp:inline></w:drawing></w:r></w:p>'''
+
+
 def list_p(text: str, num_id: int, level: int = 0) -> str:
     return (
         "<w:p>"
@@ -89,8 +107,8 @@ def table(rows: list[list[str]], widths: list[int], header: bool = False) -> str
     )
 
 
-def cover_block(title: str) -> list[str]:
-    return [
+def cover_block(title: str, include_architecture: bool = False) -> list[str]:
+    blocks = [
         p(title, "Title"),
         p("赛力斯企业命题参赛材料", "Subtitle"),
         table(
@@ -104,6 +122,13 @@ def cover_block(title: str) -> list[str]:
         ),
         p("", "SmallSpace"),
     ]
+    if include_architecture:
+        blocks.extend([
+            image_p(),
+            p("图1  质量风险主动管控AI数字员工总体架构", "ReferenceList"),
+            page_break(),
+        ])
+    return blocks
 
 
 def maybe_kv_table(lines: list[str], start: int) -> tuple[str | None, int]:
@@ -153,13 +178,13 @@ def maybe_markdown_table(lines: list[str], start: int) -> tuple[str | None, int]
     return table(rows, widths, header=True), index
 
 
-def build_body(md: str) -> str:
+def build_body(md: str, include_architecture: bool = False) -> str:
     lines = md.strip().splitlines()
     title = "参赛材料"
     if lines and lines[0].startswith("# "):
         title = lines[0][2:].strip()
         lines = lines[1:]
-    body = cover_block(title)
+    body = cover_block(title, include_architecture)
     i = 0
     in_reference_section = False
     while i < len(lines):
@@ -231,7 +256,11 @@ def numbering_xml() -> str:
 
 def document_xml(body: str) -> str:
     return f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+ xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+ xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+ xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+ xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
   <w:body>
     {body}
     <w:sectPr>
@@ -245,11 +274,20 @@ def document_xml(body: str) -> str:
 def write_docx(md_path: Path) -> None:
     md = md_path.read_text(encoding="utf-8")
     out = md_path.with_suffix(".docx")
+    include_architecture = md_path.stem in ARCHITECTURE_DOCS
+    if include_architecture and not ARCHITECTURE_PNG.exists():
+        raise FileNotFoundError(f"缺少架构图: {ARCHITECTURE_PNG}")
+    image_relationship = (
+        '  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" '
+        'Target="media/quality-ai-architecture.png"/>\n'
+        if include_architecture else ""
+    )
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("[Content_Types].xml", """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
   <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
   <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="png" ContentType="image/png"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
   <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
   <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
@@ -258,14 +296,17 @@ def write_docx(md_path: Path) -> None:
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
 </Relationships>""")
-        zf.writestr("word/_rels/document.xml.rels", """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        zf.writestr("word/_rels/document.xml.rels", f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
   <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+{image_relationship}
 </Relationships>""")
-        zf.writestr("word/document.xml", document_xml(build_body(md)))
+        zf.writestr("word/document.xml", document_xml(build_body(md, include_architecture)))
         zf.writestr("word/styles.xml", styles_xml())
         zf.writestr("word/numbering.xml", numbering_xml())
+        if include_architecture:
+            zf.write(ARCHITECTURE_PNG, "word/media/quality-ai-architecture.png")
 
 
 def main() -> None:
