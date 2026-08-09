@@ -1,4 +1,4 @@
-# 飞书在线闭环接入
+﻿# 飞书在线闭环接入
 
 本项目已把“知质·灵巡”数字员工接入本机 Feishu CLI 用户授权，用于把质量风险事件同步到多维表格，并为 Aily、机器人卡片和责任任务流转提供同一份事件事实。
 
@@ -7,28 +7,28 @@
 - 授权身份：用户身份曾完成Base、文档和任务调用；Token具有时效性，运行前以`lark-cli auth status`结果为准。
 - 目标多维表格：`https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b`
 - 在线事件表：`赛力斯质量风险事件闭环`
-- 本地执行脚本：`D:\赛力斯\scripts\sync_feishu_quality_event.ps1`
-- 字段 schema：`D:\赛力斯\data\feishu_quality_event_fields.json`
-- 样例事件：`D:\赛力斯\data\feishu_live_quality_event_record.json`
+- 本地执行脚本：`scripts\sync_feishu_quality_event.ps1`
+- 字段 schema：`data\feishu_quality_event_fields.json`
+- 样例事件：`data\feishu_live_quality_event_record.json`
 
 ## 运行方式
 
 首次创建在线事件表并写入样例记录：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\sync_feishu_quality_event.ps1 -CreateTable -WriteRecord
+powershell -ExecutionPolicy Bypass -File scripts\sync_feishu_quality_event.ps1 -CreateTable -WriteRecord
 ```
 
 后续按事件ID更新或创建记录：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\sync_feishu_quality_event.ps1 -WriteRecord
+powershell -ExecutionPolicy Bypass -File scripts\sync_feishu_quality_event.ps1 -WriteRecord
 ```
 
 运行后会更新：
 
-- `D:\赛力斯\config\feishu_live_base.json`
-- `D:\赛力斯\data\feishu_live_connection.status.json`
+- `config\feishu_live_base.json`
+- `data\feishu_live_connection.status.json`
 
 ## 业务闭环
 

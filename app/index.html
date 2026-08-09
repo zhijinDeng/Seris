@@ -33,11 +33,11 @@
   </header>
 
   <section class="plant-strip" aria-label="工厂实时态势">
-    <div><span>总装一线</span><b class="normal">稳定</b></div>
-    <div><span>焊装二线</span><b class="watch">1项关注</b></div>
-    <div><span>涂装一线</span><b class="normal">稳定</b></div>
-    <div><span>压铸单元</span><b class="normal">稳定</b></div>
-    <div class="clock"><span>数据时间</span><b id="liveClock">--:--:--</b></div>
+    <div data-plant="assembly"><span>总装一线</span><b class="normal">稳定</b></div>
+    <div data-plant="welding"><span>焊装二线</span><b class="normal">稳定</b></div>
+    <div data-plant="painting"><span>涂装一线</span><b class="normal">稳定</b></div>
+    <div data-plant="casting"><span>压铸单元</span><b class="normal">稳定</b></div>
+    <div class="clock"><span>回放时钟</span><b id="liveClock">--:--</b></div>
   </section>
 
   <section class="runtime-ribbon" aria-label="数字员工运行保障">
@@ -157,6 +157,7 @@
         <div class="action-buttons">
           <button id="dispatchBtn" class="primary-btn">派发飞书闭环</button>
           <button id="confirmBtn" class="secondary-btn">人工确认处置</button>
+          <button id="writebackBtn" class="secondary-btn">验收任务与回写</button>
           <button id="resolveBtn" class="ghost-btn" disabled>验证并关闭</button>
         </div>
         <div id="actionLog" class="action-log"></div>
@@ -223,7 +224,7 @@
       <div class="feishu-grid">
         <article class="feishu-status panel-shell">
           <div class="online-hero">
-            <div><span class="online-dot"></span><strong>飞书对象已验证</strong><small>Base、任务与复盘文档可核验 · 授权状态运行前检查</small></div>
+            <div><span class="online-dot"></span><strong>飞书能力分层核验</strong><small>Base写入回读已核验 · 任务/文档对象样例可查 · Aily与事件订阅待部署</small></div>
             <a id="baseLink" class="secondary-btn" href="https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD" target="_blank" rel="noreferrer">打开质量台账</a>
           </div>
           <div id="feishuPipeline" class="feishu-pipeline"></div>
@@ -248,6 +249,10 @@
         <p>以下均为试点目标，不包装为既成收益；只有被现场采纳且完成闭环的事件才进入统计。</p>
       </div>
       <div id="valueCards" class="value-cards"></div>
+      <article class="readiness-panel panel-shell">
+        <div class="panel-heading compact"><div><span class="kicker">PRODUCTION READINESS GATE</span><h3>生产试点就绪门</h3></div><span class="mini-badge">证据分层 · 不越级承诺</span></div>
+        <div id="pilotReadiness" class="pilot-readiness"></div>
+      </article>
       <div class="assurance-grid">
         <article class="resilience-panel panel-shell">
           <div class="panel-heading compact"><div><span class="kicker">FAIL-SAFE DRILL</span><h3>运行保障与降级演练</h3></div><span id="resilienceStatus" class="mini-badge">全链路可用</span></div>

@@ -2,7 +2,7 @@
 
 ## 一、企业业务依据
 
-赛力斯集团2024年年度报告提出持续推进“产业大脑+超级工厂”引领的智能制造2.0建设，并披露大模型技术赋能研发、生产、销售和服务全链路。2025年半年度报告进一步披露数字孪生、人工智能、大数据和物联网的融合，以及关键生产工序、焊点质量和整车静态质量自动化检测能力。2024年ESG报告说明公司构建全生命周期质量管控机制，使用AI监测、虚拟调试和数字孪生，并建立“一件一档、一车一档”追溯机制。
+赛力斯集团2025年年度报告披露工业AI大模型、行业首创智能连接工艺系统、36,000+质量点位全自动实时监控，以及贯通生产、质量与供应链的“信息—决策—行动”闭环。2024年年度报告提出持续推进“产业大脑+超级工厂”引领的智能制造2.0建设；2025年半年度报告进一步披露数字孪生、人工智能、大数据和物联网的融合，以及关键生产工序、焊点质量和整车静态质量自动化检测能力；2024年ESG报告说明公司建立“一件一档、一车一档”追溯机制。
 
 上述资料表明，赛力斯已有高质量数据采集与追溯基础。本方案不重复建设数据看板，而是补齐从异常信号到证据推理、责任任务、关闭验证和知识回写的主动质量风险层。
 
@@ -24,29 +24,31 @@ NIST SP 800-82 Rev.3强调OT环境的可用性、安全性、网络分区、访�
 
 ## 五、参考文献
 
-1. 赛力斯集团股份有限公司. 2024年年度报告[EB/OL]. 2025-04-01. https://cdn-web.seres.cn/uploads/20250401/5cb4a1a9711d4df2daabb14d964625a0.pdf.
-2. 赛力斯集团股份有限公司. 2025年半年度报告[EB/OL]. 2025-09-02. https://cdn-web.seres.cn/uploads/20250902/16d86a4ef54310af944762148f4e9c3a.pdf.
-3. 赛力斯集团股份有限公司. 2024年环境、社会及管治报告[EB/OL]. 2025-04-01. https://cdn-web.seres.cn/uploads/20250401/527578cbe5eb235154a0b049fa778022.pdf.
-4. ISO. ISO 9001 explained: Quality management systems[EB/OL]. https://www.iso.org/home/insights-news/resources/iso-9001-explained.html.
-5. National Institute of Standards and Technology. Artificial Intelligence Risk Management Framework 1.0[R]. NIST AI 100-1, 2023. https://doi.org/10.6028/NIST.AI.100-1.
-6. Wehner C, Kertel M, Wewerka J, et al. Interactive and Intelligent Root Cause Analysis in Manufacturing with Causal Bayesian Networks and Knowledge Graphs[EB/OL]. arXiv:2402.00043, 2024. https://arxiv.org/abs/2402.00043.
-7. Chen J, Qian J, Zhang X, et al. Root-KGD: A Novel Framework for Root Cause Diagnosis Based on Knowledge Graph and Industrial Data[EB/OL]. arXiv:2406.13664, 2024. https://arxiv.org/abs/2406.13664.
-8. Knollmeyer S, Caymazer O, Grossmann D. Document GraphRAG: Knowledge Graph Enhanced Retrieval Augmented Generation for Document Question Answering Within the Manufacturing Domain[J]. Electronics, 2025, 14(11):2102. https://doi.org/10.3390/electronics14112102.
-9. Kurniawan K, Kropatschek S, Kiesling E, et al. ProQ-KG: Integrated Cyber-Physical Production System Knowledge Graph for Quality Issue Analysis[EB/OL]. 2025. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5273075.
-10. Xu Z, Dang Y. Data-driven causal knowledge graph construction for root cause analysis in quality problem solving[J]. International Journal of Production Research, 2023, 61(14):4693-4711. https://doi.org/10.1080/00207543.2022.2137597.
-11. 飞书开放平台. 多维表格概述[EB/OL]. https://open.feishu.cn/document/server-docs/docs/bitable-v1/bitable-overview?lang=zh-CN.
-12. 飞书开放平台. 任务v2概述[EB/OL]. https://open.feishu.cn/document/task-v2/overview.
-13. 飞书开放平台. 配置卡片交互[EB/OL]. https://open.feishu.cn/document/common-capabilities/message-card/add-card-interaction/interaction-module.
-14. 飞书开放平台. 文档OpenAPI概述[EB/OL]. https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/docx-overview.
-15. Rehak J, Sommer A, Becker M, et al. Counterfactual Root Cause Analysis via Anomaly Detection and Causal Graphs[C]. IEEE INDIN, 2023. https://doi.org/10.1109/INDIN51400.2023.10218245.
-16. Rehak J, Youssef S, Beyerer J. Root cause analysis using anomaly detection and temporal informed causal graphs[C]. ML4CPS, 2024. https://doi.org/10.24406/publica-3069.
-17. Kropatschek S, et al. Retrieval-Augmented Generation using Knowledge Graphs for Manufacturing Problem-Solving[C]. 2025. https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10.
-18. ISO. ISO 23247-2:2021 Automation systems and integration - Digital twin framework for manufacturing - Part 2: Reference architecture[EB/OL]. https://www.iso.org/standard/78743.html.
-19. OPC Foundation. OPC Unified Architecture - Common Object Model: ISA-95[EB/OL]. https://reference.opcfoundation.org/specs/OPC-10030/4.1.
-20. National Institute of Standards and Technology. Guide to Operational Technology Security: NIST SP 800-82 Rev.3[EB/OL]. 2023. https://csrc.nist.gov/pubs/sp/800/82/r3/final.
-21. Automotive Industry Action Group. Control Plan 1st Edition[EB/OL]. https://www.aiag.org/training-and-resources/manuals/details/CP-1.
-22. Automotive Industry Action Group. AIAG & VDA FMEA Handbook[EB/OL]. https://www.aiag.org/training-and-resources/manuals/details/FMEAAV-1.
-23. 飞书开放平台. 事件概述[EB/OL]. https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN.
-24. 飞书开放平台. 多维表格记录变更事件[EB/OL]. https://open.feishu.cn/document/docs/bitable-v1/events/bitable_record_changed.
+1. 赛力斯集团股份有限公司. 2025年年度报告[EB/OL]. 2026-03-31. https://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12037655&stockid=601127.
+2. 赛力斯集团股份有限公司. 2024年年度报告[EB/OL]. 2025-04-01. https://cdn-web.seres.cn/uploads/20250401/5cb4a1a9711d4df2daabb14d964625a0.pdf.
+3. 赛力斯集团股份有限公司. 2025年半年度报告[EB/OL]. 2025-09-02. https://cdn-web.seres.cn/uploads/20250902/16d86a4ef54310af944762148f4e9c3a.pdf.
+4. 赛力斯集团股份有限公司. 2024年环境、社会及管治报告[EB/OL]. 2025-04-01. https://cdn-web.seres.cn/uploads/20250401/527578cbe5eb235154a0b049fa778022.pdf.
+5. ISO. ISO 9001 explained: Quality management systems[EB/OL]. https://www.iso.org/home/insights-news/resources/iso-9001-explained.html.
+6. National Institute of Standards and Technology. Artificial Intelligence Risk Management Framework 1.0[R]. NIST AI 100-1, 2023. https://doi.org/10.6028/NIST.AI.100-1.
+7. Wehner C, Kertel M, Wewerka J, et al. Interactive and Intelligent Root Cause Analysis in Manufacturing with Causal Bayesian Networks and Knowledge Graphs[EB/OL]. arXiv:2402.00043, 2024. https://arxiv.org/abs/2402.00043.
+8. Chen J, Qian J, Zhang X, et al. Root-KGD: A Novel Framework for Root Cause Diagnosis Based on Knowledge Graph and Industrial Data[EB/OL]. arXiv:2406.13664, 2024. https://arxiv.org/abs/2406.13664.
+9. Knollmeyer S, Caymazer O, Grossmann D. Document GraphRAG: Knowledge Graph Enhanced Retrieval Augmented Generation for Document Question Answering Within the Manufacturing Domain[J]. Electronics, 2025, 14(11):2102. https://doi.org/10.3390/electronics14112102.
+10. Kurniawan K, Kropatschek S, Kiesling E, et al. ProQ-KG: Integrated Cyber-Physical Production System Knowledge Graph for Quality Issue Analysis[EB/OL]. 2025. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5273075.
+11. Xu Z, Dang Y. Data-driven causal knowledge graph construction for root cause analysis in quality problem solving[J]. International Journal of Production Research, 2023, 61(14):4693-4711. https://doi.org/10.1080/00207543.2022.2137597.
+12. 飞书开放平台. 多维表格概述[EB/OL]. https://open.feishu.cn/document/server-docs/docs/bitable-v1/bitable-overview?lang=zh-CN.
+13. 飞书开放平台. 任务v2概述[EB/OL]. https://open.feishu.cn/document/task-v2/overview.
+14. 飞书开放平台. 配置卡片交互[EB/OL]. https://open.feishu.cn/document/common-capabilities/message-card/add-card-interaction/interaction-module.
+15. 飞书开放平台. 文档OpenAPI概述[EB/OL]. https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/docx-overview.
+16. Rehak J, Sommer A, Becker M, et al. Counterfactual Root Cause Analysis via Anomaly Detection and Causal Graphs[C]. IEEE INDIN, 2023. https://doi.org/10.1109/INDIN51400.2023.10218245.
+17. Rehak J, Youssef S, Beyerer J. Root cause analysis using anomaly detection and temporal informed causal graphs[C]. ML4CPS, 2024. https://doi.org/10.24406/publica-3069.
+18. Kropatschek S, et al. Retrieval-Augmented Generation using Knowledge Graphs for Manufacturing Problem-Solving[C]. 2025. https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10.
+19. ISO. ISO 23247-2:2021 Automation systems and integration - Digital twin framework for manufacturing - Part 2: Reference architecture[EB/OL]. https://www.iso.org/standard/78743.html.
+20. OPC Foundation. OPC Unified Architecture - Common Object Model: ISA-95[EB/OL]. https://reference.opcfoundation.org/specs/OPC-10030/4.1.
+21. National Institute of Standards and Technology. Guide to Operational Technology Security: NIST SP 800-82 Rev.3[EB/OL]. 2023. https://csrc.nist.gov/pubs/sp/800/82/r3/final.
+22. Automotive Industry Action Group. Control Plan 1st Edition[EB/OL]. https://www.aiag.org/training-and-resources/manuals/details/CP-1.
+23. Automotive Industry Action Group. AIAG & VDA FMEA Handbook[EB/OL]. https://www.aiag.org/training-and-resources/manuals/details/FMEAAV-1.
+24. 飞书开放平台. 事件概述[EB/OL]. https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN.
+25. 飞书开放平台. 多维表格记录变更事件[EB/OL]. https://open.feishu.cn/document/docs/bitable-v1/events/bitable_record_changed.
+26. 飞书开放平台. 获取多维表格自动化工作流[EB/OL]. https://open.feishu.cn/document/docs/bitable-v1/app-workflow/list?lang=zh-CN.
 
 结构化参考目录保存在`data/reference_catalog.json`，每条来源标注其在方案中的使用位置。企业公开数字只作为场景依据，仿真参数不声称来自赛力斯真实产线。

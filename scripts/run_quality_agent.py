@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import argparse
+import hashlib
 from datetime import datetime
 from pathlib import Path
 
@@ -10,13 +11,58 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+EVENT_REQUIRED_FIELDS = {
+    "event_id", "event_time", "ingest_time", "source_system", "source_event_id",
+    "sequence_no", "quality_code", "schema_version", "asset_id", "station_id",
+    "tag_id", "calibration_id", "calibration_valid_until", "object_binding", "line",
+    "station", "equipment", "parameter", "value", "unit", "lower", "upper", "alarm",
+    "quality_risk", "vin_scope",
+}
+ALLOWED_UNITS = {"N·m", "kA", "℃"}
+
+
+def validate_event(event: dict, seen_keys: set[tuple[str, str]]) -> dict:
+    missing = sorted(EVENT_REQUIRED_FIELDS - set(event))
+    if missing or any(not event.get(field) for field in EVENT_REQUIRED_FIELDS):
+        raise ValueError(f"{event.get('event_id', 'UNKNOWN')} 数据契约缺字段: {', '.join(missing) or '存在空值'}")
+    if event["schema_version"] != "2.1":
+        raise ValueError(f"{event['event_id']} 不支持的数据契约版本: {event['schema_version']}")
+    source_key = (event["source_system"], event["source_event_id"])
+    if source_key in seen_keys:
+        raise ValueError(f"{event['event_id']} 重复源事件: {source_key}")
+    seen_keys.add(source_key)
+    event_time = datetime.fromisoformat(event["event_time"])
+    ingest_time = datetime.fromisoformat(event["ingest_time"])
+    calibration_until = datetime.fromisoformat(event["calibration_valid_until"])
+    if (ingest_time - event_time).total_seconds() > 30:
+        raise ValueError(f"{event['event_id']} 事件水位超过30秒")
+    if calibration_until <= event_time:
+        raise ValueError(f"{event['event_id']} 量具/设备校准已失效")
+    if event["unit"] not in ALLOWED_UNITS:
+        raise ValueError(f"{event['event_id']} 单位未进入白名单: {event['unit']}")
+    if float(event["lower"]) >= float(event["upper"]):
+        raise ValueError(f"{event['event_id']} 工艺窗口上下限无效")
+    if event["quality_code"] != "GOOD":
+        raise ValueError(f"{event['event_id']} 进入QUARANTINED分支: {event['quality_code']}")
+    event["raw_sample_hash"] = hashlib.sha256(
+        "|".join(event[field] for field in sorted(EVENT_REQUIRED_FIELDS)).encode("utf-8")
+    ).hexdigest()
+    return event
+
+
 def load_events():
     with (ROOT / "data" / "factory_events.csv").open(encoding="utf-8-sig") as f:
-        return list(csv.DictReader(f))
+        events = list(csv.DictReader(f))
+    seen_keys: set[tuple[str, str]] = set()
+    return [validate_event(event, seen_keys) for event in events]
 
 
 def load_cases():
     return json.loads((ROOT / "data" / "quality_cases.json").read_text(encoding="utf-8"))
+
+
+def load_graph():
+    return json.loads((ROOT / "data" / "quality_graph.json").read_text(encoding="utf-8"))
 
 
 def load_assurance_profiles():
@@ -97,27 +143,49 @@ def risk_score(event):
     return "P3"
 
 
-def retrieve_case(event, cases):
-    text = "".join([event["station"], event["equipment"], event["parameter"], event["alarm"], event["quality_risk"]])
-    best = None
-    best_score = -1
-    for case in cases:
-        hay = case["scene"] + case["symptom"] + case["root_cause"]
-        terms = [case["scene"], case["symptom"], case["root_cause"]]
-        score = sum(6 for term in terms if term in text or any(part in text for part in term.replace("/", "或").split("或")))
-        score += sum(1 for ch in set(hay) if ch in text)
-        if score > best_score:
-            best = case
-            best_score = score
-    return best
+def retrieve_case(event, cases, graph):
+    nodes = {node["id"]: node for node in graph["nodes"]}
+    adjacency: dict[str, list[dict]] = {}
+    for edge in graph["edges"]:
+        adjacency.setdefault(edge["source"], []).append(edge)
+    start = f"event:{event['event_id']}"
+    if start not in nodes:
+        raise ValueError(f"知识图谱缺少事件节点: {start}")
+    queue = [(start, 0)]
+    visited = {start}
+    trace = []
+    matched_case_id = None
+    while queue:
+        source, depth = queue.pop(0)
+        if depth >= 4:
+            continue
+        for edge in adjacency.get(source, []):
+            target = edge["target"]
+            target_node = nodes[target]
+            trace.append({
+                "source": nodes[source]["label"],
+                "relation": edge["relation"],
+                "target": target_node["label"],
+                "source_ref": target_node["source_ref"],
+            })
+            if edge["relation"] == "matchedCase":
+                matched_case_id = target.split(":", 1)[1]
+            if target not in visited:
+                visited.add(target)
+                queue.append((target, depth + 1))
+    case = next((item for item in cases if item["case_id"] == matched_case_id), None)
+    if case is None:
+        raise ValueError(f"事件 {event['event_id']} 未检索到受约束案例")
+    return case, trace
 
 
-def build_result(event, case, risk, profile, assurance_contract, intervention_id=None, mode="shadow"):
+def build_result(event, case, graph_trace, risk, profile, assurance_contract, intervention_id=None, mode="shadow"):
     detection = analyze_signal(profile, assurance_contract["detector_parameters"])
     intervention = apply_intervention(profile, intervention_id)
     hypotheses = [
         {
             **hypothesis,
+            "hypothesis_id": f"H{hypothesis['rank']}",
             "original_rank": hypothesis["rank"],
             "posterior": intervention["posterior"][index] if intervention else hypothesis["confidence"],
         }
@@ -158,6 +226,12 @@ def build_result(event, case, risk, profile, assurance_contract, intervention_id
             for check in assurance_contract["deterministic_close_gate"]
         ],
         "evidence_chain": evidence,
+        "graph_retrieval": {
+            "mode": "bounded_relation_path",
+            "knowledge_version": "KG-17.4",
+            "query_trace": graph_trace,
+            "source_fragments": sorted({step["source_ref"] for step in graph_trace}),
+        },
         "actions": case["actions"],
         "feishu_record": {
             "事件ID": event["event_id"],
@@ -174,6 +248,7 @@ def build_result(event, case, risk, profile, assurance_contract, intervention_id
             "反证动作": profile["top_hypotheses"][0]["falsification"],
             "干预结果": intervention["result"] if intervention else "待执行",
             "运行模式": mode,
+            "原始样本哈希": event["raw_sample_hash"],
             "任务状态": "处置中",
         },
         "governance": {
@@ -194,6 +269,7 @@ def main():
     args = parser.parse_args()
     events = load_events()
     cases = load_cases()
+    graph = load_graph()
     profiles, assurance_contract = load_assurance_profiles()
     if args.event:
         events = [event for event in events if event["event_id"] == args.event]
@@ -202,9 +278,9 @@ def main():
     results = []
     for event in events:
         risk = risk_score(event)
-        case = retrieve_case(event, cases)
+        case, graph_trace = retrieve_case(event, cases, graph)
         profile = profiles[event["event_id"]]
-        results.append(build_result(event, case, risk, profile, assurance_contract, args.intervention, args.mode))
+        results.append(build_result(event, case, graph_trace, risk, profile, assurance_contract, args.intervention, args.mode))
     if args.json:
         print(json.dumps(results, ensure_ascii=False, indent=2))
         return
@@ -216,12 +292,15 @@ def main():
         print(f"主动发现：{detection['weak_signal']} | 弱信号 {detection['first_weak_time']} | 可行动 {detection['actionable_time']} | 前置 {detection['lead_minutes']} 分钟（仿真计算）")
         print("Top-3根因与反证动作：")
         for hypothesis in result["top_hypotheses"]:
-            print(f"- H{hypothesis['rank']} {hypothesis['posterior']:.0%} {hypothesis['cause']}；反证：{hypothesis['falsification']}")
+            print(f"- {hypothesis['hypothesis_id']} | Rank {hypothesis['rank']} | {hypothesis['posterior']:.0%} {hypothesis['cause']}；反证：{hypothesis['falsification']}")
         if result["intervention"]:
             print(f"干预结果：{result['intervention']['label']}；{result['intervention']['result']}")
         print("证据链：")
         for item in result["evidence_chain"]:
             print(f"- {item}")
+        print("关系图检索轨迹：")
+        for step in result["graph_retrieval"]["query_trace"]:
+            print(f"- {step['source']} --{step['relation']}--> {step['target']} [{step['source_ref']}]")
         print("处置动作：")
         for index, action in enumerate(result["actions"], 1):
             print(f"{index}. {action}")

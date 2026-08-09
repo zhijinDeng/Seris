@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "knowledge_version": "KG-17.4",
+  "nodes": [
+    {"id":"event:CASE-TQ-20260719-01","type":"QualityEvent","label":"总装拧紧异常","source_ref":"factory_events.csv#CASE-TQ-20260719-01"},
+    {"id":"station:ST-GA-12","type":"Station","label":"GA-12底盘合装工位","source_ref":"factory_events.csv#ST-GA-12"},
+    {"id":"asset:ASSET-TQ-17","type":"Equipment","label":"TQ-17智能拧紧枪","source_ref":"factory_events.csv#ASSET-TQ-17"},
+    {"id":"parameter:TAG-TQ17-M12-TORQUE","type":"ProcessParameter","label":"M12关键螺栓扭矩","source_ref":"factory_events.csv#TAG-TQ17-M12-TORQUE"},
+    {"id":"risk:TQ-PRELOAD","type":"QualityCharacteristic","label":"关键连接预紧力","source_ref":"quality_cases.json#C-009"},
+    {"id":"case:C-009","type":"HistoricalCase","label":"拧紧套筒磨损案例","source_ref":"quality_cases.json#C-009"},
+    {"id":"cause:TQ-SOCKET-CAL","type":"FailureCause","label":"套筒磨损或拧紧枪校准漂移","source_ref":"quality_cases.json#C-009"},
+
+    {"id":"event:CASE-WD-20260719-02","type":"QualityEvent","label":"焊点电流漂移","source_ref":"factory_events.csv#CASE-WD-20260719-02"},
+    {"id":"station:ST-BIW-07","type":"Station","label":"BIW-07侧围焊接工位","source_ref":"factory_events.csv#ST-BIW-07"},
+    {"id":"asset:ASSET-RB-42","type":"Equipment","label":"RB-42焊接机器人","source_ref":"factory_events.csv#ASSET-RB-42"},
+    {"id":"parameter:TAG-RB42-WELD-CURRENT","type":"ProcessParameter","label":"焊点电流","source_ref":"factory_events.csv#TAG-RB42-WELD-CURRENT"},
+    {"id":"risk:WD-STRENGTH","type":"QualityCharacteristic","label":"焊点强度","source_ref":"quality_cases.json#C-021"},
+    {"id":"case:C-021","type":"HistoricalCase","label":"焊接热输入不足案例","source_ref":"quality_cases.json#C-021"},
+    {"id":"cause:WD-CAP-LOOP","type":"FailureCause","label":"电极帽磨损或二次回路接触电阻升高","source_ref":"quality_cases.json#C-021"},
+
+    {"id":"event:CASE-PA-20260719-03","type":"QualityEvent","label":"烘房三区低温","source_ref":"factory_events.csv#CASE-PA-20260719-03"},
+    {"id":"station:ST-PA-05","type":"Station","label":"PA-05中涂烘干工位","source_ref":"factory_events.csv#ST-PA-05"},
+    {"id":"asset:ASSET-OV-03","type":"Equipment","label":"OV-03烘房","source_ref":"factory_events.csv#ASSET-OV-03"},
+    {"id":"parameter:TAG-OV03-Z3-TEMP","type":"ProcessParameter","label":"三区温度","source_ref":"factory_events.csv#TAG-OV03-Z3-TEMP"},
+    {"id":"risk:PA-ADHESION","type":"QualityCharacteristic","label":"涂层附着力","source_ref":"quality_cases.json#C-033"},
+    {"id":"case:C-033","type":"HistoricalCase","label":"风门响应滞后案例","source_ref":"quality_cases.json#C-033"},
+    {"id":"cause:PA-DAMPER-PID","type":"FailureCause","label":"风门执行机构响应滞后或温控回路调节不足","source_ref":"quality_cases.json#C-033"},
+
+    {"id":"event:CASE-DC-20260719-04","type":"QualityEvent","label":"压铸模温差扩大","source_ref":"factory_events.csv#CASE-DC-20260719-04"},
+    {"id":"station:ST-DC-02","type":"Station","label":"DC-02后车体压铸工位","source_ref":"factory_events.csv#ST-DC-02"},
+    {"id":"asset:ASSET-DC-9000T","type":"Equipment","label":"DC-9000T压铸单元","source_ref":"factory_events.csv#ASSET-DC-9000T"},
+    {"id":"parameter:TAG-DC02-MOLD-DT","type":"ProcessParameter","label":"模温差","source_ref":"factory_events.csv#TAG-DC02-MOLD-DT"},
+    {"id":"risk:DC-INTERNAL","type":"QualityCharacteristic","label":"缩孔与尺寸稳定性","source_ref":"quality_cases.json#C-047"},
+    {"id":"case:C-047","type":"HistoricalCase","label":"冷却水路异常案例","source_ref":"quality_cases.json#C-047"},
+    {"id":"cause:DC-WATER-VALVE","type":"FailureCause","label":"冷却水路堵塞或温控阀响应异常","source_ref":"quality_cases.json#C-047"}
+  ],
+  "edges": [
+    {"source":"event:CASE-TQ-20260719-01","relation":"observedAt","target":"station:ST-GA-12"},
+    {"source":"station:ST-GA-12","relation":"operates","target":"asset:ASSET-TQ-17"},
+    {"source":"asset:ASSET-TQ-17","relation":"emits","target":"parameter:TAG-TQ17-M12-TORQUE"},
+    {"source":"parameter:TAG-TQ17-M12-TORQUE","relation":"affects","target":"risk:TQ-PRELOAD"},
+    {"source":"event:CASE-TQ-20260719-01","relation":"matchedCase","target":"case:C-009"},
+    {"source":"case:C-009","relation":"hasFailureCause","target":"cause:TQ-SOCKET-CAL"},
+
+    {"source":"event:CASE-WD-20260719-02","relation":"observedAt","target":"station:ST-BIW-07"},
+    {"source":"station:ST-BIW-07","relation":"operates","target":"asset:ASSET-RB-42"},
+    {"source":"asset:ASSET-RB-42","relation":"emits","target":"parameter:TAG-RB42-WELD-CURRENT"},
+    {"source":"parameter:TAG-RB42-WELD-CURRENT","relation":"affects","target":"risk:WD-STRENGTH"},
+    {"source":"event:CASE-WD-20260719-02","relation":"matchedCase","target":"case:C-021"},
+    {"source":"case:C-021","relation":"hasFailureCause","target":"cause:WD-CAP-LOOP"},
+
+    {"source":"event:CASE-PA-20260719-03","relation":"observedAt","target":"station:ST-PA-05"},
+    {"source":"station:ST-PA-05","relation":"operates","target":"asset:ASSET-OV-03"},
+    {"source":"asset:ASSET-OV-03","relation":"emits","target":"parameter:TAG-OV03-Z3-TEMP"},
+    {"source":"parameter:TAG-OV03-Z3-TEMP","relation":"affects","target":"risk:PA-ADHESION"},
+    {"source":"event:CASE-PA-20260719-03","relation":"matchedCase","target":"case:C-033"},
+    {"source":"case:C-033","relation":"hasFailureCause","target":"cause:PA-DAMPER-PID"},
+
+    {"source":"event:CASE-DC-20260719-04","relation":"observedAt","target":"station:ST-DC-02"},
+    {"source":"station:ST-DC-02","relation":"operates","target":"asset:ASSET-DC-9000T"},
+    {"source":"asset:ASSET-DC-9000T","relation":"emits","target":"parameter:TAG-DC02-MOLD-DT"},
+    {"source":"parameter:TAG-DC02-MOLD-DT","relation":"affects","target":"risk:DC-INTERNAL"},
+    {"source":"event:CASE-DC-20260719-04","relation":"matchedCase","target":"case:C-047"},
+    {"source":"case:C-047","relation":"hasFailureCause","target":"cause:DC-WATER-VALVE"}
+  ]
+}

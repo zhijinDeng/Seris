@@ -15,5 +15,14 @@
   {"id":"P5","type":"论文","title":"Data-driven causal knowledge graph construction for root cause analysis in quality problem solving","year":2023,"url":"https://doi.org/10.1080/00207543.2022.2137597","used_for":"从质量问题解决数据中挖掘因果知识"},
   {"id":"P6","type":"论文","title":"Counterfactual Root Cause Analysis via Anomaly Detection and Causal Graphs","year":2023,"url":"https://doi.org/10.1109/INDIN51400.2023.10218245","used_for":"异常检测、因果图与反事实干预验证"},
   {"id":"P7","type":"论文","title":"Root cause analysis using anomaly detection and temporal informed causal graphs","year":2024,"url":"https://doi.org/10.24406/publica-3069","used_for":"利用时间信息约束因果传播方向"},
-  {"id":"P8","type":"论文","title":"Retrieval-Augmented Generation using Knowledge Graphs for Manufacturing Problem-Solving","year":2025,"url":"https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10","used_for":"在线异常检测、FMEA因果网络、历史8D图谱与混合检索"}
+  {"id":"P8","type":"论文","title":"Retrieval-Augmented Generation using Knowledge Graphs for Manufacturing Problem-Solving","year":2025,"url":"https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10","used_for":"在线异常检测、FMEA因果网络、历史8D图谱与混合检索"},
+  {"id":"S0","type":"企业官方","title":"赛力斯集团股份有限公司2025年年度报告","year":2026,"url":"https://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12037655&stockid=601127","used_for":"工业AI大模型、36,000+质量点位实时监控、信息-决策-行动闭环"},
+  {"id":"Q2","type":"标准","title":"ISO 23247-2制造数字孪生参考架构","year":2021,"url":"https://www.iso.org/standard/78743.html","used_for":"制造域实体与功能实体分层"},
+  {"id":"Q3","type":"标准","title":"OPC UA for ISA-95 Common Object Model","year":2024,"url":"https://reference.opcfoundation.org/specs/OPC-10030/4.1","used_for":"设备、物料、人员与企业系统语义互操作"},
+  {"id":"Q4","type":"可信OT","title":"NIST SP 800-82 Rev.3","year":2023,"url":"https://csrc.nist.gov/pubs/sp/800/82/r3/final","used_for":"OT分区、访问控制、监测与恢复"},
+  {"id":"Q5","type":"质量方法","title":"AIAG Control Plan 1st Edition","year":2024,"url":"https://www.aiag.org/training-and-resources/manuals/details/CP-1","used_for":"控制计划、反应计划与安全投产"},
+  {"id":"Q6","type":"质量方法","title":"AIAG & VDA FMEA Handbook","year":2019,"url":"https://www.aiag.org/training-and-resources/manuals/details/FMEAAV-1","used_for":"过程功能、失效链与行动优先级"},
+  {"id":"F5","type":"飞书官方","title":"事件订阅概述","year":2026,"url":"https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN","used_for":"协同状态反向事件流"},
+  {"id":"F6","type":"飞书官方","title":"多维表格记录变更事件","year":2026,"url":"https://open.feishu.cn/document/docs/bitable-v1/events/bitable_record_changed","used_for":"记录变更订阅、权限与触发边界"},
+  {"id":"F7","type":"飞书官方","title":"获取多维表格自动化工作流","year":2026,"url":"https://open.feishu.cn/document/docs/bitable-v1/app-workflow/list?lang=zh-CN","used_for":"工作流清单与生产能力核验"}
 ]

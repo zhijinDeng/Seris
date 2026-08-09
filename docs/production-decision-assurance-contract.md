@@ -2,7 +2,7 @@
 
 ## 定位
 
-知质·灵巡是MES/QMS/SCADA与现场岗位之间的质量风险决策保障层。合同约束数据如何进入、结论如何形成、动作由谁执行、异常时如何降级以及事件如何关闭。当前仓库实现脱敏仿真和飞书链路验证；生产部署需要将相同合同落实到服务端策略、企业身份、OT分区和不可变审计。
+知质·灵巡是MES/QMS/SCADA与现场岗位之间的质量风险决策保障层。合同约束数据如何进入、结论如何形成、动作由谁执行、异常时如何降级以及事件如何关闭。当前仓库实现脱敏仿真、可执行事件准入、关系图查询和Base写入回读；任务与文档为对象样例。生产部署需要将相同合同落实到服务端策略、企业身份、OT分区和不可变审计。
 
 ## OT与IT边界
 
@@ -16,7 +16,7 @@
 
 ## 事件数据契约
 
-边缘事件必须包含`source_system`、`source_event_id`、`event_time`、`ingest_time`、`sequence_no`、`asset_id`、`station_id`、`tag_id`、`unit`、`quality_code`、`schema_version`、`calibration_id`和对象绑定。平台计算延迟、缺失、时钟偏差、采样率、量程和单位一致性；不满足阈值的事件进入`QUARANTINED`，不能触发自动派单。
+边缘事件按`data/factory_event.schema.json`的2.1契约准入，必须包含`source_system`、`source_event_id`、`event_time`、`ingest_time`、`sequence_no`、`asset_id`、`station_id`、`tag_id`、`unit`、`quality_code`、`calibration_id`、`calibration_valid_until`和`object_binding`。运行脚本执行空值、重复、水位、单位、工艺窗口、校准有效期和质量码检查；不满足阈值的事件进入`QUARANTINED`，不能触发自动派单。决策快照保存原始样本SHA-256。
 
 决策快照必须包含`rule_set_version`、`feature_schema_version`、`knowledge_snapshot`、`ontology_version`、`evidence_hash`、Top-3、冲突证据、干预状态和运行模式。事件护照的哈希输入随干预、签署、授权和关闭状态变化。
 
@@ -66,3 +66,5 @@
 4. L0、数据过期和知识失效能在策略层阻断规定动作。
 5. 飞书中断时任务显示待补偿，恢复后同一幂等键只创建一次。
 6. 已关闭P1五项门完整率为100%，过程字段完整率不低于95%，越权成功操作为0。
+7. `scripts/test_event_contract.py`必须拒绝缺字段、重复、延迟、错误单位、校准失效和可疑质量码六类异常。
+8. 试点统计、金标准、置信区间与Go/No-Go遵循`docs/pilot-acceptance-protocol.md`。

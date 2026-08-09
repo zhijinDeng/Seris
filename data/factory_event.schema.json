@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://seres.example/schemas/factory-event-2.1.json",
+  "title": "质量风险事件准入契约",
+  "type": "object",
+  "required": [
+    "event_id", "event_time", "ingest_time", "source_system", "source_event_id",
+    "sequence_no", "quality_code", "schema_version", "asset_id", "station_id",
+    "tag_id", "calibration_id", "calibration_valid_until", "object_binding",
+    "line", "station", "equipment", "parameter", "value", "unit", "lower",
+    "upper", "alarm", "quality_risk", "vin_scope"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.1"},
+    "quality_code": {"enum": ["GOOD", "SUSPECT", "QUARANTINED"]},
+    "sequence_no": {"type": "integer", "minimum": 1},
+    "value": {"type": "number"},
+    "lower": {"type": "number"},
+    "upper": {"type": "number"},
+    "event_time": {"type": "string", "format": "date-time"},
+    "ingest_time": {"type": "string", "format": "date-time"},
+    "calibration_valid_until": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

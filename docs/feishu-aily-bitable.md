@@ -20,13 +20,13 @@ P1卡片面向质量负责人、设备工程师、工艺工程师和班组长，
 
 ## 文档与事件订阅
 
-事件关闭时自动生成复盘文档，包含事件摘要、证据链、根因假设、处置动作、关联任务和关闭检查项，并进入质量知识空间。任务更新事件和消息交互事件作为闭环回写入口：责任人完成任务、上传附件或修改状态后，Agent重新校验关闭条件并更新Base。生产部署采用长连接消费者，按message_id、event_id和task_guid去重。
+生产部署在事件关闭后生成复盘文档，包含事件摘要、证据链、根因假设、处置动作、关联任务和关闭检查项，并进入质量知识空间。Base记录、任务、审批和消息交互事件作为闭环回写入口；Agent只读取回执后的证据状态重新校验关闭条件。生产消费者按平台事件ID、事件ID和任务GUID去重，并保存Inbox处理结果。
 
-## 当前在线证明
+## 当前证据分层
 
 - 在线Base：`https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD`
-- 飞书任务：`https://applink.feishu.cn/client/todo/detail?guid=f10d51e5-cc8e-4c71-9441-cd29a77feacf`
-- 复盘文档：`https://larkcommunity.feishu.cn/docx/PjludNq8foBhkrxV8VQccsldneb`
+- 任务对象样例：`https://applink.feishu.cn/client/todo/detail?guid=f10d51e5-cc8e-4c71-9441-cd29a77feacf`
+- 复盘文档对象样例：`https://larkcommunity.feishu.cn/docx/PjludNq8foBhkrxV8VQccsldneb`
 - 本地编排：`scripts/orchestrate_feishu_quality_event.ps1`
 
-消息发送默认关闭。只有明确确认收件人、消息内容和发送身份后，脚本才允许开启`-SendMessage -ConfirmMessage`，避免演示环境误触达真实群组。
+Base写入回读已经在线核验；任务与文档用于证明对象形态。消息发送默认关闭。机器人卡片、Aily、企业角色映射、原生审批和事件订阅须完成企业应用发布后再计入生产验收。

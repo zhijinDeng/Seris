@@ -1,4 +1,4 @@
-# 飞书生产接入指南
+﻿# 飞书生产接入指南
 
 ## 已完成环境
 
@@ -9,19 +9,19 @@
 干跑验证：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\orchestrate_feishu_quality_event.ps1 -WriteBase -CreateTask -CreateReviewDoc -DryRun
+powershell -ExecutionPolicy Bypass -File scripts\orchestrate_feishu_quality_event.ps1 -WriteBase -CreateTask -CreateReviewDoc -DryRun
 ```
 
 创建飞书任务与复盘文档：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\orchestrate_feishu_quality_event.ps1 -CreateTask -CreateReviewDoc
+powershell -ExecutionPolicy Bypass -File scripts\orchestrate_feishu_quality_event.ps1 -CreateTask -CreateReviewDoc
 ```
 
 同步质量事件Base：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\赛力斯\scripts\sync_feishu_quality_event.ps1 -WriteRecord
+powershell -ExecutionPolicy Bypass -File scripts\sync_feishu_quality_event.ps1 -WriteRecord
 ```
 
 脚本读取`data/feishu_orchestration_event.json`，自动获取当前授权用户open_id，用事件ID构造任务幂等键，并把任务嵌入复盘文档。运行状态写入本地忽略文件，不提交访问令牌或应用密钥。
