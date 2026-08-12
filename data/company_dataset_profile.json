@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "source": {
+    "business_reference": "赛力斯设备质量风险AI数字员工_业务场景参考材料.docx",
+    "masked_dataset": "赛力斯设备场景闭环脱敏数据包.xlsx",
+    "scope_note": "赛事提供的历史静态快照。仅使用脱敏结构、聚合统计和重键关联；原始文件不进入公共仓库。",
+    "limitations": [
+      "不含人员、真实设备编号、精确时间、厂区工位、品牌型号和原始自由文本",
+      "不含设备手册、维修手册、图纸和指导书",
+      "关联覆盖率不等于标签准确率，候选失效模式必须经业务人员复核"
+    ]
+  },
+  "snapshot": {
+    "equipment_types": 625,
+    "equipment_instances": 9673,
+    "equipment_functions": 336,
+    "failure_modes": 1287,
+    "work_orders": 406
+  },
+  "relationship_coverage": {
+    "equipment_to_type": {"linked": 9673, "total": 9673, "rate": 1.0},
+    "equipment_with_knowledge_chain": {"linked": 7517, "total": 9673, "rate": 0.7771115476},
+    "work_order_to_equipment": {"linked": 383, "total": 406, "rate": 0.9433497537},
+    "work_order_to_failure_mode": {"linked": 71, "total": 406, "rate": 0.1748768473},
+    "type_consistent_full_chain": {"linked": 62, "total": 406, "rate": 0.1527093596}
+  },
+  "business_record_quality": {
+    "closed_work_orders": {"count": 316, "total": 406, "rate": 0.7783251232},
+    "cause_not_confirmed": {"count": 286, "total": 406, "rate": 0.7044334975},
+    "action_not_structured": {"count": 259, "total": 406, "rate": 0.6379310345},
+    "content_complete_candidates": {"count": 40, "total": 406, "rate": 0.0985221675},
+    "linked_equipment_instances": 62,
+    "top_10_equipment_work_order_share": 0.7415143603
+  },
+  "flagship_case": {
+    "event_id": "CASE-KD-20260812-05",
+    "title": "安全防护设备工单集中的闭而未解风险",
+    "risk_type": "知识债务与复发风险",
+    "risk_level": "P2-专家复核",
+    "primary_equipment_id": "EQ-XBB841ED4011",
+    "equipment_type_id": "ET-X23C58B2E6F0",
+    "equipment_family": "安全防护设备",
+    "function_id": "FN-X0601933D3A3",
+    "function_category": "安全防护",
+    "observations": {
+      "work_orders": 121,
+      "closed": 119,
+      "pending": 2,
+      "cause_not_confirmed": 120,
+      "generic_action": 121,
+      "failure_mode_linked": 0
+    },
+    "same_type_evidence": {
+      "equipment_id": "EQ-X97058A25213",
+      "work_orders": 29,
+      "failure_mode_linked": 4,
+      "maintenance_factor_records": 4,
+      "specific_action": "清洁疏通或润滑",
+      "specific_action_records": 1
+    },
+    "candidate_failure_modes": [
+      {
+        "failure_mode_id": "FM-XF976CAACE89",
+        "component_family": "工装夹持元件",
+        "phenomenon_category": "安全防护异常",
+        "cause_category": "维护因素",
+        "effect_category": "安全影响",
+        "detection_category": "未记录"
+      },
+      {
+        "failure_mode_id": "FM-X057C259452B",
+        "component_family": "执行元件",
+        "phenomenon_category": "安全防护异常",
+        "cause_category": "维护因素",
+        "effect_category": "安全影响",
+        "detection_category": "未记录"
+      }
+    ],
+    "agent_judgement": {
+      "conclusion": "工单关闭状态不能证明根因闭环。该设备的高频复发、原因缺失和失效模式未关联构成知识债务，应触发专项复核。",
+      "confidence_boundary": "现有快照只能提出维护因素候选，不能自动确认为根因，也不能推断精确发生频率。",
+      "actions": [
+        "核验两张待处理工单的现场状态并建立设备风险线程",
+        "对工装夹持元件和执行元件执行清洁、润滑、动作可靠性与安全回路检查",
+        "由设备、维修和质量人员确认失效模式关联，不允许模型自动回填",
+        "确认后发起点巡检项目、检测方法和维护周期变更申请",
+        "观察后续复发情况，满足有效性条件后再关闭知识债务事件"
+      ]
+    }
+  }
+}

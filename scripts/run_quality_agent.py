@@ -65,6 +65,10 @@ def load_graph():
     return json.loads((ROOT / "data" / "quality_graph.json").read_text(encoding="utf-8"))
 
 
+def load_company_profile():
+    return json.loads((ROOT / "data" / "company_dataset_profile.json").read_text(encoding="utf-8"))
+
+
 def load_assurance_profiles():
     payload = json.loads((ROOT / "data" / "decision_assurance.json").read_text(encoding="utf-8"))
     return payload["profiles"], payload
@@ -179,6 +183,116 @@ def retrieve_case(event, cases, graph):
     return case, trace
 
 
+def retrieve_graph_path(graph: dict, start: str, max_depth: int = 5) -> list[dict]:
+    nodes = {node["id"]: node for node in graph["nodes"]}
+    adjacency: dict[str, list[dict]] = {}
+    for edge in graph["edges"]:
+        adjacency.setdefault(edge["source"], []).append(edge)
+        adjacency.setdefault(edge["target"], []).append({
+            "source": edge["target"],
+            "relation": f"inverse:{edge['relation']}",
+            "target": edge["source"],
+        })
+    if start not in nodes:
+        raise ValueError(f"知识图谱缺少起点: {start}")
+    queue = [(start, 0)]
+    visited = {start}
+    trace = []
+    while queue:
+        source, depth = queue.pop(0)
+        if depth >= max_depth:
+            continue
+        for edge in adjacency.get(source, []):
+            target = edge["target"]
+            if target in visited and edge["relation"] not in {"hasWorkOrder", "linkedFailureMode"}:
+                continue
+            target_node = nodes[target]
+            trace.append({
+                "source_id": source,
+                "source": nodes[source]["label"],
+                "relation": edge["relation"],
+                "target_id": target,
+                "target": target_node["label"],
+                "source_ref": target_node["source_ref"],
+            })
+            if target not in visited:
+                visited.add(target)
+                queue.append((target, depth + 1))
+    return trace
+
+
+def build_company_audit_result(profile: dict, graph: dict) -> dict:
+    case = profile["flagship_case"]
+    observations = case["observations"]
+    sibling = case["same_type_evidence"]
+    trace = retrieve_graph_path(graph, f"event:{case['event_id']}")
+    candidates = case["candidate_failure_modes"]
+    hypotheses = [
+        {
+            "hypothesis_id": "H1",
+            "rank": 1,
+            "failure_mode_id": candidates[0]["failure_mode_id"],
+            "candidate": f"{candidates[0]['component_family']}维护因素",
+            "support": f"同类别实例已有{sibling['failure_mode_linked']}张关联工单，且出现“{sibling['specific_action']}”处置",
+            "conflict": "当前设备121张工单均未关联失效模式，候选条目也未记录检测方法",
+            "verification": "检查夹持元件清洁润滑状态、动作可靠性与安全回路，并由设备/维修/质量三方确认",
+            "status": "候选-待现场核验",
+        },
+        {
+            "hypothesis_id": "H2",
+            "rank": 2,
+            "failure_mode_id": candidates[1]["failure_mode_id"],
+            "candidate": f"{candidates[1]['component_family']}维护因素",
+            "support": "与目标设备同类别、同安全防护功能、同异常现象和同安全影响",
+            "conflict": "缺少同实例处置证据、检测方法和原始工单正文",
+            "verification": "检查执行元件行程、反馈、污染和润滑状态，记录可复现条件",
+            "status": "候选-待现场核验",
+        },
+    ]
+    return {
+        "event_id": case["event_id"],
+        "event_type": "knowledge_debt_audit",
+        "risk": case["risk_level"],
+        "title": case["title"],
+        "source_boundary": profile["source"]["scope_note"],
+        "trigger": {
+            "equipment_id": case["primary_equipment_id"],
+            "work_orders": observations["work_orders"],
+            "closed": observations["closed"],
+            "pending": observations["pending"],
+            "cause_not_confirmed": observations["cause_not_confirmed"],
+            "generic_action": observations["generic_action"],
+            "failure_mode_linked": observations["failure_mode_linked"],
+            "closed_but_unresolved_rate": round(observations["cause_not_confirmed"] / observations["work_orders"], 4),
+        },
+        "judgement": case["agent_judgement"]["conclusion"],
+        "confidence_boundary": case["agent_judgement"]["confidence_boundary"],
+        "top_hypotheses": hypotheses,
+        "graph_retrieval": {
+            "mode": "equipment_type_sibling_transfer",
+            "knowledge_version": graph["knowledge_version"],
+            "query_trace": trace,
+            "source_fragments": sorted({step["source_ref"] for step in trace}),
+        },
+        "actions": case["agent_judgement"]["actions"],
+        "close_gate": [
+            "两张待处理工单与历史抽样记录已核验",
+            "候选失效模式经设备、维修、质量三方确认或驳回",
+            "维护措施执行并完成复机确认",
+            "点巡检变更获批且主平台回写完成回读核对",
+            "后续观察窗内复发情况达到批准准则",
+        ],
+        "feishu_objects": [
+            "知识债事件",
+            "诊断任务",
+            "现场检查记录",
+            "复机确认",
+            "标准变更审批",
+            "设备平台回写回执",
+        ],
+    }
+
+
 def build_result(event, case, graph_trace, risk, profile, assurance_contract, intervention_id=None, mode="shadow"):
     detection = analyze_signal(profile, assurance_contract["detector_parameters"])
     intervention = apply_intervention(profile, intervention_id)
@@ -228,7 +342,7 @@ def build_result(event, case, graph_trace, risk, profile, assurance_contract, in
         "evidence_chain": evidence,
         "graph_retrieval": {
             "mode": "bounded_relation_path",
-            "knowledge_version": "KG-17.4",
+            "knowledge_version": "KG-18.0",
             "query_trace": graph_trace,
             "source_fragments": sorted({step["source_ref"] for step in graph_trace}),
         },
@@ -266,7 +380,29 @@ def main():
     parser.add_argument("--json", action="store_true", help="输出结构化JSON")
     parser.add_argument("--intervention", help="执行指定反事实干预并更新Top-3后验")
     parser.add_argument("--mode", choices=["shadow", "collaborative", "controlled"], default="shadow", help="运行权限模式")
+    parser.add_argument("--company-audit", action="store_true", help="运行企业脱敏数据的闭而未解风险审计")
     args = parser.parse_args()
+    if args.company_audit:
+        result = build_company_audit_result(load_company_profile(), load_graph())
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return
+        print("知质·灵巡企业脱敏数据审计\n")
+        print(f"事件ID：{result['event_id']} | 风险：{result['risk']}")
+        print(result["judgement"])
+        print("\nTop候选与核验动作：")
+        for hypothesis in result["top_hypotheses"]:
+            print(f"- {hypothesis['hypothesis_id']} | Rank {hypothesis['rank']} | {hypothesis['candidate']} | {hypothesis['status']}")
+            print(f"  支持：{hypothesis['support']}")
+            print(f"  冲突：{hypothesis['conflict']}")
+            print(f"  核验：{hypothesis['verification']}")
+        print("\nGraph检索轨迹：")
+        for step in result["graph_retrieval"]["query_trace"]:
+            print(f"- {step['source']} --{step['relation']}--> {step['target']} [{step['source_ref']}]")
+        print("\n协同动作：")
+        for index, action in enumerate(result["actions"], 1):
+            print(f"{index}. {action}")
+        return
     events = load_events()
     cases = load_cases()
     graph = load_graph()

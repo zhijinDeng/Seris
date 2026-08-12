@@ -14,13 +14,26 @@
     "detectedBy": "http://seres.example/kg/detectedBy",
     "verifiedBy": "http://seres.example/kg/verifiedBy",
     "approvedBy": "http://seres.example/kg/approvedBy",
+    "instanceOf": "http://seres.example/kg/instanceOf",
+    "hasWorkOrder": "http://seres.example/kg/hasWorkOrder",
+    "linkedFailureMode": "http://seres.example/kg/linkedFailureMode",
+    "updatesStandard": "http://seres.example/kg/updatesStandard",
+    "requiresRestartConfirmation": "http://seres.example/kg/requiresRestartConfirmation",
     "version": "http://seres.example/kg/version",
     "evidenceHash": "http://seres.example/kg/evidenceHash"
   },
   "@graph": [
     {
       "@id": "Equipment",
-      "name": "设备"
+      "name": "设备实例"
+    },
+    {
+      "@id": "EquipmentType",
+      "name": "设备类别与标准模型"
+    },
+    {
+      "@id": "EquipmentFunction",
+      "name": "设备功能"
     },
     {
       "@id": "Station",
@@ -101,6 +114,26 @@
     {
       "@id": "Task",
       "name": "处置任务"
+    },
+    {
+      "@id": "WorkOrder",
+      "name": "故障工单"
+    },
+    {
+      "@id": "InspectionStandard",
+      "name": "点巡检项目、方法与周期"
+    },
+    {
+      "@id": "MaintenancePlan",
+      "name": "维修维护计划"
+    },
+    {
+      "@id": "RestartConfirmation",
+      "name": "设备安全、功能、运行稳定性与质量影响复机确认"
+    },
+    {
+      "@id": "KnowledgeDebtEvent",
+      "name": "已关闭但根因、措施或失效模式未闭环的复发风险事件"
     },
     {
       "@id": "ReviewRecord",

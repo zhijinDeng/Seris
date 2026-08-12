@@ -26,6 +26,8 @@ async function pageMetrics(page) {
     pipelineSteps: document.querySelectorAll(".pipeline-step").length,
     readinessRows: document.querySelectorAll(".readiness-row").length,
     citationButtons: document.querySelectorAll(".bubble-citations button").length
+    ,companyMetrics: document.querySelectorAll("#companyDatasetMetrics > div").length
+    ,funnelRows: document.querySelectorAll("#relationshipFunnel .funnel-row").length
   }));
 }
 
@@ -45,6 +47,15 @@ async function main() {
   expect(metrics.interventions === 2 && metrics.responsibilityRows === 6, "反事实验证或责任链组件数量错误");
   expect(metrics.pipelineSteps === 6 && metrics.readinessRows === 7, "飞书六对象或生产就绪门数量错误");
   expect(metrics.citationButtons === 4, "数字员工回答缺少证据引用");
+  expect(metrics.companyMetrics === 5 && metrics.funnelRows === 4, "企业脱敏数据规模或关系漏斗缺失");
+  await desktop.locator("#runDataAuditBtn").click();
+  await desktop.waitForTimeout(3300);
+  expect((await desktop.locator("#dataAuditTrace").textContent()).includes("P2知识债务事件"), "闭而未解审计未形成受控结论");
+  expect((await desktop.locator("#dataAuditTrace").textContent()).includes("不自动写入唯一根因"), "企业审计缺少人工确认边界");
+  await desktop.locator("#companyEvidenceBtn").click();
+  expect((await desktop.locator("#evidenceDrawer").getAttribute("aria-hidden")) === "false", "企业数据证据链未打开");
+  expect((await desktop.locator("#drawerContent").textContent()).includes("121张") && (await desktop.locator("#drawerContent").textContent()).includes("均未关联失效模式"), "企业数据证据链事实不完整");
+  await desktop.locator("#drawerCloseBtn").click();
   expect((await desktop.locator("[data-plant='assembly'] b").textContent()).includes("P1"), "首场景未动态点亮总装产线");
   expect((await desktop.locator("[data-plant='welding'] b").textContent()).includes("稳定"), "非当前焊装产线状态错误");
   expect((await desktop.locator("#liveClock").textContent()).trim() === "14:16", "首场景回放时钟错误");
@@ -98,9 +109,9 @@ async function main() {
   await desktop.locator("#completeInterventionBtn").click();
   expect((await desktop.locator("#interventionStatus").textContent()).includes("已签署"), "干预实测未签署");
   expect((await desktop.locator("#validationSummary").textContent()).includes("4/5"), "干预后的关闭门状态错误");
-  expect(await desktop.locator("#resolveBtn").isDisabled(), "任务与知识回写未验收时关闭按钮必须禁用");
+  expect(await desktop.locator("#resolveBtn").isDisabled(), "任务与知识草案未验收时关闭按钮必须禁用");
   await desktop.locator("#writebackBtn").click();
-  expect((await desktop.locator("#validationSummary").textContent()).includes("5/5"), "独立回写验收后的关闭门状态错误");
+  expect((await desktop.locator("#validationSummary").textContent()).includes("5/5"), "独立任务与知识草案验收后的关闭门状态错误");
   expect(!(await desktop.locator("#resolveBtn").isDisabled()), "五项独立证据完成后应允许申请关闭");
   await desktop.locator("#resolveBtn").click();
   expect((await desktop.locator("#validationSummary").textContent()).includes("5/5"), "关闭后的确定性校验未全部通过");
@@ -123,7 +134,7 @@ async function main() {
 
   expect(errors.length === 0, errors.join("\n"));
   await browser.close();
-  console.log(JSON.stringify({ desktop: { width: 1600, overflow: false }, mobile: { width: 390, overflow: false }, projection: { width: 1366, fileProtocol: true }, scenarios: 4, workflow: "five-independent-gates-closed", screenshots: 5 }, null, 2));
+  console.log(JSON.stringify({ desktop: { width: 1600, overflow: false }, mobile: { width: 390, overflow: false }, projection: { width: 1366, fileProtocol: true }, scenarios: 4, companyAudit: "closed-but-unresolved-verified", workflow: "field-close-plus-knowledge-debt", screenshots: 5 }, null, 2));
 }
 
 main().catch((error) => {

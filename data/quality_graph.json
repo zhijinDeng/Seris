@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "knowledge_version": "KG-17.4",
+  "knowledge_version": "KG-18.0",
   "nodes": [
     {"id":"event:CASE-TQ-20260719-01","type":"QualityEvent","label":"总装拧紧异常","source_ref":"factory_events.csv#CASE-TQ-20260719-01"},
     {"id":"station:ST-GA-12","type":"Station","label":"GA-12底盘合装工位","source_ref":"factory_events.csv#ST-GA-12"},
@@ -32,7 +32,16 @@
     {"id":"parameter:TAG-DC02-MOLD-DT","type":"ProcessParameter","label":"模温差","source_ref":"factory_events.csv#TAG-DC02-MOLD-DT"},
     {"id":"risk:DC-INTERNAL","type":"QualityCharacteristic","label":"缩孔与尺寸稳定性","source_ref":"quality_cases.json#C-047"},
     {"id":"case:C-047","type":"HistoricalCase","label":"冷却水路异常案例","source_ref":"quality_cases.json#C-047"},
-    {"id":"cause:DC-WATER-VALVE","type":"FailureCause","label":"冷却水路堵塞或温控阀响应异常","source_ref":"quality_cases.json#C-047"}
+    {"id":"cause:DC-WATER-VALVE","type":"FailureCause","label":"冷却水路堵塞或温控阀响应异常","source_ref":"quality_cases.json#C-047"},
+
+    {"id":"event:CASE-KD-20260812-05","type":"KnowledgeDebtEvent","label":"安全防护设备闭而未解风险","source_ref":"company_dataset_profile.json#flagship_case"},
+    {"id":"equipment:EQ-XBB841ED4011","type":"Equipment","label":"工单集中设备实例","source_ref":"company_dataset_profile.json#flagship_case.primary_equipment_id"},
+    {"id":"equipmentType:ET-X23C58B2E6F0","type":"EquipmentType","label":"安全防护设备类别","source_ref":"company_dataset_profile.json#flagship_case.equipment_type_id"},
+    {"id":"function:FN-X0601933D3A3","type":"EquipmentFunction","label":"安全防护功能","source_ref":"company_dataset_profile.json#flagship_case.function_id"},
+    {"id":"failureMode:FM-XF976CAACE89","type":"FailureMode","label":"维护因素/工装夹持元件候选","source_ref":"company_dataset_profile.json#flagship_case.candidate_failure_modes[0]"},
+    {"id":"failureMode:FM-X057C259452B","type":"FailureMode","label":"维护因素/执行元件候选","source_ref":"company_dataset_profile.json#flagship_case.candidate_failure_modes[1]"},
+    {"id":"equipment:EQ-X97058A25213","type":"Equipment","label":"同类别已关联实例","source_ref":"company_dataset_profile.json#flagship_case.same_type_evidence"},
+    {"id":"workOrder:WO-XD3037DA4A64","type":"WorkOrder","label":"清洁疏通或润滑处置记录","source_ref":"company_dataset_profile.json#flagship_case.same_type_evidence.specific_action"}
   ],
   "edges": [
     {"source":"event:CASE-TQ-20260719-01","relation":"observedAt","target":"station:ST-GA-12"},
@@ -61,6 +70,15 @@
     {"source":"asset:ASSET-DC-9000T","relation":"emits","target":"parameter:TAG-DC02-MOLD-DT"},
     {"source":"parameter:TAG-DC02-MOLD-DT","relation":"affects","target":"risk:DC-INTERNAL"},
     {"source":"event:CASE-DC-20260719-04","relation":"matchedCase","target":"case:C-047"},
-    {"source":"case:C-047","relation":"hasFailureCause","target":"cause:DC-WATER-VALVE"}
+    {"source":"case:C-047","relation":"hasFailureCause","target":"cause:DC-WATER-VALVE"},
+
+    {"source":"event:CASE-KD-20260812-05","relation":"aggregates","target":"equipment:EQ-XBB841ED4011"},
+    {"source":"equipment:EQ-XBB841ED4011","relation":"instanceOf","target":"equipmentType:ET-X23C58B2E6F0"},
+    {"source":"equipmentType:ET-X23C58B2E6F0","relation":"hasFunction","target":"function:FN-X0601933D3A3"},
+    {"source":"function:FN-X0601933D3A3","relation":"hasFailureMode","target":"failureMode:FM-XF976CAACE89"},
+    {"source":"function:FN-X0601933D3A3","relation":"hasFailureMode","target":"failureMode:FM-X057C259452B"},
+    {"source":"equipment:EQ-X97058A25213","relation":"instanceOf","target":"equipmentType:ET-X23C58B2E6F0"},
+    {"source":"equipment:EQ-X97058A25213","relation":"hasWorkOrder","target":"workOrder:WO-XD3037DA4A64"},
+    {"source":"workOrder:WO-XD3037DA4A64","relation":"linkedFailureMode","target":"failureMode:FM-XF976CAACE89"}
   ]
 }

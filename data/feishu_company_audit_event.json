@@ -1,0 +1,36 @@
+{
+  "event_id": "KDE-XBB841ED4011-001",
+  "event_type": "CLOSED_BUT_UNRESOLVED",
+  "risk": "P2",
+  "source": "赛事提供设备场景闭环脱敏数据包",
+  "equipment_id": "EQ-XBB841ED4011",
+  "equipment_type_id": "ET-X23C58B2E6F0",
+  "equipment_function_id": "FN-X0601933D3A3",
+  "facts": {
+    "work_orders": 121,
+    "closed_work_orders": 119,
+    "unknown_cause_work_orders": 120,
+    "linked_failure_modes": 0
+  },
+  "candidate_failure_modes": [
+    {
+      "failure_mode_id": "FM-XF976CAACE89",
+      "candidate": "工装夹持部件安全防护异常",
+      "status": "待现场验证"
+    },
+    {
+      "failure_mode_id": "FM-X057C259452B",
+      "candidate": "执行部件安全防护异常",
+      "status": "待现场验证"
+    }
+  ],
+  "required_actions": [
+    "抽样复核历史工单原始记录",
+    "检查清洁堵塞与润滑状态",
+    "检查执行部件与工装夹持部件",
+    "设备专家确认或驳回候选故障模式",
+    "质量与工艺岗位完成复机判断",
+    "审批后受控回写设备平台"
+  ],
+  "control_boundary": "禁止自动确认根因、自动复机、自动发布标准或覆盖主系统数据"
+}

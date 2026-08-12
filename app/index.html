@@ -20,6 +20,7 @@
 
     <nav class="primary-nav" aria-label="工作台导航">
       <button class="nav-item active" data-target="command">实时管控</button>
+      <button class="nav-item" data-target="dataset">企业数据</button>
       <button class="nav-item" data-target="reasoning">知识推理</button>
       <button class="nav-item" data-target="collaboration">飞书协同</button>
       <button class="nav-item" data-target="value">价值验证</button>
@@ -52,7 +53,7 @@
     <div class="runtime-facts">
       <span><i class="healthy"></i>回放新鲜度 <b id="freshnessValue">2.4s</b></span>
       <span>规则包 <b id="ruleVersion">QG-2026.08</b></span>
-      <span>知识版本 <b id="knowledgeVersion">KG-17.4</b></span>
+      <span>知识版本 <b id="knowledgeVersion">KG-18.0</b></span>
       <span>权限等级 <b id="permissionLevel">L2 建议+派单</b></span>
       <span>事件护照 <b id="eventPassport">--</b></span>
     </div>
@@ -63,15 +64,14 @@
       <aside class="scenario-rail panel-shell">
         <div class="panel-heading">
           <div><span class="kicker">EVENT QUEUE</span><h2>风险事件队列</h2></div>
-          <span id="eventCount" class="count-badge">4</span>
+          <span id="eventCount" class="count-badge">4+1</span>
         </div>
         <div id="scenarioList" class="scenario-list"></div>
         <div class="coverage-block">
-          <div class="coverage-head"><span>知识底座覆盖</span><b>首期试点</b></div>
-          <div class="coverage-row"><span>设备 / 工位</span><strong>26 / 18</strong></div>
-          <div class="coverage-row"><span>质量关系</span><strong>1,248</strong></div>
-          <div class="coverage-row"><span>历史案例</span><strong>320</strong></div>
-          <div class="coverage-row"><span>控制规则</span><strong>186</strong></div>
+          <div class="coverage-head"><span>企业脱敏知识底座</span><b>赛事数据核验</b></div>
+          <div class="coverage-row"><span>设备类别 / 实例</span><strong>625 / 9,673</strong></div>
+          <div class="coverage-row"><span>功能 / 失效模式</span><strong>336 / 1,287</strong></div>
+          <div class="coverage-row"><span>工单 / 类型一致闭环</span><strong>406 / 62</strong></div>
         </div>
       </aside>
 
@@ -157,17 +157,42 @@
         <div class="action-buttons">
           <button id="dispatchBtn" class="primary-btn">派发飞书闭环</button>
           <button id="confirmBtn" class="secondary-btn">人工确认处置</button>
-          <button id="writebackBtn" class="secondary-btn">验收任务与回写</button>
+          <button id="writebackBtn" class="secondary-btn">验收任务与知识草案</button>
           <button id="resolveBtn" class="ghost-btn" disabled>验证并关闭</button>
         </div>
         <div id="actionLog" class="action-log"></div>
       </aside>
     </section>
 
+    <section id="dataset" class="dataset-section anchor-section">
+      <div class="section-intro">
+        <div><span class="kicker">ENTERPRISE DATA AUDIT</span><h2>企业脱敏数据核验与闭而未解识别</h2></div>
+        <p>从设备类别、实例、功能、失效模式和故障工单的真实重键关系出发，识别“工单状态已关闭，但根因、措施和知识关联尚未闭环”的复发风险。</p>
+      </div>
+      <article class="dataset-console panel-shell">
+        <div class="dataset-heading">
+          <div><span class="mini-badge verified">赛事提供脱敏快照</span><h3>设备业务知识链健康度</h3></div>
+          <button id="runDataAuditBtn" class="primary-btn">运行关系审计</button>
+        </div>
+        <div id="companyDatasetMetrics" class="dataset-metrics"></div>
+        <div class="dataset-body">
+          <div class="funnel-zone">
+            <div class="panel-heading compact"><h3>关联漏斗</h3><span class="mini-badge">覆盖率不等于准确率</span></div>
+            <div id="relationshipFunnel" class="relationship-funnel"></div>
+          </div>
+          <div class="debt-zone">
+            <div class="panel-heading compact"><h3>自主触发案例</h3><span class="mini-badge warning">P2 · 专家复核</span></div>
+            <div id="knowledgeDebtCase" class="knowledge-debt-case"></div>
+          </div>
+        </div>
+        <div id="dataAuditTrace" class="data-audit-trace" aria-live="polite"></div>
+      </article>
+    </section>
+
     <section id="reasoning" class="intelligence-section anchor-section">
       <div class="section-intro">
         <div><span class="kicker">EVIDENCE-FIRST REASONING</span><h2>知识推理与影响圈定</h2></div>
-        <p>以设备—工位—参数—质量特性—缺陷模式—历史案例为主链，文档证据用于校验，不让大模型脱离现场关系自由生成。</p>
+        <p>以设备类别—实例—功能—失效模式—工单为企业数据主链，并在具备OT数据时扩展到工位、参数、质量特性与VIN；文档证据只在关系约束内补充。</p>
       </div>
 
       <div class="intelligence-grid">

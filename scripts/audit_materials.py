@@ -23,13 +23,13 @@ required = [
     "docs/final-round-acceptance-plan.md", "docs/active-detection-and-causal-assurance.md",
     "docs/research-evidence-matrix.md", "docs/production-decision-assurance-contract.md", "docs/pilot-acceptance-protocol.md",
     "data/quality_ontology.jsonld", "data/quality_graph.json", "data/factory_event.schema.json", "data/factory_events.csv", "data/quality_cases.json",
-    "data/interactive_scenarios.json", "data/decision_assurance.json", "data/seres_source_evidence.json",
+    "data/interactive_scenarios.json", "data/decision_assurance.json", "data/seres_source_evidence.json", "data/company_dataset_profile.json",
     "data/feishu_bitable_schema.csv", "data/feishu_env_template.json", "data/feishu_aily_skills.json",
     "data/feishu_event_callback.example.json", "data/feishu_bitable_record.example.json",
     "data/end_to_end_trace.json", "data/innovation_cards.json", "data/feishu_integration_matrix.json",
-    "data/feishu_orchestration_event.json", "data/feishu_review_doc_template.xml", "data/reference_catalog.json",
+    "data/feishu_orchestration_event.json", "data/feishu_company_audit_event.json", "data/feishu_review_doc_template.xml", "data/reference_catalog.json",
     "diagram/quality-ai-architecture.svg", "app/index.html", "app/innovation.html", "app/styles.css",
-    "app/app.js", "app/dashboard.js", "app/assets/quality-agent.png", "scripts/run_quality_agent.py", "scripts/test_event_contract.py",
+    "app/app.js", "app/dashboard.js", "app/assets/quality-agent.png", "scripts/run_quality_agent.py", "scripts/test_event_contract.py", "scripts/test_company_audit.py", "scripts/profile_company_dataset.py",
     "scripts/qa_browser.js", "scripts/feishu_client.py", "scripts/lark_cli_runner.js",
     "scripts/sync_feishu_quality_event.ps1", "scripts/orchestrate_feishu_quality_event.ps1",
 ]
@@ -113,18 +113,31 @@ if {event["schema_version"] for event in events} != {"2.1"}:
 
 graph = json.loads((ROOT / "data/quality_graph.json").read_text(encoding="utf-8"))
 graph_nodes = {node["id"] for node in graph.get("nodes", [])}
-if len(graph_nodes) < 28 or len(graph.get("edges", [])) < 24:
-    raise SystemExit("关系图实例与边不足以覆盖四类工况")
+if len(graph_nodes) < 36 or len(graph.get("edges", [])) < 32:
+    raise SystemExit("关系图实例与边不足以覆盖四类工况和企业数据审计")
 for event in events:
     if f"event:{event['event_id']}" not in graph_nodes:
         raise SystemExit(f"关系图缺少事件节点: {event['event_id']}")
 
 references = json.loads((ROOT / "data/reference_catalog.json").read_text(encoding="utf-8"))
 reference_ids = {item.get("id") for item in references}
-if len(references) != 26 or len(reference_ids) != len(references):
-    raise SystemExit("参考资料目录必须保持26条且ID唯一")
-if not {"S0", "F6", "F7"}.issubset(reference_ids):
-    raise SystemExit("参考资料目录缺少2025年报或飞书事件/工作流官方依据")
+if len(references) != 28 or len(reference_ids) != len(references):
+    raise SystemExit("参考资料目录必须保持28条且ID唯一")
+if not {"S0", "F6", "F7", "C1", "C2"}.issubset(reference_ids):
+    raise SystemExit("参考资料目录缺少企业年报、赛事材料或飞书官方依据")
+
+company_profile = json.loads((ROOT / "data/company_dataset_profile.json").read_text(encoding="utf-8"))
+if company_profile.get("snapshot") != {"equipment_types": 625, "equipment_instances": 9673, "equipment_functions": 336, "failure_modes": 1287, "work_orders": 406}:
+    raise SystemExit("企业脱敏数据画像的核心数量与赛事数据包不一致")
+flagship = company_profile.get("flagship_case", {})
+if flagship.get("observations", {}).get("work_orders") != 121 or flagship.get("observations", {}).get("failure_mode_linked") != 0:
+    raise SystemExit("闭而未解旗舰案例的证据统计不一致")
+company_event = json.loads((ROOT / "data/feishu_company_audit_event.json").read_text(encoding="utf-8"))
+if company_event.get("event_type") != "CLOSED_BUT_UNRESOLVED" or len(company_event.get("candidate_failure_modes", [])) != 2:
+    raise SystemExit("企业数据审计事件契约缺失或候选故障模式数量错误")
+aily_skills = json.loads((ROOT / "data/feishu_aily_skills.json").read_text(encoding="utf-8"))
+if len(aily_skills) != 5 or any("禁止" not in item.get("permission", "") and item.get("permission") != "只读" for item in aily_skills[2:]):
+    raise SystemExit("Aily岗位技能必须保持五类受控能力和明确权限边界")
 
 source_evidence = json.loads((ROOT / "data/seres_source_evidence.json").read_text(encoding="utf-8"))
 if not any("2025年年度报告" in item.get("name", "") for item in source_evidence):
@@ -135,6 +148,7 @@ interaction_ids = [
     "leadTime", "warningStages", "traceSelector", "causalHypotheses", "guardrailChecks",
     "validationGate", "replicationMatrix", "modeSelector", "eventPassport", "interventionOptions",
     "interventionResult", "resilienceOptions", "responsibilityMatrix", "pilotReadiness", "writebackBtn",
+    "companyDatasetMetrics", "relationshipFunnel", "knowledgeDebtCase", "dataAuditTrace", "runDataAuditBtn",
 ]
 for element_id in interaction_ids:
     if f'id="{element_id}"' not in html:
@@ -149,4 +163,4 @@ for heading in ["整体概述", "整体架构与核心功能模块", "核心创�
     if heading not in final_text:
         raise SystemExit(f"决赛方案缺少章节: {heading}")
 
-print(f"材料检查通过: {len(required)} 个核心文件，{len(docx_files)} 个DOCX，4个可计算场景，26条参考资料，15个关键交互节点。")
+print(f"材料检查通过: {len(required)} 个核心文件，{len(docx_files)} 个DOCX，4个可计算时序场景，1个企业数据审计案例，28条参考资料，20个关键交互节点。")

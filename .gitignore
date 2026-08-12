@@ -12,3 +12,4 @@ data/playwright-*.png
 data/baseline.png
 data/http-*.log
 app/assets/*-chroma.png
+sls-data/

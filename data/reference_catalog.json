@@ -24,5 +24,7 @@
   {"id":"Q6","type":"质量方法","title":"AIAG & VDA FMEA Handbook","year":2019,"url":"https://www.aiag.org/training-and-resources/manuals/details/FMEAAV-1","used_for":"过程功能、失效链与行动优先级"},
   {"id":"F5","type":"飞书官方","title":"事件订阅概述","year":2026,"url":"https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN","used_for":"协同状态反向事件流"},
   {"id":"F6","type":"飞书官方","title":"多维表格记录变更事件","year":2026,"url":"https://open.feishu.cn/document/docs/bitable-v1/events/bitable_record_changed","used_for":"记录变更订阅、权限与触发边界"},
-  {"id":"F7","type":"飞书官方","title":"获取多维表格自动化工作流","year":2026,"url":"https://open.feishu.cn/document/docs/bitable-v1/app-workflow/list?lang=zh-CN","used_for":"工作流清单与生产能力核验"}
+  {"id":"F7","type":"飞书官方","title":"获取多维表格自动化工作流","year":2026,"url":"https://open.feishu.cn/document/docs/bitable-v1/app-workflow/list?lang=zh-CN","used_for":"工作流清单与生产能力核验"},
+  {"id":"C1","type":"赛事提供材料","title":"赛力斯设备质量风险AI数字员工业务场景参考材料","year":2026,"availability":"赛事定向提供，原文件不进入公共仓库","used_for":"设备管理业务过程、现有数据基础、角色协同、共性问题与能力目标"},
+  {"id":"C2","type":"赛事提供数据","title":"赛力斯设备场景闭环脱敏数据包","year":2026,"availability":"赛事定向提供，公共仓库仅保留聚合画像与重键证据样例","used_for":"625类设备、9673个实例、336项功能、1287条失效模式、406张工单及关联覆盖率核验"}
 ]

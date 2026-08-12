@@ -1,5 +1,26 @@
 const qualityScenarios = window.qualityScenarios || [];
 
+const companyDataset = {
+  counts: [
+    ["设备类别", "625"], ["设备实例", "9,673"], ["设备功能", "336"], ["失效模式", "1,287"], ["故障工单", "406"]
+  ],
+  funnel: [
+    ["故障工单", 406, 100], ["有效设备关联", 383, 94.3], ["失效模式关联", 71, 17.5], ["类型一致知识链", 62, 15.3]
+  ],
+  flagship: {
+    eventId: "CASE-KD-20260812-05",
+    equipment: "EQ-XBB841ED4011",
+    equipmentType: "ET-X23C58B2E6F0",
+    sibling: "EQ-X97058A25213",
+    workOrders: 121,
+    closed: 119,
+    unknownCause: 120,
+    genericAction: 121,
+    linkedFailureMode: 0,
+    candidates: ["FM-XF976CAACE89", "FM-X057C259452B"]
+  }
+};
+
 const references = [
   {
     type: "企业官方",
@@ -238,6 +259,8 @@ let interventionAccepted = false;
 let workflowEvidenceAccepted = false;
 let resilienceState = "normal";
 let outboxQueued = false;
+let companyAuditStep = 0;
+let companyAuditTimer = null;
 
 const $ = (id) => document.getElementById(id);
 const selected = () => qualityScenarios[selectedIndex];
@@ -281,7 +304,7 @@ function analyzeSignal(profile = assurance()) {
 }
 
 function eventPassport() {
-  const versions = "QG-2026.08|KG-17.4|FS-2.0|QO-2.1";
+  const versions = "QG-2026.08|KG-18.0|FS-2.0|QO-2.2";
   const input = `${selected().id}|${assurance().signal.points.map((point) => point.join("/")).join("|")}|${runMode}|${selectedIntervention || "none"}|${interventionAccepted}|${confirmed}|${workflowEvidenceAccepted}|${closed}|${versions}`;
   let hash = 2166136261;
   for (const char of input) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
@@ -294,10 +317,10 @@ function policyDecision(action) {
   if (action === "close" && resilienceState === "graph-down") return { allowed: false, reason: "知识快照不可用，关闭申请转人工复核。" };
   if (action === "close" && !interventionAccepted) return { allowed: false, reason: "缺少已签署的反事实或物理复检证据。" };
   if (action === "close" && !confirmed) return { allowed: false, reason: "缺少质量负责人实名确认。" };
-  if (action === "writeback" && phaseIndex < 3) return { allowed: false, reason: "协同对象尚未派发，不能验收任务与知识回写。" };
+  if (action === "writeback" && phaseIndex < 3) return { allowed: false, reason: "协同对象尚未派发，不能验收任务与知识草案。" };
   if (action === "writeback" && !interventionAccepted) return { allowed: false, reason: "物理复检证据尚未签署。" };
   if (action === "writeback" && !confirmed) return { allowed: false, reason: "质量负责人尚未确认处置。" };
-  if (action === "close" && !workflowEvidenceAccepted) return { allowed: false, reason: "任务完成、复检附件与知识回写尚未独立验收。" };
+  if (action === "close" && !workflowEvidenceAccepted) return { allowed: false, reason: "任务完成、复检附件与知识变更草案尚未独立验收。" };
   return { allowed: true, queue: action === "dispatch" && resilienceState === "feishu-down" };
 }
 
@@ -336,6 +359,55 @@ function renderScenarioList() {
   document.querySelectorAll(".scenario").forEach((button) => {
     button.addEventListener("click", () => selectScenario(Number(button.dataset.index)));
   });
+}
+
+function renderCompanyDataset() {
+  $("companyDatasetMetrics").innerHTML = companyDataset.counts.map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join("");
+  $("relationshipFunnel").innerHTML = companyDataset.funnel.map(([label, count, rate], index) => `
+    <div class="funnel-row ${index >= 2 ? "gap" : ""}">
+      <span>${label}</span><i><em style="width:${Math.max(rate, 8)}%"></em></i><b>${count}</b><small>${rate.toFixed(1)}%</small>
+    </div>
+  `).join("");
+  const item = companyDataset.flagship;
+  $("knowledgeDebtCase").innerHTML = `
+    <div class="debt-title"><span>${item.eventId}</span><strong>安全防护设备工单集中的“闭而未解”风险</strong></div>
+    <div class="debt-stats">
+      <div><b>${item.workOrders}</b><span>同设备工单</span></div>
+      <div><b>${item.closed}</b><span>显示已关闭</span></div>
+      <div class="alert"><b>${item.unknownCause}</b><span>原因未确认</span></div>
+      <div class="alert"><b>${item.linkedFailureMode}</b><span>失效模式关联</span></div>
+    </div>
+    <p>关闭率高不等于问题已解决。该设备的工单几乎全部缺少可复用根因和结构化措施，且同类别设备已经出现维护因素与清洁润滑证据。</p>
+    <div class="debt-chain"><code>${item.equipment}</code><span>同类别</span><code>${item.equipmentType}</code><span>迁移证据</span><code>${item.sibling}</code></div>
+  `;
+  const stages = [
+    ["01", "聚合异常", "发现121张同设备报警工单，119张虽关闭但仍持续复现"],
+    ["02", "识别知识债务", "120张原因未确认、121张未关联失效模式，关闭状态不能作为解决证据"],
+    ["03", "GraphRAG收敛", `沿设备类别—功能—失效模式检索${item.candidates.join(" / ")}，并命中同类设备维护处置`],
+    ["04", "生成受控行动", "派发夹持/执行元件检查、失效模式确认、点巡检标准变更与复机观察任务"]
+  ];
+  $("dataAuditTrace").innerHTML = companyAuditStep ? `
+    <div class="audit-steps">${stages.map(([no, title, detail], index) => `<div class="audit-step ${index < companyAuditStep ? "active" : ""}"><b>${no}</b><strong>${title}</strong><span>${detail}</span></div>`).join("")}</div>
+    ${companyAuditStep >= stages.length ? `<div class="audit-decision"><div><span>数字员工结论</span><strong>建议建立P2知识债务事件，不自动写入唯一根因</strong><p>先核验两张待处理工单，再由设备、维修、质量三方确认候选失效模式；批准后更新点巡检项目、检测方法和维护周期。</p></div><button id="companyEvidenceBtn" class="secondary-btn">查看完整证据链</button></div>` : ""}
+  ` : `<div class="audit-idle"><span>待运行</span><p>点击“运行关系审计”，数字员工将从业务系统快照主动发起分析，不依赖人员提问或新的PLC硬告警。</p></div>`;
+  $("runDataAuditBtn").disabled = companyAuditStep > 0 && companyAuditStep < stages.length;
+  $("runDataAuditBtn").textContent = companyAuditStep >= stages.length ? "重新运行审计" : companyAuditStep ? "审计运行中" : "运行关系审计";
+  $("companyEvidenceBtn")?.addEventListener("click", openCompanyEvidence);
+}
+
+function runCompanyAudit() {
+  window.clearInterval(companyAuditTimer);
+  companyAuditStep = 1;
+  renderCompanyDataset();
+  showToast("已聚合企业脱敏业务记录，开始关系完整性审计");
+  companyAuditTimer = window.setInterval(() => {
+    companyAuditStep += 1;
+    renderCompanyDataset();
+    if (companyAuditStep >= 4) {
+      window.clearInterval(companyAuditTimer);
+      showToast("闭而未解风险已收敛，等待跨专业复核与标准变更审批");
+    }
+  }, 680);
 }
 
 function selectScenario(index) {
@@ -471,10 +543,10 @@ function renderDialogue(customQuestion) {
         <button data-evidence-ref="E1">E1 原始证据</button>
         <button data-evidence-ref="E2">E2 关联证据</button>
         <button data-evidence-ref="QG-2026.08">QG-2026.08</button>
-        <button data-evidence-ref="KG-17.4">KG-17.4</button>
+        <button data-evidence-ref="KG-18.0">KG-18.0</button>
       </div>
     </div>
-    ${closed ? `<div class="bubble system">事件已关闭：复检、设备处理、责任确认和知识回写字段完整。</div>` : ""}
+    ${closed ? `<div class="bubble system">现场处置事件已关闭：复检、设备处理、责任确认和知识变更草案完整；知识债进入独立审批与观察。</div>` : ""}
   `;
   const questions = ["如何提前发现", "为什么升级P1", "因果结论可信吗", "影响哪些VIN", "如何派发飞书任务", "关闭条件是什么"];
   $("quickQuestions").innerHTML = questions.map((question) => `<button data-question="${question}">${question}</button>`).join("");
@@ -492,7 +564,7 @@ function renderTasks() {
       <strong>${task.action}</strong><span>${task.owner}</span>
     </div>`;
   }).join("");
-  $("actionLog").textContent = closed ? "事件关闭；已生成待审核的PFMEA/控制计划变更单。" : workflowEvidenceAccepted ? "任务、复检附件与知识回写已独立验收，允许提交关闭校验。" : outboxQueued ? `飞书中断：${item.id} 已进入Outbox，恢复后按同一幂等键补偿。` : phaseIndex >= 3 ? `已用 ${item.id} 作为幂等键生成协同对象，等待责任人更新。` : "协同编排尚未启动；当前处于证据推理阶段。";
+  $("actionLog").textContent = closed ? "现场处置已关闭；知识变更单进入独立审批和有效性观察。" : workflowEvidenceAccepted ? "任务、复检附件与知识变更草案已独立验收，允许提交现场处置关闭校验。" : outboxQueued ? `飞书中断：${item.id} 已进入Outbox，恢复后按同一幂等键补偿。` : phaseIndex >= 3 ? `已用 ${item.id} 作为幂等键生成协同对象，等待责任人更新。` : "协同编排尚未启动；当前处于证据推理阶段。";
 }
 
 function renderKnowledge() {
@@ -571,7 +643,7 @@ function renderAssurance() {
     ["影响范围锁定", phaseIndex >= 2 || closed, `已关联${scopeNumber(selected())}及最后合格校验点`],
     ["物理复检通过", interventionAccepted, interventionAccepted ? `实测与准则已签署：${intervention.label}` : "等待对照试验、实测值、验收准则和检测签署"],
     ["授权人员确认", confirmed, confirmed ? "质量负责人确认流程已仿真并留痕" : "P1禁止自动放行"],
-    ["任务与知识回写", workflowEvidenceAccepted, workflowEvidenceAccepted ? "任务状态、复检附件与知识条目已独立验收" : "须先完成回写验收，关闭动作不得反向置为通过"]
+    ["任务完成与知识草案入审", workflowEvidenceAccepted, workflowEvidenceAccepted ? "任务状态、复检附件与变更草案已独立验收" : "须先验收任务与知识草案，关闭动作不得反向置为通过"]
   ];
   const passed = checks.filter((check) => check[1]).length;
   $("validationSummary").textContent = `${passed}/5 已通过`;
@@ -636,7 +708,7 @@ function buildRecord() {
       "处置方案": item.decision,
       "责任任务": item.tasks.map((task) => `${task.owner}:${task.action}`).join("；"),
       "人工确认": confirmed ? "已确认" : "待确认",
-      "关闭证据门": `源数据=${resilienceState !== "data-delay" ? "通过" : "阻断"}；范围=${phaseIndex >= 2 ? "通过" : "待定"}；物理复检=${interventionAccepted ? "通过" : "待签署"}；授权=${confirmed ? "通过" : "待确认"}；任务与知识=${workflowEvidenceAccepted ? "通过" : "待验收"}`,
+      "关闭证据门": `源数据=${resilienceState !== "data-delay" ? "通过" : "阻断"}；范围=${phaseIndex >= 2 ? "通过" : "待定"}；物理复检=${interventionAccepted ? "通过" : "待签署"}；授权=${confirmed ? "通过" : "待确认"}；任务与知识草案=${workflowEvidenceAccepted ? "通过" : "待验收"}`,
       "运行模式": runMode,
       "事件护照": eventPassport(),
       "幂等键": item.id,
@@ -652,7 +724,7 @@ function renderFeishu() {
     ["复检记录", "实测、量具与签署", interventionAccepted],
     ["设备维修", "措施与首件确认", workflowEvidenceAccepted],
     ["原生审批", "风险受理与放行", confirmed],
-    ["复盘知识", "PFMEA/控制计划草案", workflowEvidenceAccepted]
+    ["知识变更", "PFMEA/控制计划草案待审批", workflowEvidenceAccepted]
   ];
   $("feishuPipeline").innerHTML = pipeline.map(([name, use, active], index) => `<div class="pipeline-step ${active ? "active" : ""}"><small>0${index + 1}</small><b>${name}</b><span>${use}</span></div>`).join("");
   $("capabilityMatrix").innerHTML = feishuCapabilities.map((capability) => `
@@ -728,7 +800,7 @@ function renderDrawer() {
   const profile = assurance();
   $("drawerContent").innerHTML = `
     <section class="drawer-group"><h3>事件摘要</h3><p>${item.id} · ${item.scene} · ${item.risk}</p><p>${item.decision}</p></section>
-    <section class="drawer-group"><h3>事件护照</h3><p>${eventPassport()}</p><p>规则 QG-2026.08 · 知识 KG-17.4 · 特征 FS-2.0 · 本体 QO-2.1</p><p>弱信号 ${analyzeSignal().firstWeak} · 可行动 ${analyzeSignal().actionable} · 下游理论显性 ${analyzeSignal().downstream}</p></section>
+    <section class="drawer-group"><h3>事件护照</h3><p>${eventPassport()}</p><p>规则 QG-2026.08 · 知识 KG-18.0 · 特征 FS-2.0 · 本体 QO-2.2</p><p>弱信号 ${analyzeSignal().firstWeak} · 可行动 ${analyzeSignal().actionable} · 下游理论显性 ${analyzeSignal().downstream}</p></section>
     <section class="drawer-group"><h3>原始与派生证据</h3><ol>${item.evidence.map((evidence) => `<li>${evidence}</li>`).join("")}</ol></section>
     <section class="drawer-group"><h3>根因假设</h3><p>${item.rootCause}</p><p>置信度 ${Math.round(item.confidence * 100)}%，必须由点检、复检和维修结果证实或证伪。</p></section>
     <section class="drawer-group"><h3>候选根因与反证动作</h3><ol>${profile.hypotheses.map((hypothesis) => `<li><b>${hypothesis.score}% ${hypothesis.name}</b>：${hypothesis.test}</li>`).join("")}</ol></section>
@@ -736,9 +808,24 @@ function renderDrawer() {
   `;
 }
 
+function openCompanyEvidence() {
+  const item = companyDataset.flagship;
+  $("drawerContent").innerHTML = `
+    <section class="drawer-group"><h3>数据边界</h3><p>赛事提供的历史静态脱敏快照，仅保留结构、受控类别和重键关系。没有精确时间、真实设备编号、工位、人员和原始正文，因此不能推断真实发生频率或直接确认根因。</p></section>
+    <section class="drawer-group"><h3>触发事实</h3><ol><li>${item.equipment}关联${item.workOrders}张设备报警工单，其中${item.closed}张显示已关闭、2张待处理。</li><li>${item.unknownCause}张原因未确认，${item.genericAction}张仅记录为其他处置。</li><li>全部${item.workOrders}张均未关联失效模式。</li></ol></section>
+    <section class="drawer-group"><h3>关系图路径</h3><p>${item.equipment} → ${item.equipmentType} → 安全防护功能 → ${item.candidates[0]} / ${item.candidates[1]}。</p><p>同类别实例${item.sibling}有29张工单，其中4张关联维护因素失效模式，1张记录清洁疏通或润滑处置。</p></section>
+    <section class="drawer-group"><h3>候选与冲突</h3><ol><li><b>H1 工装夹持元件维护因素</b>：同类设备有处置支持，但目标设备无失效模式关联，候选条目未记录检测方法。</li><li><b>H2 执行元件维护因素</b>：功能与现象一致，但缺少同实例处置和原始工单正文。</li></ol></section>
+    <section class="drawer-group"><h3>受控行动</h3><ol><li>核验两张待处理工单状态。</li><li>执行夹持、执行元件和安全回路检查。</li><li>由设备、维修、质量三方确认或驳回失效模式。</li><li>批准后更新点巡检项目、检测方法和维护周期。</li><li>在观察窗验证复发率后关闭知识债务事件。</li></ol></section>
+  `;
+  $("drawerBackdrop").hidden = false;
+  $("evidenceDrawer").classList.add("open");
+  $("evidenceDrawer").setAttribute("aria-hidden", "false");
+}
+
 function renderAll() {
   renderRuntimeRibbon();
   renderScenarioList();
+  renderCompanyDataset();
   renderPlantStatus();
   renderIncident();
   renderDialogue();
@@ -865,6 +952,7 @@ function bindEvents() {
     selectedIndex = (selectedIndex + 1) % qualityScenarios.length;
     simulateRun();
   });
+  $("runDataAuditBtn").addEventListener("click", runCompanyAudit);
   $("dispatchBtn").addEventListener("click", dispatchFeishu);
   $("confirmBtn").addEventListener("click", confirmAction);
   $("writebackBtn").addEventListener("click", acceptWorkflowEvidence);

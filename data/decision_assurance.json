@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "measurement_note": "前置量由脱敏仿真时间序列计算：可行动时刻为统计弱信号与知识关系首次形成最小证据共识的时间，下游时刻为现行质量门理论可检出的时间，不代表实车生产收益。",
   "detector_parameters": {"ewma_lambda": 0.3, "ewma_sigma": 0.3, "cusum_k_sigma": 0.25, "cusum_h_sigma": 1.5, "actionable_rule": "统计检测器至少一项触发且知识关系命中"},
-  "governance_versions": {"rule_set": "QG-2026.08", "knowledge_snapshot": "KG-17.4", "feature_schema": "FS-2.0", "ontology": "QO-2.1"},
+  "governance_versions": {"rule_set": "QG-2026.08", "knowledge_snapshot": "KG-18.0", "feature_schema": "FS-2.0", "ontology": "QO-2.2"},
   "profiles": {
     "CASE-TQ-20260719-01": {
       "lead_minutes": 22,
@@ -81,7 +81,7 @@
     "影响范围锁定",
     "物理复检通过",
     "授权人员确认",
-    "任务与知识回写完成"
+    "任务完成与知识草案入审"
   ],
   "operating_modes": {
     "shadow": {"permission":"L0","external_write":false,"purpose":"离线回放与误报标定"},
