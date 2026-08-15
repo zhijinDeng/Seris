@@ -21,6 +21,7 @@
     <nav class="primary-nav" aria-label="工作台导航">
       <button class="nav-item active" data-target="command">实时管控</button>
       <button class="nav-item" data-target="dataset">企业数据</button>
+      <button class="nav-item" data-target="lifecycle">全流程</button>
       <button class="nav-item" data-target="reasoning">知识推理</button>
       <button class="nav-item" data-target="collaboration">飞书协同</button>
       <button class="nav-item" data-target="value">价值验证</button>
@@ -189,6 +190,23 @@
       </article>
     </section>
 
+    <section id="lifecycle" class="lifecycle-section anchor-section">
+      <div class="section-intro">
+        <div><span class="kicker">FIELD DISPOSITION LIFECYCLE</span><h2>异常处置全生命周期</h2></div>
+        <p>按现场导师给出的处置链拆解为12个可审计节点：前11步对应现场业务流程，最后增加观察验证。每一步都显示责任岗位、AI职责、必备证据和飞书对象；当前为脱敏仿真状态。</p>
+      </div>
+      <article class="lifecycle-console panel-shell">
+        <div class="lifecycle-summary">
+          <div><span>当前事件</span><strong id="lifecycleEvent">--</strong></div>
+          <div><span>已形成证据</span><strong id="lifecycleEvidence">--</strong></div>
+          <div><span>当前阻断</span><strong id="lifecycleBlocker">信息确认与责任签收</strong></div>
+          <div><span>标准状态</span><strong>变更草案待审批</strong></div>
+        </div>
+        <div id="lifecycleRail" class="lifecycle-rail" role="tablist" aria-label="异常处置全生命周期步骤"></div>
+        <div id="lifecycleDetail" class="lifecycle-detail" role="region" aria-live="polite"></div>
+      </article>
+    </section>
+
     <section id="reasoning" class="intelligence-section anchor-section">
       <div class="section-intro">
         <div><span class="kicker">EVIDENCE-FIRST REASONING</span><h2>知识推理与影响圈定</h2></div>
@@ -294,7 +312,7 @@
         <div id="replicationMatrix" class="replication-matrix"></div>
       </div>
       <div class="sources-panel panel-shell">
-        <div class="panel-heading compact"><h3>公开证据与技术依据</h3><span class="mini-badge">企业官方 / 标准 / 论文 / 飞书官方</span></div>
+        <div class="panel-heading compact"><h3>公开证据与技术依据</h3><span class="mini-badge">企业官方 / 标准 / 论文 / 数据集 / 飞书官方</span></div>
         <div id="sourceSupport" class="source-support"></div>
       </div>
     </section>

@@ -28,6 +28,7 @@ async function pageMetrics(page) {
     citationButtons: document.querySelectorAll(".bubble-citations button").length
     ,companyMetrics: document.querySelectorAll("#companyDatasetMetrics > div").length
     ,funnelRows: document.querySelectorAll("#relationshipFunnel .funnel-row").length
+    ,lifecycleNodes: document.querySelectorAll("#lifecycleRail .lifecycle-node").length
   }));
 }
 
@@ -48,9 +49,14 @@ async function main() {
   expect(metrics.pipelineSteps === 6 && metrics.readinessRows === 7, "飞书六对象或生产就绪门数量错误");
   expect(metrics.citationButtons === 4, "数字员工回答缺少证据引用");
   expect(metrics.companyMetrics === 5 && metrics.funnelRows === 4, "企业脱敏数据规模或关系漏斗缺失");
+  expect(metrics.lifecycleNodes === 12, "现场处置全生命周期必须展示12个节点");
+  expect((await desktop.locator("#lifecycleDetail").textContent()).includes("责任岗位") && (await desktop.locator("#lifecycleDetail").textContent()).includes("必备证据"), "生命周期节点缺少责任与证据说明");
+  await desktop.locator("#lifecycleRail .lifecycle-node").nth(10).click();
+  expect((await desktop.locator("#lifecycleDetail").textContent()).includes("变更草案已生成"), "标准审视节点未显示审批门");
+  await desktop.locator("#lifecycleRail .lifecycle-node").first().click();
   expect(await desktop.locator("#confirmBtn").isDisabled(), "未派发前不得直接确认处置");
   await desktop.locator("#runDataAuditBtn").click();
-  await desktop.waitForTimeout(3300);
+  await desktop.waitForTimeout(5200);
   expect((await desktop.locator("#dataAuditTrace").textContent()).includes("P2知识债务事件"), "闭而未解审计未形成受控结论");
   expect((await desktop.locator("#dataAuditTrace").textContent()).includes("不自动写入唯一根因"), "企业审计缺少人工确认边界");
   await desktop.locator("#companyEvidenceBtn").click();
@@ -111,6 +117,7 @@ async function main() {
   expect(await desktop.locator("#resolveBtn").isDisabled(), "缺少检测签署时关闭按钮不应可用");
   await desktop.locator("#completeInterventionBtn").click();
   expect((await desktop.locator("#interventionStatus").textContent()).includes("已签署"), "干预实测未签署");
+  expect(await desktop.locator(".inspection-fields").count() === 1, "复检证据字段未展示");
   expect((await desktop.locator("#validationSummary").textContent()).includes("4/5"), "干预后的关闭门状态错误");
   expect(await desktop.locator("#resolveBtn").isDisabled(), "任务与知识草案未验收时关闭按钮必须禁用");
   await desktop.locator("#writebackBtn").click();
@@ -119,6 +126,8 @@ async function main() {
   await desktop.locator("#resolveBtn").click();
   expect((await desktop.locator("#validationSummary").textContent()).includes("5/5"), "关闭后的确定性校验未全部通过");
   expect((await desktop.locator("#gateStatus").textContent()).includes("已验证关闭"), "安全门关闭状态错误");
+  expect((await desktop.locator("#gateStatus").textContent()).includes("标准草案待审批"), "现场关闭不应伪装成标准已回写");
+  expect((await desktop.locator("#lifecycleDetail").textContent()).length > 0, "生命周期关闭后详情丢失");
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   mobile.on("pageerror", (error) => errors.push(`mobile pageerror: ${error.message}`));

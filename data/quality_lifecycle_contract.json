@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "name": "设备质量风险现场处置全生命周期",
+  "purpose": "把异常发现到有效性观察拆成可审计的责任、证据和权限门，支持脱敏工况回放与企业试点迁移。",
+  "demo_boundary": "当前页面展示脱敏仿真状态；真实设备控制、质量放行、标准发布和主平台回写仍由企业授权岗位完成。",
+  "stages": [
+    {"id":"anomaly_discovery","order":1,"name":"异常发现","owner":"数字员工","ai_role":"读取事件流，识别弱信号、重复模式与质量影响","required_evidence":["event_time","source_event_id","parameter_value","quality_code"],"gate":"数据契约通过；缺失、延迟或质量码异常进入隔离","feishu_object":"质量风险事件Base","sla":"事件到达后即时"},
+    {"id":"information_confirmation","order":2,"name":"信息确认","owner":"质量工程师","ai_role":"汇总来源系统、设备/工位、时间窗、质量码、批次与已有工单","required_evidence":["asset_id","station_id","event_time","object_binding","existing_work_order_check"],"gate":"对象、时间和影响范围可追溯；否则QUARANTINED，不派单","feishu_object":"事件台账","sla":"P1不超过5分钟"},
+    {"id":"work_order_admission","order":3,"name":"工单发起","owner":"质量工程师","ai_role":"判断新建风险事件、关联既有工单或转人工复核","required_evidence":["event_passport","duplicate_check","risk_level","impact_scope"],"gate":"通过准入门后生成唯一幂等键；重复事件不得重复建单","feishu_object":"质量风险事件Base","sla":"P1不超过1分钟"},
+    {"id":"task_assignment","order":4,"name":"任务分派","owner":"数字员工 + 班组长","ai_role":"按风险、工位、班次、岗位技能和SLA生成任务草案并升级超时任务","required_evidence":["role_route","assignee","sla","idempotency_key"],"gate":"责任岗位接单；飞书不可用时写入Outbox，不重复建单","feishu_object":"任务中心 / 消息卡片","sla":"P1不超过1分钟"},
+    {"id":"onsite_diagnosis","order":5,"name":"现场排查","owner":"设备工程师 / 维修人员","ai_role":"提供按失效模式组织的检查清单和反证路径，不替代现场判断","required_evidence":["inspection_items","measured_value","instrument_id","calibration_status","attachment"],"gate":"每个检查项必须记录合格、异常或无法确认；证据不足保持隔离","feishu_object":"现场检查记录","sla":"按风险等级和工序SLA"},
+    {"id":"cause_judgment","order":6,"name":"原因判断","owner":"设备 / 工艺 / 质量三方","ai_role":"给出Top-3候选、支持与冲突证据、反事实动作和后验排序","required_evidence":["graph_path","support_evidence","conflict_evidence","counterfactual_result"],"gate":"候选根因只能成为现场核验结论，未经签署不得写入标准或平台","feishu_object":"诊断任务 / 复盘文档","sla":"随现场排查完成"},
+    {"id":"repair_action","order":7,"name":"维修处置","owner":"设备工程师 / 维修人员","ai_role":"根据已确认候选生成措施顺序、风险提示和完成条件","required_evidence":["maintenance_action","before_after_measurement","parts_or_tool","executor"],"gate":"维修结果与措施回执齐全；不允许由模型直接写入控制参数","feishu_object":"设备维修记录","sla":"按风险等级和工序SLA"},
+    {"id":"operating_confirmation","order":8,"name":"运行确认","owner":"设备 / 工艺工程师","ai_role":"核对设备恢复、稳定运行曲线和检查项完整性","required_evidence":["function_test","stability_window","parameter_recovery","operator_signoff"],"gate":"运行确认不通过，维持隔离并扩大排查范围","feishu_object":"设备维修记录 / 复机确认","sla":"恢复后即时"},
+    {"id":"production_restart","order":9,"name":"恢复生产","owner":"质量负责人","ai_role":"检查首件、影响范围、放行范围和签署条件，不拥有放行权","required_evidence":["restart_confirmation","first_piece_result","release_scope","quality_owner_signoff"],"gate":"首件合格且质量负责人授权；任何缺失不得恢复生产","feishu_object":"复机确认 / 原生审批","sla":"复机申请后即时"},
+    {"id":"knowledge_capture","order":10,"name":"知识沉淀","owner":"质量知识管理员","ai_role":"生成证据包、复盘摘要和候选知识变更草案","required_evidence":["validated_cause_or_rejection","action_result","evidence_hash","review_record"],"gate":"形成草案，不直接发布；保留旧版本和回退路径","feishu_object":"复盘文档 / 知识库","sla":"关闭后当班"},
+    {"id":"standard_review","order":11,"name":"检查标准审视","owner":"质量 / 工艺 / 设备授权岗位","ai_role":"对比PFMEA、控制计划、点检项目和维护周期版本差异","required_evidence":["old_version","new_version","change_reason","approval_id","effective_time"],"gate":"草案经审批后才可回写主平台；审批前保持待发布","feishu_object":"标准变更审批 / 主平台回写回执","sla":"按变更流程"},
+    {"id":"effectiveness_observation","order":12,"name":"有效性观察","owner":"质量负责人","ai_role":"跟踪观察窗内复发、误报、驳回原因和版本效果，必要时建议回退","required_evidence":["observation_window","similar_events","recurrence_rate","rollback_decision"],"gate":"观察期结束后判定有效、继续观察或建议回退；知识债事件独立关闭","feishu_object":"知识债观察记录","sla":"试点建议30天"}
+  ],
+  "forbidden_transitions": ["未通过信息确认不得派发任务","未完成维修处置不得申请复机","未完成首件验证不得恢复生产","未经标准审批不得发布失效模式或检查标准","现场处置关闭不等于知识标准已回写"]
+}
+

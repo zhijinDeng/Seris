@@ -27,10 +27,10 @@ required = [
     "data/feishu_bitable_schema.csv", "data/feishu_env_template.json", "data/feishu_aily_skills.json",
     "data/feishu_event_callback.example.json", "data/feishu_bitable_record.example.json",
     "data/end_to_end_trace.json", "data/innovation_cards.json", "data/feishu_integration_matrix.json",
-    "data/feishu_orchestration_event.json", "data/feishu_company_audit_event.json", "data/feishu_review_doc_template.xml", "data/reference_catalog.json",
+    "data/feishu_orchestration_event.json", "data/feishu_company_audit_event.json", "data/feishu_review_doc_template.xml", "data/reference_catalog.json", "data/quality_lifecycle_contract.json", "data/public_benchmark_profile.json",
     "diagram/quality-ai-architecture.svg", "app/index.html", "app/innovation.html", "app/styles.css",
     "app/app.js", "app/dashboard.js", "app/assets/quality-agent.png", "scripts/run_quality_agent.py", "scripts/test_event_contract.py", "scripts/test_company_audit.py", "scripts/profile_company_dataset.py",
-    "scripts/qa_browser.js", "scripts/feishu_client.py", "scripts/lark_cli_runner.js",
+    "scripts/qa_browser.js", "scripts/test_lifecycle_contract.py", "scripts/feishu_client.py", "scripts/lark_cli_runner.js",
     "scripts/sync_feishu_quality_event.ps1", "scripts/orchestrate_feishu_quality_event.ps1",
 ]
 
@@ -121,10 +121,17 @@ for event in events:
 
 references = json.loads((ROOT / "data/reference_catalog.json").read_text(encoding="utf-8"))
 reference_ids = {item.get("id") for item in references}
-if len(references) != 28 or len(reference_ids) != len(references):
-    raise SystemExit("参考资料目录必须保持28条且ID唯一")
-if not {"S0", "F6", "F7", "C1", "C2"}.issubset(reference_ids):
+if len(references) != 29 or len(reference_ids) != len(references):
+    raise SystemExit("参考资料目录必须保持29条且ID唯一")
+if not {"S0", "F6", "F7", "U1", "C1", "C2"}.issubset(reference_ids):
     raise SystemExit("参考资料目录缺少企业年报、赛事材料或飞书官方依据")
+
+lifecycle = json.loads((ROOT / "data/quality_lifecycle_contract.json").read_text(encoding="utf-8"))
+if len(lifecycle.get("stages", [])) != 12 or len(lifecycle.get("forbidden_transitions", [])) != 5:
+    raise SystemExit("现场生命周期契约必须包含12步和5条禁止跳转")
+benchmark = json.loads((ROOT / "data/public_benchmark_profile.json").read_text(encoding="utf-8"))
+if benchmark.get("facts", {}).get("samples") != 1567 or benchmark.get("facts", {}).get("features") != 591:
+    raise SystemExit("公开数据验证卡片缺少UCI SECOM官方规模")
 
 company_profile = json.loads((ROOT / "data/company_dataset_profile.json").read_text(encoding="utf-8"))
 if company_profile.get("snapshot") != {"equipment_types": 625, "equipment_instances": 9673, "equipment_functions": 336, "failure_modes": 1287, "work_orders": 406}:
@@ -148,7 +155,7 @@ interaction_ids = [
     "leadTime", "warningStages", "traceSelector", "causalHypotheses", "guardrailChecks",
     "validationGate", "replicationMatrix", "modeSelector", "eventPassport", "interventionOptions",
     "interventionResult", "resilienceOptions", "responsibilityMatrix", "pilotReadiness", "writebackBtn",
-    "companyDatasetMetrics", "relationshipFunnel", "knowledgeDebtCase", "dataAuditTrace", "runDataAuditBtn",
+    "companyDatasetMetrics", "relationshipFunnel", "knowledgeDebtCase", "dataAuditTrace", "runDataAuditBtn", "lifecycleRail", "lifecycleDetail", "lifecycleEvidence",
 ]
 for element_id in interaction_ids:
     if f'id="{element_id}"' not in html:
@@ -163,4 +170,4 @@ for heading in ["整体概述", "整体架构与核心功能模块", "核心创�
     if heading not in final_text:
         raise SystemExit(f"决赛方案缺少章节: {heading}")
 
-print(f"材料检查通过: {len(required)} 个核心文件，{len(docx_files)} 个DOCX，4个可计算时序场景，1个企业数据审计案例，28条参考资料，20个关键交互节点。")
+print(f"材料检查通过: {len(required)} 个核心文件，{len(docx_files)} 个DOCX，4个可计算时序场景，1个企业数据审计案例，29条参考资料，23个关键交互节点。")

@@ -136,6 +136,12 @@ const references = [
     title: "制造问题求解的知识图谱增强RAG",
     detail: "把在线异常检测、FMEA因果网络、历史8D图谱和混合检索串成制造问题求解链。",
     url: "https://publica.fraunhofer.de/entities/publication/3ec641f3-33db-472b-8414-a1bb9e246a10"
+  },
+  {
+    type: "公开数据集",
+    title: "UCI SECOM",
+    detail: "1567条半导体制造样本、591个匿名特征、时间戳、缺失值和合格标签；仅用于通用检测、数据治理和事件编排验证。",
+    url: "https://archive.ics.uci.edu/dataset/179/secom"
   }
 ];
 
@@ -246,6 +252,21 @@ const phases = [
   { label: "验证回写", detail: "校验关闭条件并沉淀复盘知识" }
 ];
 
+const lifecycleStages = [
+  ["异常发现", "数字员工", "识别弱信号、重复模式与质量影响", "事件时间、源事件ID、参数值、质量码", "质量风险事件Base"],
+  ["信息确认", "质量工程师", "核对来源系统、设备/工位、时间窗、批次与已有工单", "设备/工位、对象绑定、时间戳、既有工单检查", "事件台账"],
+  ["工单发起", "质量工程师", "判断新建、关联既有工单或转人工复核", "事件护照、重复检查、风险等级、影响范围", "质量风险事件Base"],
+  ["任务分派", "数字员工 + 班组长", "按风险、工位、班次和技能生成任务草案并升级超时", "责任人、岗位路由、SLA、幂等键", "任务中心 / 消息卡片"],
+  ["现场排查", "设备工程师 / 维修人员", "提供按失效模式组织的检查清单和反证路径", "检查项、实测值、量具编号、校准状态、附件", "现场检查记录"],
+  ["原因判断", "设备 / 工艺 / 质量三方", "给出Top-3候选、支持与冲突证据和反事实动作", "图谱路径、支持证据、冲突证据、干预结果", "诊断任务 / 复盘文档"],
+  ["维修处置", "设备工程师 / 维修人员", "生成措施顺序、风险提示和完成条件", "维修动作、前后测量值、部件/工具、执行人", "设备维修记录"],
+  ["运行确认", "设备 / 工艺工程师", "核对设备恢复、稳定窗口和检查项完整性", "功能测试、稳定窗口、参数恢复、操作签名", "设备维修记录 / 复机确认"],
+  ["恢复生产", "质量负责人", "检查首件、放行范围和签署条件，不拥有放行权", "复机确认、首件结果、放行范围、负责人签署", "复机确认 / 原生审批"],
+  ["知识沉淀", "质量知识管理员", "生成证据包、复盘摘要和知识变更草案", "验证结论、措施结果、证据哈希、复盘记录", "复盘文档 / 知识库"],
+  ["检查标准审视", "质量 / 工艺 / 设备授权岗位", "对比PFMEA、控制计划、点检项目和维护周期版本差异", "旧/新版本、变更原因、审批号、生效时间", "标准变更审批 / 回写回执"],
+  ["有效性观察", "质量负责人", "跟踪复发、误报、驳回原因和版本效果，必要时建议回退", "观察窗、同类事件、复发率、回退决定", "知识债观察记录"]
+];
+
 let selectedIndex = 0;
 let phaseIndex = 3;
 let activeQuestion = "证据链是什么";
@@ -264,6 +285,7 @@ let outboxReconciled = false;
 let feishuDispatched = false;
 let companyAuditStep = 0;
 let companyAuditTimer = null;
+let lifecycleIndex = 0;
 let drawerReturnFocus = null;
 let drawerFocusRef = null;
 
@@ -390,10 +412,13 @@ function renderCompanyDataset() {
     <div class="debt-chain"><code>${item.equipment}</code><span>同类别</span><code>${item.equipmentType}</code><span>迁移证据</span><code>${item.sibling}</code></div>
   `;
   const stages = [
-    ["01", "聚合异常", "发现121张同设备报警工单，119张虽关闭但仍持续复现"],
-    ["02", "识别知识债务", "120张原因未确认、121张未关联失效模式，关闭状态不能作为解决证据"],
-    ["03", "GraphRAG收敛", `沿设备类别—功能—失效模式检索${item.candidates.join(" / ")}，并命中同类设备维护处置`],
-    ["04", "生成受控行动", "派发夹持/执行元件检查、失效模式确认、点巡检标准变更与复机观察任务"]
+    ["01", "快照准入", "读取赛事提供的历史静态脱敏快照，保留来源版本和统计口径"],
+    ["02", "关系完整性审计", "发现121张同设备工单中119张显示关闭，但原因和失效模式关联不足"],
+    ["03", "识别知识债务", "120张原因未确认、121张未关联失效模式，关闭状态不能作为解决证据"],
+    ["04", "GraphRAG收敛", `沿设备类别—功能—失效模式检索${item.candidates.join(" / ")}，并命中同类设备维护处置`],
+    ["05", "现场检查与候选确认", "设备、维修、质量三方记录检查项和实测结果，候选只能确认或驳回"],
+    ["06", "复机与标准审批", "复机确认、首件验证和PFMEA/点检变更草案分别留痕，审批前不回写"],
+    ["07", "观察与回退", "进入观察窗跟踪同类事件、复发率和驳回原因，必要时建议回退版本"]
   ];
   $("dataAuditTrace").innerHTML = companyAuditStep ? `
     <div class="audit-steps">${stages.map(([no, title, detail], index) => `<div class="audit-step ${index < companyAuditStep ? "active" : ""}"><b>${no}</b><strong>${title}</strong><span>${detail}</span></div>`).join("")}</div>
@@ -412,9 +437,9 @@ function runCompanyAudit() {
   companyAuditTimer = window.setInterval(() => {
     companyAuditStep += 1;
     renderCompanyDataset();
-    if (companyAuditStep >= 4) {
+    if (companyAuditStep >= 7) {
       window.clearInterval(companyAuditTimer);
-      showToast("闭而未解风险已收敛，等待跨专业复核与标准变更审批");
+      showToast("企业知识债流程已走完脱敏演示，现场确认、标准审批与观察结果仍由授权岗位完成");
     }
   }, 680);
 }
@@ -434,6 +459,7 @@ function selectScenario(index) {
   outboxQueued = false;
   outboxReconciled = false;
   feishuDispatched = false;
+  lifecycleIndex = 0;
   window.clearInterval(runTimer);
   renderAll();
 }
@@ -467,9 +493,9 @@ function renderIncident() {
   $("phaseLabel").textContent = closed ? "闭环完成" : phases[phaseIndex].label;
   $("phaseDetail").textContent = closed ? "证据、任务与复盘已关联" : phases[phaseIndex].detail;
   $("decisionText").textContent = item.decision;
-  $("rootCauseText").textContent = `Top-1假设：${item.rootCause}（${Math.round(item.confidence * 100)}%，待现场验证）`;
+  $("rootCauseText").textContent = `Top-1候选假设：${item.rootCause}（${Math.round(item.confidence * 100)}%，待现场验证）`;
   $("slaBadge").textContent = item.risk === "P1" ? "SLA 30min" : "SLA 当班";
-  $("gateStatus").textContent = closed ? "已验证关闭" : confirmed ? "处置已确认" : "待质量负责人确认";
+  $("gateStatus").textContent = closed ? "现场处置已验证关闭 · 标准草案待审批" : confirmed ? "处置已确认" : "待质量负责人确认";
   $("dispatchBtn").disabled = !policyDecision("dispatch").allowed || closed;
   $("dispatchBtn").textContent = feishuDispatched ? "已派发飞书闭环" : phaseIndex < 3 ? "等待证据研判完成" : "派发飞书闭环";
   $("confirmBtn").disabled = !policyDecision("confirm").allowed || confirmed || closed;
@@ -642,8 +668,8 @@ function renderAssurance() {
     return { ...hypothesis, priorRank, posteriorRank: index + 1 };
   }).find((hypothesis) => hypothesis.priorRank !== hypothesis.posteriorRank) : null;
   $("interventionResult").innerHTML = intervention ? (interventionAccepted ? `
-    <div class="intervention-evidence"><div><span>脱敏签署流程仿真</span><strong>${intervention.result}</strong><small>验收准则：${intervention.criterion} · 仿真岗位：${intervention.signer}</small><small>${intervention.conclusion}</small>${rankShift ? `<div class="rank-shift"><b>${rankShift.hypothesisId} 排序更新</b><strong>Rank ${rankShift.priorRank} → Rank ${rankShift.posteriorRank}</strong><span>${rankShift.priorScore}% → ${rankShift.score}%</span></div>` : ""}</div><div><span>后验置信度更新</span><div class="posterior-bars">${intervention.posterior.map((score, index) => `<div class="posterior-row"><b>H${index + 1}</b><i><em style="width:${score}%"></em></i><strong>${score}%</strong></div>`).join("")}</div></div></div>
-  ` : `<div class="intervention-evidence"><div><span>待执行动作</span><strong>${intervention.label}</strong><small>必填实测：${intervention.measurement}</small><small>验收准则：${intervention.criterion}</small></div><div><span>证据状态</span><strong>等待检测岗位签署</strong><button id="completeInterventionBtn" class="secondary-btn">提交脱敏实测并签署</button></div></div>`) : `<div class="intervention-empty">选择一项现场对照动作，系统将依据观测结果增强、降级或重排Top-3假设。</div>`;
+    <div class="intervention-evidence"><div><span>脱敏签署流程仿真</span><strong>${intervention.result}</strong><small>验收准则：${intervention.criterion} · 仿真岗位：${intervention.signer}</small><div class="inspection-fields"><span>实测值</span><b>${intervention.result}</b><span>量具状态</span><b>校准有效 · 脱敏样例</b><span>附件</span><b>复检记录 + 首件确认</b><span>签署时间</span><b>回放时刻 ${analyzeSignal().actionable}</b></div><small>${intervention.conclusion}</small>${rankShift ? `<div class="rank-shift"><b>${rankShift.hypothesisId} 排序更新</b><strong>Rank ${rankShift.priorRank} → Rank ${rankShift.posteriorRank}</strong><span>${rankShift.priorScore}% → ${rankShift.score}%</span></div>` : ""}</div><div><span>后验置信度更新</span><div class="posterior-bars">${intervention.posterior.map((score, index) => `<div class="posterior-row"><b>H${index + 1}</b><i><em style="width:${score}%"></em></i><strong>${score}%</strong></div>`).join("")}</div></div></div>
+  ` : `<div class="intervention-evidence"><div><span>待执行动作</span><strong>${intervention.label}</strong><small>必填实测：${intervention.measurement}</small><small>验收准则：${intervention.criterion}</small></div><div><span>证据状态</span><strong>等待检测岗位签署</strong><button id="completeInterventionBtn" class="secondary-btn">载入脱敏实测样例并验收</button></div></div>`) : `<div class="intervention-empty">选择一项现场对照动作，系统将依据观测结果增强、降级或重排Top-3假设。</div>`;
   $("completeInterventionBtn")?.addEventListener("click", () => {
     interventionAccepted = true;
     workflowEvidenceAccepted = false;
@@ -693,6 +719,52 @@ function renderTimeline() {
   `).join("");
 }
 
+function lifecycleState(index) {
+  const completed = [
+    phaseIndex >= 0,
+    phaseIndex >= 1,
+    phaseIndex >= 2,
+    feishuDispatched,
+    interventionAccepted,
+    interventionAccepted,
+    workflowEvidenceAccepted,
+    workflowEvidenceAccepted,
+    workflowEvidenceAccepted && confirmed,
+    workflowEvidenceAccepted,
+    false,
+    closed ? false : false
+  ];
+  if (index === 10) return workflowEvidenceAccepted ? "草案待审批" : "待发起";
+  if (index === 11) return closed ? "观察中" : "待关闭";
+  if (completed[index]) return "已完成";
+  if (index === Math.min(phaseIndex + 1, 9)) return "当前节点";
+  return "待处理";
+}
+
+function renderLifecycle() {
+  const item = selected();
+  const current = lifecycleStages[lifecycleIndex] || lifecycleStages[0];
+  const states = lifecycleStages.map((_, index) => lifecycleState(index));
+  const evidenceCount = states.filter((state) => state === "已完成" || state === "草案待审批" || state === "观察中").length;
+  const blocker = closed ? "现场已验证关闭；知识标准进入审批与观察" : confirmed ? "维修、复机首件与草案验收" : feishuDispatched ? "现场排查与复检签署" : "信息确认与责任签收";
+  $("lifecycleEvent").textContent = item.id;
+  $("lifecycleEvidence").textContent = `${evidenceCount}/12 节点有记录`;
+  $("lifecycleBlocker").textContent = blocker;
+  $("lifecycleRail").innerHTML = lifecycleStages.map((stage, index) => {
+    const state = states[index];
+    return `<button class="lifecycle-node ${state === "已完成" || state === "观察中" ? "done" : state === "当前节点" || state === "草案待审批" ? "current" : "pending"} ${index === lifecycleIndex ? "selected" : ""}" data-lifecycle-index="${index}" role="tab" aria-selected="${index === lifecycleIndex}"><small>${String(index + 1).padStart(2, "0")}</small><strong>${stage[0]}</strong><span>${state}</span></button>`;
+  }).join("");
+  $("lifecycleDetail").innerHTML = `
+    <div class="lifecycle-detail-head"><div><span class="kicker">STEP ${String(lifecycleIndex + 1).padStart(2, "0")} / 12</span><h3>${current[0]}</h3></div><span class="lifecycle-status ${states[lifecycleIndex] === "已完成" ? "done" : "pending"}">${states[lifecycleIndex]}</span></div>
+    <div class="lifecycle-detail-grid"><div><span>责任岗位</span><strong>${current[1]}</strong></div><div><span>数字员工职责</span><strong>${current[2]}</strong></div><div><span>必备证据</span><strong>${current[3]}</strong></div><div><span>飞书对象</span><strong>${current[4]}</strong></div></div>
+    <p class="lifecycle-gate"><b>权限门</b>${lifecycleIndex === 10 ? "变更草案已生成，必须经过授权审批后才能回写主平台。" : lifecycleIndex === 11 ? "现场关闭后继续观察30天，不以一次处置结果宣称标准已经有效。" : "该节点缺证据时保持隔离、升级或转人工，不由模型置信度替代。"}</p>
+  `;
+  document.querySelectorAll("#lifecycleRail .lifecycle-node").forEach((button) => button.addEventListener("click", () => {
+    lifecycleIndex = Number(button.dataset.lifecycleIndex);
+    renderLifecycle();
+  }));
+}
+
 function buildRecord() {
   const item = selected();
   const analysis = analyzeSignal();
@@ -702,7 +774,7 @@ function buildRecord() {
     fields: {
       "事件ID": item.id,
       "风险等级": item.risk,
-      "任务状态": closed ? "已关闭并回写" : phaseIndex >= 3 ? "已派发" : "处置中",
+      "任务状态": closed ? "现场已验证关闭；知识标准变更草案待审批" : phaseIndex >= 3 ? "已派发" : "处置中",
       "设备": item.equipment,
       "工位": item.station,
       "异常参数": `${item.parameter}=${item.value}${item.unit}`,
@@ -856,6 +928,7 @@ function renderAll() {
   renderRuntimeRibbon();
   renderScenarioList();
   renderCompanyDataset();
+  renderLifecycle();
   renderPlantStatus();
   renderIncident();
   renderDialogue();
@@ -880,6 +953,7 @@ function simulateRun() {
   outboxQueued = false;
   outboxReconciled = false;
   feishuDispatched = false;
+  lifecycleIndex = 0;
   taskProgress = 0;
   traceIndex = 0;
   renderAll();

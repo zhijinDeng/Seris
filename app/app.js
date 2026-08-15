@@ -447,7 +447,7 @@ function renderBitable() {
       "处置决策": selected.decision,
       "证据链": selected.evidence.join("；"),
       "责任任务数": selected.tasks.length,
-      "任务状态": closed ? "已关闭并回写" : "处置中",
+      "任务状态": closed ? "现场已验证关闭；知识标准变更草案待审批" : "处置中",
       "Aily入口": `@知质灵巡 查询 ${selected.id}`,
       "机器人卡片": `${selected.risk} ${selected.scene} ${selected.decision}`
     }

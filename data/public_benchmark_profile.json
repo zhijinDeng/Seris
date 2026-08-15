@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "dataset": "SECOM",
+  "source": {"publisher":"UCI Machine Learning Repository","url":"https://archive.ics.uci.edu/dataset/179/secom","doi":"10.24432/C54305","license":"CC BY 4.0","accessed":"2026-08-15"},
+  "facts": {"samples":1567,"features":591,"labels":{"pass":-1,"fail":1},"has_timestamp":true,"missing_values":true,"domain":"半导体制造过程"},
+  "mapping": [
+    {"source":"每行样本","target":"QualityEvent候选事件","boundary":"验证事件检测与风险编排，不证明赛力斯设备根因"},
+    {"source":"时间戳","target":"event_time","boundary":"仅用于排序和时间窗，不等同于生产节拍"},
+    {"source":"F1-F591匿名变量","target":"SensorFeature","boundary":"不映射为扭矩、焊接电流或模温等具体参数"},
+    {"source":"缺失值","target":"MISSING/SUSPECT","boundary":"不得静默插值后直接派单"},
+    {"source":"Pass/Fail标签","target":"quality_outcome","boundary":"仅用于离线检测与排序评估"}
+  ],
+  "usable_for":["数据质量治理","异常筛选","风险排序","事件契约与任务编排复现"],
+  "not_evidence_for":["赛力斯真实设备根因","维修措施正确性","VIN影响范围","复机授权","飞书生产联动","现场收益"],
+  "reproduction":{"raw_data_committed":false,"required_report":["dataset_version_or_download_date","sha256","preprocess","split","model_version","PR-AUC","recall","false_alarm_rate"],"status":"source-profile; raw benchmark and results must be supplied before reporting numeric performance"}
+}
+
