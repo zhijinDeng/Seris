@@ -1,0 +1,142 @@
+<title>【40强赛】赛力斯集团🤝智造知行队｜知质·灵巡：质量风险主动管控AI数字员工</title>
+<p align="center"><b><span text-color="rgb(31,41,55)">让每一次设备异常都成为一条可验证、可执行、可复用的质量改进链</span></b></p>
+<callout emoji="🔎" background-color="rgb(238,247,246)" border-color="rgb(15,118,110)"><p><b>30秒读懂方案</b><br/>知质·灵巡部署在MES、QMS、SCADA/PLC、检测系统、维修系统与“一车一档”之上，主动发现缺陷显性化前的弱信号；用质量本体约束GraphRAG形成Top-3根因假设、支持与冲突证据；再通过反事实干预、物理复检和授权签署收敛结论，并在飞书中完成派单、复检、审批、复盘与知识回写。系统始终阻断PLC控制写入和AI自动放行。</p></callout>
+
+<h2>一、参赛方案信息卡【必须包含】</h2>
+<table><colgroup><col width="170"/><col width="560"/></colgroup><thead><tr><th><p>项目</p></th><th><p>填写内容</p></th></tr></thead><tbody>
+<tr><td><p>队名</p></td><td><p><b>智造知行队</b></p></td></tr>
+<tr><td><p>命题</p></td><td><p>赛力斯集团：如何打造一名会主动管控设备质量风险的AI数字员工？</p></td></tr>
+<tr><td><p>方案名称</p></td><td><p><b>知质·灵巡</b>｜面向超级工厂的质量风险主动管控AI数字员工</p></td></tr>
+<tr><td><p>一句话摘要</p></td><td><p>早于缺陷发现风险，以可证伪证据收敛根因，由授权岗位完成处置与放行，并把闭环资产复制到更多工序。</p></td></tr>
+<tr><td><p>成员介绍&amp;分工</p></td><td><p><b>邓植斤</b>｜负责企业场景研究、质量本体与知识图谱、Agent工作流、互动原型、飞书协同集成、数据验证与参赛材料。</p></td></tr>
+<tr><td><p>使用的飞书AI能力</p></td><td><p><b>多维表格</b>统一事件与证据台账；<b>飞书任务</b>承载责任人、SLA与子任务；<b>Aily</b>提供事件问答和复盘入口；<b>云文档/知识库</b>沉淀复盘与标准变更草案；<b>消息卡片、审批、事件订阅</b>完成接单、签署和状态回收。</p></td></tr>
+<tr><td><p>当前完成度</p></td><td><p><b>已实现可复现：</b>可交互Web Demo、主动推理脚本、事件Schema、质量本体、图约束检索机制原型、企业脱敏数据审计、飞书Base在线写入回读。<br/><b>脱敏仿真验证：</b>总装、焊装、涂装、压铸四工况与完整处置流程。<br/><b>待企业接入：</b>实时OT事件流、企业身份、Aily、消息卡片、原生审批、事件订阅和主平台回写。</p></td></tr>
+</tbody></table>
+
+<h2>二、方案成果展示【必须包含】</h2>
+<h3>1. 命题场景描述、问题描述及痛点说明</h3>
+<p>赛力斯超级工厂已经具备高度自动化检测与海量质量点位。企业公开材料披露工业AI大模型、智能连接工艺系统、36,000+质量点位全自动实时监控，以及“一车一档”“一件一档”等质量基础。现场的下一道难题不是再建设一个告警看板，而是把异常信号转化为可靠行动：<b>报警为什么发生、影响哪些车或零件、先验证哪个根因、谁在什么时限内处置、凭什么恢复生产、标准是否应更新</b>。</p>
+<p>导师业务反馈进一步确认，现场判断贯穿异常发现、信息确认、工单发起、任务分派、现场排查、原因判断、维修处置、运行确认、恢复生产、知识沉淀与检查标准审视。最依赖经验的是现场诊断、失效原因分析，以及处置后对检查标准与策略的再审视。</p>
+<table><colgroup><col width="160"/><col width="280"/><col width="290"/></colgroup><thead><tr><th><p>现场痛点</p></th><th><p>业务后果</p></th><th><p>知质·灵巡的切入</p></th></tr></thead><tbody>
+<tr><td><p>弱信号分散</p></td><td><p>单点未越界时风险无法升级，缺陷到下游才显性化</p></td><td><p>硬规则+EWMA+CUSUM+指令反馈残差+图谱关系形成最小证据共识</p></td></tr>
+<tr><td><p>证据跨系统</p></td><td><p>报警、工单、PFMEA、控制计划和历史8D难以同时检索</p></td><td><p>以事件ID和知识子图约束GraphRAG，输出来源、路径、版本与冲突证据</p></td></tr>
+<tr><td><p>经验难复制</p></td><td><p>根因判断依赖老师傅，结论难复核、难迁移</p></td><td><p>Top-3候选+因果护栏+反事实动作，不把相关性直接写成根因</p></td></tr>
+<tr><td><p>关闭不等于解决</p></td><td><p>工单状态关闭，但原因、失效模式或检查标准未沉淀</p></td><td><p>现场关闭与知识债关闭分离，标准草案必须审批并进入有效性观察</p></td></tr>
+<tr><td><p>跨岗位协同断点</p></td><td><p>任务、证据、授权与复盘状态不一致</p></td><td><p>飞书六对象围绕同一事件ID编排，Outbox/Inbox保证幂等和补偿</p></td></tr>
+</tbody></table>
+<img path="@./diagram/quality-ai-architecture.png" width="720" caption="图1｜知质·灵巡从现场数据、知识底座、数字员工推理到飞书协同的闭环架构"/>
+
+<h3>2. 方案优势/创新点</h3>
+<grid><column width-ratio="0.5"><h4>创新一｜双入口主动感知</h4><p>既监测实时工艺弱信号，也主动审计历史工单中的“闭而未解”知识债。数字员工不等待人提问，而是持续寻找可行动风险。</p><h4>创新三｜证据优先GraphRAG</h4><p>先用设备—工位—参数—质量特性—失效模式关系生成有界子图，再检索文档；结果同时给出支持、冲突、来源与版本。</p></column><column width-ratio="0.5"><h4>创新二｜可证伪根因推理</h4><p>稳定H1/H2/H3身份与动态Rank分离。干预实测会增强、削弱或重排候选，低置信和证据冲突自动转人工。</p><h4>创新四｜双重确定性关闭</h4><p>决策前用五项因果护栏，关闭前用五项独立证据门。任何模型置信度都不能替代物理复检、责任签署与授权放行。</p></column></grid>
+<grid><column width-ratio="0.5"><h4>创新五｜一个事件护照贯穿全链</h4><p>同一事件ID贯穿原始信号、VIN/批次、知识版本、根因假设、任务、检测实测、授权、标准草案与观察结果。</p></column><column width-ratio="0.5"><h4>创新六｜飞书成为执行织网</h4><p>多维表格、任务、卡片、Aily、文档与事件订阅不是展示附件，而是协同执行层；设备主数据仍由MES/QMS/设备平台掌管。</p></column></grid>
+<callout emoji="🛡️" background-color="rgb(255,244,230)" border-color="rgb(245,158,11)"><p><b>与常规问答式方案的区别：</b>知质·灵巡必须先感知事件、通过数据质量门、检索有界证据、提出可验证动作、等待实测与实名签署，再决定升级、隔离或申请关闭。它可以拒答、降级和回退，不能凭一段自然语言生成“根因已确认”。</p></callout>
+
+<h3>3. 具体方案说明（突出AI能力）</h3>
+<h4>3.1 七层技术架构</h4>
+<ol>
+<li><b>现场与边缘层：</b>只读接入PLC/SCADA、传感器、视觉/X光、点检和MES过站数据，完成时间同步、窗口特征与断点续传。</li>
+<li><b>事件与数据质量层：</b>统一事件时间、来源、Schema、单位、校准ID及VIN/批次绑定；异常数据进入隔离区。</li>
+<li><b>质量知识底座：</b>统一设备、工艺、产品、质量特性、PFMEA、控制计划、案例、证据、任务和审批语义。</li>
+<li><b>风险检测层：</b>组合硬规则、EWMA、CUSUM、响应残差、设备寿命与图谱关系，计算弱信号、可行动时刻和影响对象。</li>
+<li><b>GraphRAG与因果保障层：</b>输出Top-3根因、支持/冲突证据、反事实动作及后验更新。</li>
+<li><b>Agent与策略层：</b>执行观察—研判—检索—推理—行动—复盘状态机；权限和关闭条件由策略服务硬约束。</li>
+<li><b>飞书与治理层：</b>完成协同执行、版本治理、审计、审批和知识沉淀。</li>
+</ol>
+
+<h4>3.2 12步现场生命周期</h4>
+<p>数字员工把导师描述的现场流程固化为不可跳跃的状态链：<b>异常发现 → 信息确认 → 工单发起 → 任务分派 → 现场排查 → 原因判断 → 维修处置 → 运行确认 → 恢复生产 → 知识沉淀 → 检查标准审视 → 有效性观察</b>。每一步都定义责任岗位、AI职责、必备证据、权限门、飞书对象和禁止跳转条件。</p>
+<img path="@./output/playwright/final-desktop.png" width="720" caption="图2｜互动工作台：企业数据审计、证据包与12步异常处置全生命周期"/>
+
+<h4>3.3 AI推理链：从弱信号到可验证根因</h4>
+<p>本次GraphRAG机制原型先按设备ID、工位ID、工艺参数和时间窗生成事实子图，再向质量特性、失效模式、PFMEA、控制计划和历史案例扩展，文档检索只在该子图约束的实体、版本与时间范围内进行。候选根因必须通过五项护栏：数据来源完整、原因在时间上先于偏离、机理一致、同位复现、干预可证伪。企业试点阶段再接入图数据库、文档切片、向量召回与模型证据融合。</p>
+<img path="@./output/playwright/final-reasoning.png" width="720" caption="图3｜GraphRAG证据路径、稳定候选编号、反事实实验与确定性关闭校验"/>
+
+<h4>3.4 双案例验证</h4>
+<table><colgroup><col width="130"/><col width="270"/><col width="330"/></colgroup><thead><tr><th><p>案例</p></th><th><p>系统发现</p></th><th><p>闭环动作与边界</p></th></tr></thead><tbody>
+<tr><td><p><b>企业脱敏数据：闭而未解</b></p></td><td><p>赛事数据含625类设备、9673台实例、336项功能、1287条失效模式、406张工单。某设备121张工单中119张显示关闭，120张无确认原因，0张关联失效模式。</p></td><td><p>GraphRAG沿同类型设备、功能、工单和失效模式寻找可迁移证据，生成现场检查与专家确认任务；不自动写入唯一根因，标准更新须审批。</p></td></tr>
+<tr><td><p><b>总装拧紧：22分钟前置</b></p></td><td><p>14:08 EWMA发现偏移，14:16形成最小证据共识，14:38为下游理论显性点；系统圈定VIN尾号8123-8125。</p></td><td><p>“更换套筒+标准件复校”实测后Top-1由86%更新为93%，但仍须完成三车复检、设备恢复、责任签署和质量负责人授权。</p></td></tr>
+</tbody></table>
+
+<h4>3.5 飞书在线协同：从推理结果到岗位行动</h4>
+<table><colgroup><col width="150"/><col width="300"/><col width="280"/></colgroup><thead><tr><th><p>飞书对象</p></th><th><p>业务职责</p></th><th><p>当前证据</p></th></tr></thead><tbody>
+<tr><td><p>多维表格</p></td><td><p>质量事件、Top-3、证据链、VIN/批次、责任人、状态与关闭依据</p></td><td><p>已完成在线写入与回读核验</p></td></tr>
+<tr><td><p>飞书任务</p></td><td><p>隔离、检测、维修、首件、审批等任务及SLA</p></td><td><p>已形成可打开对象样例</p></td></tr>
+<tr><td><p>复盘文档/知识库</p></td><td><p>自动生成事件复盘、证据摘要和标准变更草案</p></td><td><p>已形成可打开文档样例</p></td></tr>
+<tr><td><p>Aily/卡片/审批/事件订阅</p></td><td><p>自然语言查证、群内接单、实名授权、状态回收</p></td><td><p>接口、字段和编排脚本已设计；待企业开发者应用与角色映射部署</p></td></tr>
+</tbody></table>
+<callout emoji="🔐" background-color="rgb(245,247,250)" border-color="rgb(107,114,128)"><p><b>责任边界：</b>飞书负责协同，不控制设备。系统不直接修改PLC/SCADA参数，不替代质量负责人放行，不自动关闭P1；生产身份、量具、附件、审批实例和不可覆盖时间戳必须由服务端及企业应用回读。</p></callout>
+
+<h3>4. 方案价值</h3>
+<h4>4.1 已核验成果、仿真结果与试点目标分层</h4>
+<table><colgroup><col width="160"/><col width="240"/><col width="320"/></colgroup><thead><tr><th><p>证据层</p></th><th><p>当前结果</p></th><th><p>说明</p></th></tr></thead><tbody>
+<tr><td><p>已核验工程成果</p></td><td><p>互动工作台、推理脚本、事件Schema、质量本体、知识图谱、飞书Base写入回读、任务与复盘样例</p></td><td><p>可通过源码、数据契约、页面交互和在线飞书对象复核</p></td></tr>
+<tr><td><p>脱敏仿真结果</p></td><td><p>总装22分钟、焊装31分钟、涂装18分钟、压铸46分钟前置量</p></td><td><p>由T_actionable与T_downstream时间戳计算，只证明机制可运行，不代表赛力斯现网收益</p></td></tr>
+<tr><td><p>90天试点目标</p></td><td><p>定位时间下降40%-60%；Top-3命中率≥80%；影响范围准确率≥90%；P1派发&lt;1分钟</p></td><td><p>须以影子运行、现场金标准、分层统计和95%置信区间验收</p></td></tr>
+</tbody></table>
+<h4>4.2 企业价值指标</h4>
+<ul>
+<li><b>效率：</b>前置量中位数≥10分钟，异常定位时间下降40%-60%，P1派发时长小于1分钟。</li>
+<li><b>质量：</b>P1召回率≥95%，根因Top-3命中率≥80%，影响范围准确率≥90%，重复问题下降15%-25%。</li>
+<li><b>治理：</b>已关闭P1五项门完整率100%，回写可追溯率100%，主平台错误自动写入0，越权成功0。</li>
+<li><b>组织：</b>把老师傅经验转成可审查的图谱关系、反事实动作和复盘知识，缩短跨系统、跨岗位的信息等待。</li>
+</ul>
+
+<h3>5. 方案体验入口 &amp; Demo展示视频【建议包含】</h3>
+<callout emoji="🧭" background-color="rgb(235,247,255)" border-color="rgb(59,130,246)"><p><b>建议体验顺序（约5分钟）：</b>先打开GitHub查看说明与完整源码；下载后直接双击app/index.html进入互动工作台；再打开质量事件Base核对同一事件ID、证据链和流转状态；最后查看飞书任务与复盘文档。</p></callout>
+<p><b>69秒核心流程演示：</b>依次展示主动风险、企业数据审计、12步生命周期、GraphRAG证据、反事实干预、飞书协同与试点价值。</p>
+<figure view-type="Card"><source path="@./output/demo/seris-quality-agent-demo.mp4" name="知质灵巡-核心流程演示.mp4"/></figure>
+<table><colgroup><col width="180"/><col width="550"/></colgroup><thead><tr><th><p>入口</p></th><th><p>链接与说明</p></th></tr></thead><tbody>
+<tr><td><p><b>公开源码与运行入口</b></p></td><td><p><a type="url-preview" href="https://github.com/zhijinDeng/Seris">GitHub｜zhijinDeng/Seris</a><br/>下载仓库后直接打开app/index.html，无需安装依赖。</p></td></tr>
+<tr><td><p><b>质量事件多维表格</b></p></td><td><p><a type="url-preview" href="https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD">飞书Base｜质量风险事件台账</a><br/>查看事件ID、根因假设、证据节点、运行分支、AI摘要、责任人与状态。</p></td></tr>
+<tr><td><p><b>责任任务样例</b></p></td><td><p><a type="url-preview" href="https://applink.feishu.cn/client/todo/detail?guid=f10d51e5-cc8e-4c71-9441-cd29a77feacf">飞书任务｜处置责任与SLA</a></p></td></tr>
+<tr><td><p><b>复盘文档样例</b></p></td><td><p><a type="url-preview" href="https://larkcommunity.feishu.cn/docx/PjludNq8foBhkrxV8VQccsldneb">飞书云文档｜结构化事件复盘</a></p></td></tr>
+</tbody></table>
+<img path="@./output/playwright/final-mobile.png" width="300" caption="图4｜移动端风险值守：产线态势、回放时钟、风险队列与数字员工摘要"/>
+<p><b>完整技术方案附件：</b></p>
+<figure view-type="Card"><source path="@./output/docx-qa-final/09_决赛完整技术方案.pdf" name="09_决赛完整技术方案.pdf"/></figure>
+
+<h2>三、自由展示区【可选 · 加分项】</h2>
+<h3>1. 一次风险事件怎样自主运行</h3>
+<ol>
+<li><b>Observe：</b>持续读取设备、工艺、检测和MES事件，先做事件时间、Schema、单位、校准与对象绑定校验。</li>
+<li><b>Qualify：</b>硬规则与统计检测器形成最小共识；无法圈定影响对象时只记录观察，不派单。</li>
+<li><b>Reason：</b>GraphRAG生成有界子图与Top-3，列出支持、冲突和缺失证据。</li>
+<li><b>Act：</b>在影子、协同、生产受控三种模式下调用不同工具；低置信进入人工复核。</li>
+<li><b>Verify：</b>反事实干预与物理复检更新后验，实测未签署时不能通过关闭门。</li>
+<li><b>Close &amp; Learn：</b>质量负责人授权后关闭现场事件；标准变更仍进入审批与30天有效性观察。</li>
+</ol>
+
+<h3>2. 三种运行模式与故障降级</h3>
+<table><colgroup><col width="160"/><col width="250"/><col width="320"/></colgroup><thead><tr><th><p>模式</p></th><th><p>权限</p></th><th><p>适用阶段</p></th></tr></thead><tbody>
+<tr><td><p>影子验证 L0</p></td><td><p>只读，不产生外部任务</p></td><td><p>历史回放、误报标定、规则与模型对比</p></td></tr>
+<tr><td><p>协同执行 L2</p></td><td><p>写Base、任务和文档，不控制设备</p></td><td><p>试点运行与跨岗位协同</p></td></tr>
+<tr><td><p>生产受控 L3</p></td><td><p>只写经审批的协同状态</p></td><td><p>安全评审、角色映射和服务端策略部署完成后</p></td></tr>
+</tbody></table>
+<p>数据延迟时冻结新增推理；图谱不可用时回退到控制计划与规则包；模型不可用时保留硬规则、影响圈定和人工协同；飞书不可用时进入本地Outbox，恢复后按事件ID幂等补偿；任何越权动作都被服务端策略拒绝并写入追加式审计。</p>
+
+<h3>3. 90天试点路线</h3>
+<grid><column width-ratio="0.333"><h4>第1-30天｜准入</h4><p>完成点位、事件Schema、时钟同步、PFMEA/控制计划映射与岗位权限矩阵。退出条件：关键字段完整率≥95%，只读OT通道通过安全评审。</p></column><column width-ratio="0.333"><h4>第31-60天｜影子</h4><p>历史回放和在线影子运行，以现场最终结论为金标准，评估召回、误报、Top-3和影响范围。</p></column><column width-ratio="0.334"><h4>第61-90天｜协同</h4><p>启用飞书Base、任务、卡片、Aily和事件订阅；验证签署、补偿、回写与有效性观察。</p></column></grid>
+
+<h3>4. 跨工序复制合同</h3>
+<p>首期覆盖总装拧紧、焊装点焊、涂装烘干和一体压铸四类工况。跨产线复制时复用事件模型、Agent状态机、权限矩阵、飞书字段、指标口径和审计规范；只替换感知适配器、工艺本体子图、规则包、案例集与物理验证方法。后续可扩展至电驱装配、电池包气密、整车标定、供应链来料与路试问题闭环。</p>
+
+<h2>四、附录</h2>
+<h3>1. 项目构建过程</h3>
+<p>团队从公开资料研究赛力斯的数智质量基础，随后以赛事提供的设备业务材料和脱敏数据校准业务边界；再将导师反馈中的现场异常处置流程固化为12步生命周期。作品先完成可运行的四工况与企业数据审计，再补齐飞书协同、失败降级、事件契约、试点验收和公开数据边界。每一项能力均尽量对应可打开页面、脚本、数据文件或在线对象。</p>
+
+<h3>2. 参考项目与文献</h3>
+<ol>
+<li><a href="https://vip.stock.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?id=12037655&amp;stockid=601127">赛力斯集团股份有限公司2025年年度报告</a>：工业AI大模型、36,000+质量点位与“信息—决策—行动”闭环。</li>
+<li><a href="https://cdn-web.seres.cn/uploads/20250401/527578cbe5eb235154a0b049fa778022.pdf">赛力斯2024年环境、社会及管治报告</a>：全过程质量、AI监测、一车一档与一件一档。</li>
+<li>赛力斯设备质量风险AI数字员工业务场景参考材料；设备场景闭环脱敏数据包，赛事定向提供，2026。</li>
+<li><a href="https://archive.ics.uci.edu/dataset/179/secom">UCI SECOM数据集</a>：匿名制造数据的缺失值治理、风险排序与事件编排验证。</li>
+<li><a href="https://airc.nist.gov/airmf-resources/airmf/5-sec-core/">NIST AI Risk Management Framework 1.0</a>：人机职责、监督、测量与持续治理。</li>
+<li><a href="https://csrc.nist.gov/pubs/sp/800/82/r3/final">NIST SP 800-82 Rev.3</a>：OT分区、访问控制、监测与恢复。</li>
+<li><a href="https://www.iso.org/standard/78743.html">ISO 23247-2:2021</a>：制造数字孪生参考架构。</li>
+<li><a href="https://arxiv.org/abs/2402.00043">Interactive and Intelligent Root Cause Analysis in Manufacturing with Causal Bayesian Networks and Knowledge Graphs</a>，2024。</li>
+<li><a href="https://doi.org/10.3390/electronics14112102">Document GraphRAG for Document Question Answering Within the Manufacturing Domain</a>，2025。</li>
+<li><a href="https://doi.org/10.1080/00207543.2022.2137597">Data-driven causal knowledge graph construction for root cause analysis in quality problem solving</a>，2023。</li>
+<li><a href="https://doi.org/10.1109/INDIN51400.2023.10218245">Counterfactual Root Cause Analysis via Anomaly Detection and Causal Graphs</a>，2023。</li>
+<li><a href="https://open.feishu.cn/document/server-docs/docs/bitable-v1/bitable-overview?lang=zh-CN">飞书多维表格</a>、<a href="https://open.feishu.cn/document/task-v2/overview">飞书任务</a>、<a href="https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN">事件订阅</a>官方文档。</li>
+</ol>
+<callout emoji="📌" background-color="rgb(245,247,250)" border-color="rgb(156,163,175)"><p><b>数据与结论边界：</b>页面工艺参数、时间序列、检测签署身份为脱敏仿真；赛事企业数据仅用于聚合统计与重键关系审计；UCI SECOM只验证通用检测和数据治理。所有现网收益均列为90天试点目标，不把仿真值包装成生产成绩。</p></callout>

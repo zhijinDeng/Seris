@@ -18,6 +18,7 @@
 - 现场生命周期契约：`data/quality_lifecycle_contract.json`固定12步责任、必备证据、权限门、飞书对象和禁止跳转；页面“全流程”面板可逐步查看当前脱敏事件状态。
 - 公开数据边界：`data/public_benchmark_profile.json`登记UCI SECOM的来源、字段映射和复现要求，只用于通用检测与数据治理验证，不替代赛力斯现场数据。
 - 决赛材料：报名文本、开题报告、整体方案、平台说明、参考文献、完整案例、创新点、仿真设计和完整技术方案。
+- 飞书在线终稿：按赛事模板重构的信息卡、方案成果、体验入口、自由展示与附录，并上传核心流程演示视频和完整技术方案PDF。
 
 ## 直接运行
 
@@ -49,6 +50,7 @@ powershell -ExecutionPolicy Bypass -File scripts\orchestrate_feishu_quality_even
 
 ## 飞书在线证明
 
+- 赛事在线终稿：<https://larkcommunity.feishu.cn/wiki/T737wm3gyiw2xGkc2YIcPf6SnLN>
 - 质量事件Base：<https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD>
 - 飞书任务：<https://applink.feishu.cn/client/todo/detail?guid=f10d51e5-cc8e-4c71-9441-cd29a77feacf>
 - 复盘文档：<https://larkcommunity.feishu.cn/docx/PjludNq8foBhkrxV8VQccsldneb>
@@ -60,8 +62,10 @@ Base记录已完成写入和回读核验；任务与文档链接作为对象样�
 - `app/`：互动工作台与数字员工视觉资产。
 - `data/`：本体、关系图实例、企业数据聚合画像、事件JSON Schema、场景、主动检测与因果保障合同、飞书字段、编排样例和参考文献目录。
 - `docs/`：架构、研究依据、飞书生产蓝图、90天计划、运行与验收说明。
+- `docs/final-online-submission.xml`：飞书赛事在线终稿的可复现DocxXML源文件。
+- `docs/assets/seris-quality-agent-demo.mp4`：69秒核心流程演示视频。
 - `docs/production-decision-assurance-contract.md`：OT/IT边界、事件契约、状态机、角色签署、降级与上线验收合同。
-- `scripts/`：推理、飞书编排、材料生成与审计脚本。
+- `scripts/`：推理、飞书编排、材料生成、演示录制与审计脚本。
 - `提交材料/`：决赛提交用Markdown与DOCX文件。
 
 ## 工程与治理边界
