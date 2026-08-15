@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>知质·灵巡功能逻辑树</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #eef1f4; color: #111827; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    .canvas { width: 1500px; height: 1120px; padding: 48px 54px 44px; background: #f7f8fa; overflow: hidden; }
+    .eyebrow { color: #087f73; font-size: 18px; font-weight: 800; letter-spacing: 0; }
+    h1 { margin: 10px 0 8px; font-size: 44px; line-height: 1.18; letter-spacing: 0; }
+    .subtitle { margin: 0; color: #596579; font-size: 20px; }
+    .mainline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-top: 42px; }
+    .stage { position: relative; min-height: 205px; padding: 20px 18px 17px; background: #fff; border: 1px solid #cfd7e2; border-top: 7px solid #0f8a7b; border-radius: 6px; }
+    .stage:not(:last-child)::after { content: ""; position: absolute; top: 88px; right: -19px; width: 19px; height: 3px; background: #2265ad; z-index: 2; }
+    .stage:not(:last-child)::before { content: ""; position: absolute; top: 82px; right: -20px; border-left: 9px solid #2265ad; border-top: 7px solid transparent; border-bottom: 7px solid transparent; z-index: 3; }
+    .stage:nth-child(3) { border-top-color: #b4232d; }
+    .stage:nth-child(4) { border-top-color: #d97706; }
+    .stage:nth-child(5) { border-top-color: #2265ad; }
+    .num { font-size: 16px; font-weight: 800; color: #087f73; }
+    .stage h2 { margin: 8px 0 12px; font-size: 25px; letter-spacing: 0; }
+    .stage ul { margin: 0; padding-left: 20px; color: #475569; font-size: 18px; line-height: 1.64; }
+    .branches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 24px; }
+    .branch { min-height: 180px; padding: 20px 21px; background: #fff; border: 1px solid #d5dbe4; border-left: 6px solid #2265ad; border-radius: 6px; }
+    .branch:nth-child(2) { border-left-color: #b4232d; }
+    .branch:nth-child(3) { border-left-color: #d97706; }
+    .branch:nth-child(4) { border-left-color: #0f8a7b; }
+    .branch h3 { margin: 0 0 10px; font-size: 22px; letter-spacing: 0; }
+    .branch p { margin: 0; color: #536174; font-size: 18px; line-height: 1.64; }
+    .contract { margin-top: 24px; display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 18px; }
+    .contract > div { padding: 19px 22px; background: #17202b; color: #fff; border-radius: 6px; min-height: 132px; }
+    .contract h3 { margin: 0 0 8px; font-size: 20px; color: #dbeafe; }
+    .contract p { margin: 0; font-size: 16px; line-height: 1.68; color: #d5dde8; }
+    .contract b { color: #73d5c9; }
+    .foot { display: flex; justify-content: space-between; margin-top: 20px; color: #667085; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <div class="eyebrow">FUNCTION LOGIC TREE · 从风险信号到质量能力资产</div>
+    <h1>知质·灵巡功能逻辑树</h1>
+    <p class="subtitle">一条主闭环、四项横向保障、三类运行合同，把“看见异常”转化为“证据充分的受控行动”</p>
+
+    <section class="mainline">
+      <article class="stage"><div class="num">01 · SENSE</div><h2>主动感知</h2><ul><li>实时工艺弱信号</li><li>存量工单知识债</li><li>设备报警与点检</li><li>VIN/批次影响对象</li></ul></article>
+      <article class="stage"><div class="num">02 · QUALIFY</div><h2>事件准入</h2><ul><li>Schema与单位校验</li><li>时间戳与质量码</li><li>校准状态与对象绑定</li><li>重复事件幂等去重</li></ul></article>
+      <article class="stage"><div class="num">03 · REASON</div><h2>证据推理</h2><ul><li>质量本体约束子图</li><li>GraphRAG路径检索</li><li>Top-3支持/冲突证据</li><li>反事实干预重排</li></ul></article>
+      <article class="stage"><div class="num">04 · ACT</div><h2>受控执行</h2><ul><li>隔离与影响圈定</li><li>飞书任务与SLA</li><li>现场排查与复检</li><li>人工授权与升级</li></ul></article>
+      <article class="stage"><div class="num">05 · LEARN</div><h2>确定关闭与学习</h2><ul><li>五项独立关闭门</li><li>事件护照与审计</li><li>标准变更草案</li><li>有效性观察与复制</li></ul></article>
+    </section>
+
+    <section class="branches">
+      <article class="branch"><h3>知识底座</h3><p>设备、工位、工序、参数、质量特性、车辆、零件批次、失效模式、PFMEA、控制计划、案例、证据、任务与审批统一语义。</p></article>
+      <article class="branch"><h3>因果保障</h3><p>数据完整、时序先行、机理一致、同位复现、干预可证伪。候选根因允许被削弱、推翻或转人工，不由置信度替代现场证据。</p></article>
+      <article class="branch"><h3>协同执行</h3><p>多维表格、任务、卡片、Aily、审批、云文档和事件订阅围绕同一事件ID编排；飞书负责协同，不控制设备。</p></article>
+      <article class="branch"><h3>可靠性与推广</h3><p>Outbox/Inbox幂等补偿、数据延迟降级、图谱/模型不可用回退、规则版本回滚；跨工序复用事件模型和状态机。</p></article>
+    </section>
+
+    <section class="contract">
+      <div><h3>运行模式</h3><p><b>L0影子验证</b>：只读、不派单　｜　<b>L2协同执行</b>：写Base/任务/文档　｜　<b>L3生产受控</b>：仅写经审批的协同状态</p></div>
+      <div><h3>禁止自动越权</h3><p>不改PLC/SCADA参数，不自动确认唯一根因，不替代质量放行，不自动关闭P1，不未经审批发布标准。</p></div>
+      <div><h3>可核验证据</h3><p>网页交互、事件JSON Schema、质量本体、图谱路径、推理脚本、生命周期合同、飞书Base回读、任务与复盘样例。</p></div>
+    </section>
+    <div class="foot"><span>智造知行队｜知质·灵巡</span><span>企业脱敏工程原型 · 真实生产能力以90天试点验收为准</span></div>
+  </main>
+</body>
+</html>

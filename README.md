@@ -63,9 +63,10 @@ Base记录已完成写入和回读核验；任务与文档链接作为对象样�
 - `data/`：本体、关系图实例、企业数据聚合画像、事件JSON Schema、场景、主动检测与因果保障合同、飞书字段、编排样例和参考文献目录。
 - `docs/`：架构、研究依据、飞书生产蓝图、90天计划、运行与验收说明。
 - `docs/final-online-submission.xml`：飞书赛事在线终稿的可复现DocxXML源文件。
+- `docs/assets/submission/`：在线终稿使用的功能逻辑树、企业落地闭环图和20余张分区高清功能截图。
 - `docs/assets/seris-quality-agent-demo.mp4`：69秒核心流程演示视频。
 - `docs/production-decision-assurance-contract.md`：OT/IT边界、事件契约、状态机、角色签署、降级与上线验收合同。
-- `scripts/`：推理、飞书编排、材料生成、演示录制与审计脚本。
+- `scripts/`：推理、飞书编排、材料生成、演示录制与审计脚本；`capture_submission_assets.js`可重生成在线终稿高清图，`qa_online_submission.js`可巡检公开页面的章节跳转与图片加载。
 - `提交材料/`：决赛提交用Markdown与DOCX文件。
 
 ## 工程与治理边界

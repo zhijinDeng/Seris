@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>企业落地作战闭环</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #eef1f4; color: #111827; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    .canvas { width: 1500px; height: 1160px; padding: 44px 50px; background: #f7f8fa; overflow: hidden; }
+    .eyebrow { color: #087f73; font-size: 18px; font-weight: 800; }
+    h1 { margin: 8px 0 8px; font-size: 43px; line-height: 1.2; letter-spacing: 0; }
+    .subtitle { color: #5d697b; font-size: 19px; margin: 0 0 28px; }
+    .loop { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+    .step { position: relative; min-height: 202px; padding: 17px; background: #fff; border: 1px solid #cfd7e2; border-top: 7px solid #0f8a7b; border-radius: 6px; }
+    .step:nth-child(2), .step:nth-child(5) { border-top-color: #2265ad; }
+    .step:nth-child(3) { border-top-color: #b4232d; }
+    .step:nth-child(4) { border-top-color: #d97706; }
+    .step:nth-child(6) { border-top-color: #6b7280; }
+    .step:not(:last-child)::after { content: "›"; position: absolute; right: -14px; top: 72px; z-index: 3; color: #2265ad; font-size: 38px; font-weight: 800; }
+    .step b { color: #087f73; font-size: 15px; }
+    .step h2 { margin: 7px 0 10px; font-size: 22px; }
+    .step p { margin: 0; color: #536174; font-size: 17px; line-height: 1.58; }
+    .matrix { margin-top: 24px; background: #fff; border: 1px solid #cfd7e2; border-radius: 6px; overflow: hidden; }
+    .row { display: grid; grid-template-columns: 170px repeat(6, 1fr); min-height: 96px; border-bottom: 1px solid #d9e0e8; }
+    .row:last-child { border-bottom: 0; }
+    .cell { padding: 14px 12px; border-right: 1px solid #d9e0e8; font-size: 16px; line-height: 1.55; color: #435064; }
+    .cell:last-child { border-right: 0; }
+    .label { display: flex; align-items: center; font-size: 17px; font-weight: 800; color: #17202b; background: #eef4f5; }
+    .head .cell { min-height: 58px; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 800; color: #fff; background: #17202b; }
+    .head .label { background: #17202b; color: #8fe1d6; }
+    .evidence { color: #087f73; font-weight: 700; }
+    .gate { color: #a11c28; font-weight: 700; }
+    .bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .bottom article { padding: 18px 20px; min-height: 132px; background: #fff; border: 1px solid #d1d8e1; border-left: 6px solid #2265ad; border-radius: 6px; }
+    .bottom article:nth-child(2) { border-left-color: #d97706; }
+    .bottom article:nth-child(3) { border-left-color: #0f8a7b; }
+    .bottom h3 { margin: 0 0 8px; font-size: 20px; }
+    .bottom p { margin: 0; color: #536174; font-size: 15px; line-height: 1.65; }
+    .foot { display: flex; justify-content: space-between; margin-top: 18px; color: #667085; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main class="canvas">
+    <div class="eyebrow">ENTERPRISE OPERATING MODEL · AI职责、岗位责任、飞书对象与证据门同图对齐</div>
+    <h1>知质·灵巡企业落地作战闭环</h1>
+    <p class="subtitle">企业真正得到的不是一个问答窗口，而是一套可接入现有MES/QMS/设备平台的质量风险岗位与执行机制</p>
+
+    <section class="loop">
+      <article class="step"><b>01 发现</b><h2>风险入池</h2><p>实时参数弱信号、设备报警、检测异常与历史工单知识债持续进入事件队列。</p></article>
+      <article class="step"><b>02 研判</b><h2>证据收敛</h2><p>数据准入、影响圈定、图谱路径、Top-3与冲突证据共同形成行动建议。</p></article>
+      <article class="step"><b>03 止损</b><h2>隔离与分派</h2><p>圈定VIN/批次，生成隔离、复检、维修、首件和升级任务，锁定SLA。</p></article>
+      <article class="step"><b>04 验证</b><h2>现场证伪</h2><p>记录量具、校准、实测值、维修前后对照和签署身份，更新候选排序。</p></article>
+      <article class="step"><b>05 放行</b><h2>确定关闭</h2><p>五项证据门全部通过后，由质量负责人决定恢复、扩大范围或继续隔离。</p></article>
+      <article class="step"><b>06 学习</b><h2>标准与复发</h2><p>形成PFMEA/控制计划/点检草案，经审批回写并进入有效性观察。</p></article>
+    </section>
+
+    <section class="matrix">
+      <div class="row head"><div class="cell label">落地要素</div><div class="cell">风险入池</div><div class="cell">证据收敛</div><div class="cell">隔离分派</div><div class="cell">现场验证</div><div class="cell">授权关闭</div><div class="cell">知识学习</div></div>
+      <div class="row"><div class="cell label">AI数字员工职责</div><div class="cell">监听、去重、风险分级</div><div class="cell">GraphRAG、Top-3、反证动作</div><div class="cell">建议影响范围与任务草案</div><div class="cell">核对证据完整、更新后验</div><div class="cell">检查关闭门，不执行放行</div><div class="cell">生成复盘与变更草案</div></div>
+      <div class="row"><div class="cell label">企业岗位责任</div><div class="cell">质量工程师受理</div><div class="cell">设备/工艺/质量三方判断</div><div class="cell">班组长与责任岗位接单</div><div class="cell">检测、设备工程师实名签署</div><div class="cell">质量负责人授权</div><div class="cell">知识管理员与标准审批人</div></div>
+      <div class="row"><div class="cell label">飞书协同对象</div><div class="cell">Base质量事件</div><div class="cell">Aily查询与证据文档</div><div class="cell">任务、卡片、SLA升级</div><div class="cell">复检/维修记录与附件</div><div class="cell">原生审批与状态回收</div><div class="cell">复盘文档、知识库、观察任务</div></div>
+      <div class="row"><div class="cell label">必须形成的证据</div><div class="cell evidence">源ID、时间、对象、Schema</div><div class="cell evidence">路径、版本、支持/冲突证据</div><div class="cell evidence">VIN/批次、责任人、回执</div><div class="cell evidence">量具、实测、前后对照、签名</div><div class="cell evidence">五门状态、审批人、放行范围</div><div class="cell evidence">版本差异、回写回执、观察结果</div></div>
+      <div class="row"><div class="cell label">不可越过的门</div><div class="cell gate">数据不合格即隔离</div><div class="cell gate">低置信/冲突转人审</div><div class="cell gate">AI无PLC写入权</div><div class="cell gate">无物理复检不得关闭</div><div class="cell gate">AI无最终放行权</div><div class="cell gate">未经审批不得发布标准</div></div>
+    </section>
+
+    <section class="bottom">
+      <article><h3>与现有系统关系</h3><p>MES/QMS/设备平台继续作为主数据与控制系统；知质·灵巡只读取受控事件并回写协同状态、审批号和审计回执，不另建第二套设备台账。</p></article>
+      <article><h3>90天上线策略</h3><p>1-30天完成准入与映射；31-60天影子运行和双专家金标准；61-90天启用飞书企业应用与L2协同。L3仍不包含PLC控制和质量放行。</p></article>
+      <article><h3>跨工序复制</h3><p>复用事件模型、状态机、权限、飞书字段、指标和审计；只替换点位适配、本体子图、规则、案例与物理验证动作。</p></article>
+    </section>
+    <div class="foot"><span>智造知行队｜知质·灵巡</span><span>现场关闭与知识发布双状态，防止“一键闭环”</span></div>
+  </main>
+</body>
+</html>

@@ -24,11 +24,27 @@
 <tr><td><p>关闭不等于解决</p></td><td><p>工单状态关闭，但原因、失效模式或检查标准未沉淀</p></td><td><p>现场关闭与知识债关闭分离，标准草案必须审批并进入有效性观察</p></td></tr>
 <tr><td><p>跨岗位协同断点</p></td><td><p>任务、证据、授权与复盘状态不一致</p></td><td><p>飞书六对象围绕同一事件ID编排，Outbox/Inbox保证幂等和补偿</p></td></tr>
 </tbody></table>
-<img path="@./diagram/quality-ai-architecture.png" width="720" caption="图1｜知质·灵巡从现场数据、知识底座、数字员工推理到飞书协同的闭环架构"/>
+<img path="@./docs/assets/submission/00-function-logic-tree.png" width="760" caption="功能逻辑树｜主动感知、事件准入、证据推理、受控执行、确定关闭与知识学习构成一条主闭环"/>
+<img path="@./diagram/quality-ai-architecture.png" width="760" caption="总体架构｜现场数据源、知识底座、数字员工引擎与飞书协同执行层"/>
 
 <h3>2. 方案优势/创新点</h3>
 <grid><column width-ratio="0.5"><h4>创新一｜双入口主动感知</h4><p>既监测实时工艺弱信号，也主动审计历史工单中的“闭而未解”知识债。数字员工不等待人提问，而是持续寻找可行动风险。</p><h4>创新三｜证据优先GraphRAG</h4><p>先用设备—工位—参数—质量特性—失效模式关系生成有界子图，再检索文档；结果同时给出支持、冲突、来源与版本。</p></column><column width-ratio="0.5"><h4>创新二｜可证伪根因推理</h4><p>稳定H1/H2/H3身份与动态Rank分离。干预实测会增强、削弱或重排候选，低置信和证据冲突自动转人工。</p><h4>创新四｜双重确定性关闭</h4><p>决策前用五项因果护栏，关闭前用五项独立证据门。任何模型置信度都不能替代物理复检、责任签署与授权放行。</p></column></grid>
 <grid><column width-ratio="0.5"><h4>创新五｜一个事件护照贯穿全链</h4><p>同一事件ID贯穿原始信号、VIN/批次、知识版本、根因假设、任务、检测实测、授权、标准草案与观察结果。</p></column><column width-ratio="0.5"><h4>创新六｜飞书成为执行织网</h4><p>多维表格、任务、卡片、Aily、文档与事件订阅不是展示附件，而是协同执行层；设备主数据仍由MES/QMS/设备平台掌管。</p></column></grid>
+<h4>2.1 已实现功能全清单</h4>
+<table><colgroup><col width="145"/><col width="300"/><col width="285"/></colgroup><thead><tr><th><p>能力域</p></th><th><p>已实现或已设计功能</p></th><th><p>可核验证据与企业用途</p></th></tr></thead><tbody>
+<tr><td><p>主动感知</p></td><td><p>四工况风险队列、EWMA、CUSUM、硬阈值、关系共识、可行动时刻与前置量</p></td><td><p>页面时序回放和推理脚本；支持缺陷显性化前预警</p></td></tr>
+<tr><td><p>事件准入</p></td><td><p>必填字段、延迟、重复、单位、校准、质量码、VIN/批次绑定及原始哈希</p></td><td><p>4条有效事件通过、6类异常拒绝；防止脏数据驱动派单</p></td></tr>
+<tr><td><p>知识底座</p></td><td><p>质量本体、36节点/32关系机制图谱、PFMEA/控制计划/案例语义、企业数据关系审计</p></td><td><p>JSON-LD、本地关系图、来源片段和版本；形成可复用知识骨架</p></td></tr>
+<tr><td><p>主动知识债审计</p></td><td><p>从关闭工单中识别原因未确认、措施缺失、失效模式未关联和标准未更新</p></td><td><p>赛事脱敏数据406张工单与121张重点案例；支持复发风险治理</p></td></tr>
+<tr><td><p>GraphRAG</p></td><td><p>有界子图、查询轨迹、来源片段、Top-3支持/冲突证据和稳定候选编号</p></td><td><p>页面证据路径与脚本输出；减少脱离现场关系的自由生成</p></td></tr>
+<tr><td><p>影响范围</p></td><td><p>一车一因果链、最后合格点、异常窗口、恢复点和VIN/批次动态扩缩</p></td><td><p>8123-8125三车追溯；为隔离、复检和放行范围提供依据</p></td></tr>
+<tr><td><p>因果与反事实</p></td><td><p>五项因果护栏、现场对照动作、实测签署和后验Rank重排</p></td><td><p>H1由86%更新至93%；系统允许初始判断被推翻</p></td></tr>
+<tr><td><p>Agent策略</p></td><td><p>L0/L2/L3模式、状态机、低置信转人工、越权阻断和事件护照</p></td><td><p>影子期不写外部对象；浏览器不能授予生产权限</p></td></tr>
+<tr><td><p>确定性关闭</p></td><td><p>源数据、影响范围、物理复检、授权确认、任务与知识草案五项独立门</p></td><td><p>3/5→4/5→5/5交互；现场关闭与标准发布双状态</p></td></tr>
+<tr><td><p>飞书执行</p></td><td><p>Base、任务、卡片、Aily、云文档、审批、事件订阅和SLA升级</p></td><td><p>Base写入回读已核验；任务/文档为对象样例；其余待企业应用</p></td></tr>
+<tr><td><p>运行保障</p></td><td><p>Outbox/Inbox幂等补偿、数据延迟降级、图谱/模型不可用回退、版本回滚</p></td><td><p>页面可演练飞书中断和恢复补偿；生产需持久化消费者</p></td></tr>
+<tr><td><p>推广与验收</p></td><td><p>生产就绪门、90天指标协议、四工序模板和跨工序复制资产包</p></td><td><p>同一事件模型与状态机，仅替换场景适配资产</p></td></tr>
+</tbody></table>
 <callout emoji="🛡️" background-color="rgb(255,244,230)" border-color="rgb(245,158,11)"><p><b>与常规问答式方案的区别：</b>知质·灵巡必须先感知事件、通过数据质量门、检索有界证据、提出可验证动作、等待实测与实名签署，再决定升级、隔离或申请关闭。它可以拒答、降级和回退，不能凭一段自然语言生成“根因已确认”。</p></callout>
 
 <h3>3. 具体方案说明（突出AI能力）</h3>
@@ -43,28 +59,56 @@
 <li><b>飞书与治理层：</b>完成协同执行、版本治理、审计、审批和知识沉淀。</li>
 </ol>
 
-<h4>3.2 12步现场生命周期</h4>
-<p>数字员工把导师描述的现场流程固化为不可跳跃的状态链：<b>异常发现 → 信息确认 → 工单发起 → 任务分派 → 现场排查 → 原因判断 → 维修处置 → 运行确认 → 恢复生产 → 知识沉淀 → 检查标准审视 → 有效性观察</b>。每一步都定义责任岗位、AI职责、必备证据、权限门、飞书对象和禁止跳转条件。</p>
-<img path="@./output/playwright/final-desktop.png" width="720" caption="图2｜互动工作台：企业数据审计、证据包与12步异常处置全生命周期"/>
+<h4>3.2 主动感知、事件准入与企业知识债审计</h4>
+<p>风险池有两个入口。实时入口持续读取设备、工艺、检测和MES事件，以硬规则守底线，以EWMA识别小幅均值漂移，以CUSUM积累持续偏差，再结合设备、工位、VIN和PFMEA关系形成最小证据共识。存量入口主动审计已关闭工单，寻找“状态闭环但知识未闭环”的复发风险。任何事件在进入Agent前都必须通过字段、时间、单位、校准、质量码、对象绑定和幂等校验。</p>
+<img path="@./docs/assets/submission/02-active-warning.png" width="720" caption="主动预警｜14:08出现弱信号，14:16形成可行动共识，较下游理论显性点提前22分钟"/>
+<img path="@./docs/assets/submission/03a-relationship-funnel.png" width="620" caption="企业数据关系漏斗｜设备关联覆盖较高，但失效模式关联和类型一致闭环明显不足"/>
+<img path="@./docs/assets/submission/03b-knowledge-debt-case.png" width="720" caption="主动知识债案例｜121张同设备工单中119张显示关闭、120张原因未确认、0张关联失效模式"/>
+<img path="@./docs/assets/submission/03c-data-audit-trace.png" width="760" caption="知识债处置链｜快照准入、关系审计、候选收敛、现场检查、标准审批、观察与回退"/>
 
-<h4>3.3 AI推理链：从弱信号到可验证根因</h4>
+<h4>3.3 12步现场生命周期与人机责任链</h4>
+<p>数字员工把企业导师描述的现场流程固化为不可跳跃的状态链：<b>异常发现 → 信息确认 → 工单发起 → 任务分派 → 现场排查 → 原因判断 → 维修处置 → 运行确认 → 恢复生产 → 知识沉淀 → 检查标准审视 → 有效性观察</b>。每一步都定义责任岗位、AI职责、必备证据、权限门、飞书对象和禁止跳转条件；现场处置关闭与知识标准发布分别维护状态。</p>
+<img path="@./docs/assets/submission/04a-lifecycle-rail.png" width="760" caption="12步状态轨道｜已完成、当前节点、待处理、待发起与待关闭状态清晰分离"/>
+<img path="@./docs/assets/submission/04b-lifecycle-detail.png" width="760" caption="节点责任卡｜以检查标准审视为例，责任岗位、AI职责、必备证据和飞书对象同时显示"/>
+
+<h4>3.4 AI推理链、影响圈定与确定性关闭</h4>
 <p>本次GraphRAG机制原型先按设备ID、工位ID、工艺参数和时间窗生成事实子图，再向质量特性、失效模式、PFMEA、控制计划和历史案例扩展，文档检索只在该子图约束的实体、版本与时间范围内进行。候选根因必须通过五项护栏：数据来源完整、原因在时间上先于偏离、机理一致、同位复现、干预可证伪。企业试点阶段再接入图数据库、文档切片、向量召回与模型证据融合。</p>
-<img path="@./output/playwright/final-reasoning.png" width="720" caption="图3｜GraphRAG证据路径、稳定候选编号、反事实实验与确定性关闭校验"/>
+<img path="@./docs/assets/submission/05-graphrag-evidence-path.png" width="760" caption="GraphRAG证据路径｜产线—工位—设备—参数—质量风险—案例—根因及E1-E4来源证据"/>
+<img path="@./docs/assets/submission/06-vin-impact-chain.png" width="720" caption="一车一因果链｜按最后合格点、异常窗口和恢复点圈定并动态调整VIN复检范围"/>
+<img path="@./docs/assets/submission/07-top3-causal-guardrails.png" width="760" caption="Top-3与因果护栏｜稳定候选编号与动态Rank分离，支持证据、冲突证据和证伪动作同时保留"/>
+<img path="@./docs/assets/submission/08-counterfactual-test.png" width="760" caption="反事实实测｜更换套筒并复校后，标准件回到99.1N·m，候选后验更新为93%/31%/14%"/>
+<img path="@./docs/assets/submission/09-deterministic-close-gate.png" width="720" caption="五项确定性关闭门｜任何强制项缺失都不能由模型置信度替代"/>
 
-<h4>3.4 双案例验证</h4>
+<h4>3.5 双案例验证</h4>
 <table><colgroup><col width="130"/><col width="270"/><col width="330"/></colgroup><thead><tr><th><p>案例</p></th><th><p>系统发现</p></th><th><p>闭环动作与边界</p></th></tr></thead><tbody>
 <tr><td><p><b>企业脱敏数据：闭而未解</b></p></td><td><p>赛事数据含625类设备、9673台实例、336项功能、1287条失效模式、406张工单。某设备121张工单中119张显示关闭，120张无确认原因，0张关联失效模式。</p></td><td><p>GraphRAG沿同类型设备、功能、工单和失效模式寻找可迁移证据，生成现场检查与专家确认任务；不自动写入唯一根因，标准更新须审批。</p></td></tr>
 <tr><td><p><b>总装拧紧：22分钟前置</b></p></td><td><p>14:08 EWMA发现偏移，14:16形成最小证据共识，14:38为下游理论显性点；系统圈定VIN尾号8123-8125。</p></td><td><p>“更换套筒+标准件复校”实测后Top-1由86%更新为93%，但仍须完成三车复检、设备恢复、责任签署和质量负责人授权。</p></td></tr>
 </tbody></table>
 
-<h4>3.5 飞书在线协同：从推理结果到岗位行动</h4>
+<h4>3.6 飞书在线协同：从推理结果到岗位行动</h4>
 <table><colgroup><col width="150"/><col width="300"/><col width="280"/></colgroup><thead><tr><th><p>飞书对象</p></th><th><p>业务职责</p></th><th><p>当前证据</p></th></tr></thead><tbody>
 <tr><td><p>多维表格</p></td><td><p>质量事件、Top-3、证据链、VIN/批次、责任人、状态与关闭依据</p></td><td><p>已完成在线写入与回读核验</p></td></tr>
 <tr><td><p>飞书任务</p></td><td><p>隔离、检测、维修、首件、审批等任务及SLA</p></td><td><p>已形成可打开对象样例</p></td></tr>
 <tr><td><p>复盘文档/知识库</p></td><td><p>自动生成事件复盘、证据摘要和标准变更草案</p></td><td><p>已形成可打开文档样例</p></td></tr>
 <tr><td><p>Aily/卡片/审批/事件订阅</p></td><td><p>自然语言查证、群内接单、实名授权、状态回收</p></td><td><p>接口、字段和编排脚本已设计；待企业开发者应用与角色映射部署</p></td></tr>
 </tbody></table>
+<img path="@./docs/assets/submission/10-feishu-execution-fabric.png" width="720" caption="飞书执行织网｜事件台账、处置任务、复检记录、设备维修、质量审批和知识变更围绕同一事件ID"/>
+<img path="@./docs/assets/submission/11-feishu-capability-matrix.png" width="520" caption="飞书能力成熟度｜已在线核验、对象样例、接口原型与待部署能力分层呈现"/>
 <callout emoji="🔐" background-color="rgb(245,247,250)" border-color="rgb(107,114,128)"><p><b>责任边界：</b>飞书负责协同，不控制设备。系统不直接修改PLC/SCADA参数，不替代质量负责人放行，不自动关闭P1；生产身份、量具、附件、审批实例和不可覆盖时间戳必须由服务端及企业应用回读。</p></callout>
+
+<h4>3.7 企业落地运行模型、生产就绪与跨工序复制</h4>
+<p>企业落地时，MES、QMS和设备平台继续作为设备、工单、质量结果与标准文件的主系统；知质·灵巡读取受控事件，形成决策证据和协同任务，只回写审批号、协同状态、标准草案及审计回执，不建设第二套设备主台账。业务闭环同时对齐AI职责、岗位责任、飞书对象、必须证据和不可越过的安全门。</p>
+<img path="@./docs/assets/submission/01-enterprise-landing-loop.png" width="760" caption="企业落地作战闭环｜风险入池、证据收敛、隔离分派、现场验证、授权关闭与知识学习"/>
+<table><colgroup><col width="150"/><col width="235"/><col width="235"/><col width="150"/></colgroup><thead><tr><th><p>数据/对象</p></th><th><p>权威来源</p></th><th><p>数字员工使用方式</p></th><th><p>允许回写</p></th></tr></thead><tbody>
+<tr><td><p>设备与工位主数据</p></td><td><p>设备管理平台/MES</p></td><td><p>只读映射设备、位置、功能和责任岗位</p></td><td><p>审批后的关联回执</p></td></tr>
+<tr><td><p>工艺时序与报警</p></td><td><p>PLC/SCADA/边缘平台</p></td><td><p>只读窗口特征、异常检测和证据追溯</p></td><td><p>禁止控制写入</p></td></tr>
+<tr><td><p>质量与车辆关系</p></td><td><p>QMS/MES/一车一档</p></td><td><p>圈定VIN/批次、读取复检结果和放行范围</p></td><td><p>经授权的协同状态</p></td></tr>
+<tr><td><p>PFMEA/控制计划/点检</p></td><td><p>质量标准与设备平台</p></td><td><p>检索版本、生成差异和变更草案</p></td><td><p>审批号、目标版本、回读结果</p></td></tr>
+<tr><td><p>事件、任务与复盘</p></td><td><p>飞书Base/任务/文档</p></td><td><p>承载责任、SLA、附件、评论、签署和知识沉淀</p></td><td><p>Agent状态和审计回执</p></td></tr>
+</tbody></table>
+<img path="@./docs/assets/submission/12-production-readiness.png" width="760" caption="生产试点就绪门｜已核验、机制原型、接口原型、待企业接入与待审批分层"/>
+<img path="@./docs/assets/submission/13-failsafe-accountability.png" width="760" caption="运行保障与责任链｜数据延迟、图谱不可用、飞书中断均可降级，授权责任不转移给AI"/>
+<img path="@./docs/assets/submission/14-replication-package.png" width="760" caption="跨工序复制资产包｜同一骨架，仅替换感知适配、知识模块和物理验证方法"/>
 
 <h3>4. 方案价值</h3>
 <h4>4.1 已核验成果、仿真结果与试点目标分层</h4>
@@ -80,6 +124,17 @@
 <li><b>治理：</b>已关闭P1五项门完整率100%，回写可追溯率100%，主平台错误自动写入0，越权成功0。</li>
 <li><b>组织：</b>把老师傅经验转成可审查的图谱关系、反事实动作和复盘知识，缩短跨系统、跨岗位的信息等待。</li>
 </ul>
+<h4>4.3 年度价值测算模型</h4>
+<p>试点不预填未经验证的收益金额，而是由财务、质量、设备和生产共同确认基线后，按被现场采纳且完成确定性关闭的事件核算：</p>
+<callout emoji="📊" background-color="rgb(238,247,246)" border-color="rgb(15,118,110)"><p><b>年度可核算价值 = 异常定位与停线等待缩短价值 + 返工/报废避免价值 + 重复问题下降价值 + 跨系统查询工时节省 − 接口、算力、运维与治理成本。</b><br/>每一项都保留事件ID、基线周期、试点周期、样本量、责任人和财务确认口径，避免把仿真提前量直接折算为财务收益。</p></callout>
+<table><colgroup><col width="160"/><col width="280"/><col width="290"/></colgroup><thead><tr><th><p>价值项</p></th><th><p>计算口径</p></th><th><p>所需企业数据</p></th></tr></thead><tbody>
+<tr><td><p>定位与等待</p></td><td><p>采纳事件数 × 平均缩短时长 × 相关岗位/停线时间成本</p></td><td><p>异常时间、受理时间、定位完成时间、停线成本口径</p></td></tr>
+<tr><td><p>返工与报废</p></td><td><p>正确提前处置的影响对象 × 单对象经财务确认的避免成本</p></td><td><p>VIN/批次、隔离范围、返工报废记录、质量成本</p></td></tr>
+<tr><td><p>重复问题</p></td><td><p>基线复发成本 − 试点期同口径复发成本</p></td><td><p>同设备/同失效模式复发、维修与停线记录</p></td></tr>
+<tr><td><p>知识与协同</p></td><td><p>减少的跨系统查询、会议和手工整理工时</p></td><td><p>工单流转时长、查询步骤、任务SLA与复盘时长</p></td></tr>
+</tbody></table>
+<h4>4.4 试点评估设计</h4>
+<p>影子期采用历史回放与在线盲测，现场最终结论作为金标准；关键事件由设备、工艺或质量双专家独立标注，分歧由第三人仲裁。所有指标报告样本量、点估计和95%置信区间，并按工序、班次、设备新旧和风险等级分层。P1重大漏判、越权成功、无复检仍关闭或主平台错误自动写入任一发生，即判定No-Go并回退人工模式。</p>
 
 <h3>5. 方案体验入口 &amp; Demo展示视频【建议包含】</h3>
 <callout emoji="🧭" background-color="rgb(235,247,255)" border-color="rgb(59,130,246)"><p><b>建议体验顺序（约5分钟）：</b>先打开GitHub查看说明与完整源码；下载后直接双击app/index.html进入互动工作台；再打开质量事件Base核对同一事件ID、证据链和流转状态；最后查看飞书任务与复盘文档。</p></callout>
@@ -91,7 +146,7 @@
 <tr><td><p><b>责任任务样例</b></p></td><td><p><a type="url-preview" href="https://applink.feishu.cn/client/todo/detail?guid=f10d51e5-cc8e-4c71-9441-cd29a77feacf">飞书任务｜处置责任与SLA</a></p></td></tr>
 <tr><td><p><b>复盘文档样例</b></p></td><td><p><a type="url-preview" href="https://larkcommunity.feishu.cn/docx/PjludNq8foBhkrxV8VQccsldneb">飞书云文档｜结构化事件复盘</a></p></td></tr>
 </tbody></table>
-<img path="@./output/playwright/final-mobile.png" width="300" caption="图4｜移动端风险值守：产线态势、回放时钟、风险队列与数字员工摘要"/>
+<img path="@./docs/assets/submission/15-mobile-workbench.png" width="300" caption="移动端风险值守｜产线态势、回放时钟、风险队列与数字员工摘要"/>
 <p><b>完整技术方案附件：</b></p>
 <figure view-type="Card"><source path="@./output/docx-qa-final/09_决赛完整技术方案.pdf" name="09_决赛完整技术方案.pdf"/></figure>
 
