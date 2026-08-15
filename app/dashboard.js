@@ -1,6 +1,7 @@
 const qualityScenarios = window.qualityScenarios || [];
 
 const companyDataset = {
+  provenance: "company_dataset_profile.json · schema 1.0 · 赛事历史静态脱敏快照",
   counts: [
     ["设备类别", "625"], ["设备实例", "9,673"], ["设备功能", "336"], ["失效模式", "1,287"], ["故障工单", "406"]
   ],
@@ -246,7 +247,7 @@ const phases = [
 ];
 
 let selectedIndex = 0;
-let phaseIndex = 2;
+let phaseIndex = 3;
 let activeQuestion = "证据链是什么";
 let confirmed = false;
 let closed = false;
@@ -259,8 +260,12 @@ let interventionAccepted = false;
 let workflowEvidenceAccepted = false;
 let resilienceState = "normal";
 let outboxQueued = false;
+let outboxReconciled = false;
+let feishuDispatched = false;
 let companyAuditStep = 0;
 let companyAuditTimer = null;
+let drawerReturnFocus = null;
+let drawerFocusRef = null;
 
 const $ = (id) => document.getElementById(id);
 const selected = () => qualityScenarios[selectedIndex];
@@ -305,7 +310,7 @@ function analyzeSignal(profile = assurance()) {
 
 function eventPassport() {
   const versions = "QG-2026.08|KG-18.0|FS-2.0|QO-2.2";
-  const input = `${selected().id}|${assurance().signal.points.map((point) => point.join("/")).join("|")}|${runMode}|${selectedIntervention || "none"}|${interventionAccepted}|${confirmed}|${workflowEvidenceAccepted}|${closed}|${versions}`;
+  const input = `${selected().id}|${assurance().signal.points.map((point) => point.join("/")).join("|")}|${runMode}|${selectedIntervention || "none"}|${interventionAccepted}|${confirmed}|${workflowEvidenceAccepted}|${closed}|${resilienceState}|${outboxReconciled}|${feishuDispatched}|${versions}`;
   let hash = 2166136261;
   for (const char of input) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
   return `EV-${(hash >>> 0).toString(16).toUpperCase().padStart(8, "0")}`;
@@ -314,6 +319,9 @@ function eventPassport() {
 function policyDecision(action) {
   if (["dispatch", "confirm", "writeback", "close"].includes(action) && runMode === "shadow") return { allowed: false, reason: "L0影子验证只允许回放和评估，不产生外部写入或关闭结论。" };
   if (["dispatch", "confirm", "writeback", "close"].includes(action) && resilienceState === "data-delay") return { allowed: false, reason: "核心数据已过期，策略服务冻结新增派单、确认和关闭。" };
+  if (action === "dispatch" && phaseIndex < 3) return { allowed: false, reason: "证据推理尚未完成，先等待图谱路径、规则共识和候选假设形成。" };
+  if (action === "dispatch" && feishuDispatched) return { allowed: false, reason: "该事件已按幂等键派发，不重复建单。" };
+  if (action === "confirm" && !feishuDispatched) return { allowed: false, reason: "处置任务尚未派发，不能跳过协同编排直接确认。" };
   if (action === "close" && resilienceState === "graph-down") return { allowed: false, reason: "知识快照不可用，关闭申请转人工复核。" };
   if (action === "close" && !interventionAccepted) return { allowed: false, reason: "缺少已签署的反事实或物理复检证据。" };
   if (action === "close" && !confirmed) return { allowed: false, reason: "缺少质量负责人实名确认。" };
@@ -362,6 +370,7 @@ function renderScenarioList() {
 }
 
 function renderCompanyDataset() {
+  $("datasetProvenance").textContent = companyDataset.provenance;
   $("companyDatasetMetrics").innerHTML = companyDataset.counts.map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join("");
   $("relationshipFunnel").innerHTML = companyDataset.funnel.map(([label, count, rate], index) => `
     <div class="funnel-row ${index >= 2 ? "gap" : ""}">
@@ -413,7 +422,7 @@ function runCompanyAudit() {
 function selectScenario(index) {
   selectedIndex = index;
   traceIndex = 0;
-  phaseIndex = 2;
+  phaseIndex = 3;
   activeQuestion = "证据链是什么";
   confirmed = false;
   closed = false;
@@ -423,6 +432,8 @@ function selectScenario(index) {
   workflowEvidenceAccepted = false;
   resilienceState = "normal";
   outboxQueued = false;
+  outboxReconciled = false;
+  feishuDispatched = false;
   window.clearInterval(runTimer);
   renderAll();
 }
@@ -439,7 +450,7 @@ function renderPlantStatus() {
   });
   const analysis = analyzeSignal();
   const replayTimes = [assurance().signal.points[0][0], analysis.firstWeak, analysis.actionable, assurance().signal.points.at(-1)[0], analysis.downstream];
-  $("liveClock").textContent = replayTimes[Math.min(closed ? 4 : phaseIndex, 4)];
+  $("liveClock").textContent = replayTimes[Math.min(closed ? 4 : Math.min(phaseIndex, 2), 4)];
 }
 
 function renderIncident() {
@@ -456,11 +467,13 @@ function renderIncident() {
   $("phaseLabel").textContent = closed ? "闭环完成" : phases[phaseIndex].label;
   $("phaseDetail").textContent = closed ? "证据、任务与复盘已关联" : phases[phaseIndex].detail;
   $("decisionText").textContent = item.decision;
-  $("rootCauseText").textContent = `首要根因假设：${item.rootCause}（置信度 ${Math.round(item.confidence * 100)}%）`;
+  $("rootCauseText").textContent = `Top-1假设：${item.rootCause}（${Math.round(item.confidence * 100)}%，待现场验证）`;
   $("slaBadge").textContent = item.risk === "P1" ? "SLA 30min" : "SLA 当班";
   $("gateStatus").textContent = closed ? "已验证关闭" : confirmed ? "处置已确认" : "待质量负责人确认";
   $("dispatchBtn").disabled = !policyDecision("dispatch").allowed || closed;
+  $("dispatchBtn").textContent = feishuDispatched ? "已派发飞书闭环" : phaseIndex < 3 ? "等待证据研判完成" : "派发飞书闭环";
   $("confirmBtn").disabled = !policyDecision("confirm").allowed || confirmed || closed;
+  $("confirmBtn").textContent = feishuDispatched ? "人工确认处置" : "等待派发后确认";
   $("writebackBtn").disabled = !policyDecision("writeback").allowed || workflowEvidenceAccepted || closed;
   $("resolveBtn").disabled = !policyDecision("close").allowed || closed;
   renderEarlyWarning();
@@ -719,14 +732,18 @@ function buildRecord() {
 
 function renderFeishu() {
   const pipeline = [
-    ["事件台账", "风险线程与护照", phaseIndex >= 3],
-    ["处置任务", "责任人与SLA", phaseIndex >= 3],
+    ["事件台账", "风险线程与护照", feishuDispatched],
+    ["处置任务", "责任人与SLA", feishuDispatched],
     ["复检记录", "实测、量具与签署", interventionAccepted],
     ["设备维修", "措施与首件确认", workflowEvidenceAccepted],
     ["原生审批", "风险受理与放行", confirmed],
     ["知识变更", "PFMEA/控制计划草案待审批", workflowEvidenceAccepted]
   ];
   $("feishuPipeline").innerHTML = pipeline.map(([name, use, active], index) => `<div class="pipeline-step ${active ? "active" : ""}"><small>0${index + 1}</small><b>${name}</b><span>${use}</span></div>`).join("");
+  const feishuInterrupted = resilienceState === "feishu-down";
+  $("onlineDot").classList.toggle("offline", feishuInterrupted);
+  $("feishuStatusTitle").textContent = feishuInterrupted ? "飞书连接中断 · Outbox接管" : outboxReconciled ? "飞书连接已恢复 · 补偿完成" : "飞书能力分层核验";
+  $("feishuStatusDetail").textContent = feishuInterrupted ? "事件包本地留存 · 待恢复补偿 · 不重复建单" : outboxReconciled ? "事件ID幂等补偿回执已记录 · 任务/文档对象样例可查" : "Base写入回读已核验 · 任务/文档对象样例可查 · Aily与事件订阅待部署";
   $("capabilityMatrix").innerHTML = feishuCapabilities.map((capability) => `
     <div class="capability-item"><b>${capability.name}</b><span>${capability.use}</span><i>${capability.status}</i></div>
   `).join("");
@@ -774,17 +791,27 @@ function renderRuntimeAssurance() {
     { id: "graph-down", label: "图谱不可用", title: "切换规则与控制计划只读包", detail: "不生成唯一根因，仅输出已验证硬规则、影响范围和人工排查清单。" },
     { id: "feishu-down", label: "飞书中断", title: "写入本地Outbox并幂等补偿", detail: "事件包落盘，恢复后按事件ID补偿同步，不重复建单、不丢失审计时间戳。" }
   ];
-  $("resilienceOptions").innerHTML = drills.map((drill) => `<button class="${drill.id === resilienceState ? "active" : ""}" data-resilience="${drill.id}">${drill.label}</button>`).join("");
+  $("resilienceOptions").innerHTML = drills.map((drill) => {
+    const label = drill.id === "feishu-down" && resilienceState === "feishu-down" && outboxQueued ? "恢复并补偿" : drill.label;
+    return `<button class="${drill.id === resilienceState ? "active" : ""}" data-resilience="${drill.id}">${label}</button>`;
+  }).join("");
   document.querySelectorAll("#resilienceOptions button").forEach((button) => button.addEventListener("click", () => {
-    resilienceState = resilienceState === button.dataset.resilience ? "normal" : button.dataset.resilience;
+    if (button.dataset.resilience === "feishu-down" && resilienceState === "feishu-down" && outboxQueued) {
+      resilienceState = "normal";
+      outboxReconciled = true;
+      showToast(`已恢复飞书连接并按事件ID ${selected().id} 完成补偿`);
+    } else {
+      resilienceState = resilienceState === button.dataset.resilience ? "normal" : button.dataset.resilience;
+    }
     renderRuntimeRibbon();
     renderRuntimeAssurance();
     renderIncident();
+    renderFeishu();
   }));
   const current = drills.find((drill) => drill.id === resilienceState);
-  $("resilienceStatus").textContent = current ? "已进入安全降级" : "全链路可用";
+  $("resilienceStatus").textContent = current ? (current.id === "feishu-down" ? "连接中断 · 待补偿" : "已进入安全降级") : outboxReconciled ? "已恢复 · 补偿完成" : "全链路可用";
   $("resilienceOutcome").className = `resilience-outcome ${current ? "warning" : ""}`;
-  $("resilienceOutcome").innerHTML = current ? `<strong>${current.title}</strong><span>${current.detail}</span>${current.id === "feishu-down" && outboxQueued ? `<span>Outbox：1条待补偿 · 幂等键 ${selected().id}</span>` : ""}` : `<strong>规则、图谱、协同链路健康</strong><span>任何单点失效均不得绕过P1隔离、人工确认与确定性关闭门。</span>${outboxQueued ? `<span>Outbox已按幂等键补偿完成，未重复建单。</span>` : ""}`;
+  $("resilienceOutcome").innerHTML = current ? `<strong>${current.title}</strong><span>${current.detail}</span>${current.id === "feishu-down" && outboxQueued ? `<span>Outbox：1条待补偿 · 幂等键 ${selected().id}</span>` : ""}` : `<strong>规则、图谱、协同链路健康</strong><span>任何单点失效均不得绕过P1隔离、人工确认与确定性关闭门。</span>${outboxReconciled ? `<span>Outbox已按事件ID补偿完成，回执已留痕。</span>` : outboxQueued ? `<span>连接已恢复，等待执行“恢复并补偿”。</span>` : ""}`;
   const rows = [
     ["数字员工", "弱信号检测、证据收敛、任务草拟", "无放行权"],
     ["质量工程师", "确认风险受理与隔离范围", "实名签收"],
@@ -799,12 +826,12 @@ function renderDrawer() {
   const item = selected();
   const profile = assurance();
   $("drawerContent").innerHTML = `
-    <section class="drawer-group"><h3>事件摘要</h3><p>${item.id} · ${item.scene} · ${item.risk}</p><p>${item.decision}</p></section>
-    <section class="drawer-group"><h3>事件护照</h3><p>${eventPassport()}</p><p>规则 QG-2026.08 · 知识 KG-18.0 · 特征 FS-2.0 · 本体 QO-2.2</p><p>弱信号 ${analyzeSignal().firstWeak} · 可行动 ${analyzeSignal().actionable} · 下游理论显性 ${analyzeSignal().downstream}</p></section>
-    <section class="drawer-group"><h3>原始与派生证据</h3><ol>${item.evidence.map((evidence) => `<li>${evidence}</li>`).join("")}</ol></section>
-    <section class="drawer-group"><h3>根因假设</h3><p>${item.rootCause}</p><p>置信度 ${Math.round(item.confidence * 100)}%，必须由点检、复检和维修结果证实或证伪。</p></section>
-    <section class="drawer-group"><h3>候选根因与反证动作</h3><ol>${profile.hypotheses.map((hypothesis) => `<li><b>${hypothesis.score}% ${hypothesis.name}</b>：${hypothesis.test}</li>`).join("")}</ol></section>
-    <section class="drawer-group"><h3>关闭条件</h3><ol><li>影响车辆或零件完成隔离与复检</li><li>设备/工艺恢复并通过首件确认</li><li>责任任务、时间戳和附件齐全</li><li>质量负责人确认放行或继续升级</li><li>根因与措施写回知识图谱和复盘文档</li></ol></section>
+    <section class="drawer-group" data-evidence-id="SUMMARY"><h3>事件摘要</h3><p>${item.id} · ${item.scene} · ${item.risk}</p><p>${item.decision}</p></section>
+    <section class="drawer-group" data-evidence-id="QG-2026.08"><h3>事件护照</h3><p>${eventPassport()}</p><p>规则 QG-2026.08 · 知识 KG-18.0 · 特征 FS-2.0 · 本体 QO-2.2</p><p>弱信号 ${analyzeSignal().firstWeak} · 可行动 ${analyzeSignal().actionable} · 下游理论显性 ${analyzeSignal().downstream}</p></section>
+    <section class="drawer-group" data-evidence-id="E1"><h3>原始与派生证据</h3><ol>${item.evidence.map((evidence) => `<li>${evidence}</li>`).join("")}</ol></section>
+    <section class="drawer-group" data-evidence-id="E2"><h3>根因假设</h3><p>${item.rootCause}</p><p>Top-1假设 ${Math.round(item.confidence * 100)}%，必须由点检、复检和维修结果证实或证伪。</p></section>
+    <section class="drawer-group" data-evidence-id="KG-18.0"><h3>候选根因与反证动作</h3><ol>${profile.hypotheses.map((hypothesis) => `<li><b>${hypothesis.score}% ${hypothesis.name}</b>：${hypothesis.test}</li>`).join("")}</ol></section>
+    <section class="drawer-group" data-evidence-id="CLOSE"><h3>关闭条件</h3><ol><li>影响车辆或零件完成隔离与复检</li><li>设备/工艺恢复并通过首件确认</li><li>责任任务、时间戳和附件齐全</li><li>质量负责人确认放行或继续升级</li><li>根因与措施写回知识图谱和复盘文档</li></ol></section>
   `;
 }
 
@@ -817,9 +844,12 @@ function openCompanyEvidence() {
     <section class="drawer-group"><h3>候选与冲突</h3><ol><li><b>H1 工装夹持元件维护因素</b>：同类设备有处置支持，但目标设备无失效模式关联，候选条目未记录检测方法。</li><li><b>H2 执行元件维护因素</b>：功能与现象一致，但缺少同实例处置和原始工单正文。</li></ol></section>
     <section class="drawer-group"><h3>受控行动</h3><ol><li>核验两张待处理工单状态。</li><li>执行夹持、执行元件和安全回路检查。</li><li>由设备、维修、质量三方确认或驳回失效模式。</li><li>批准后更新点巡检项目、检测方法和维护周期。</li><li>在观察窗验证复发率后关闭知识债务事件。</li></ol></section>
   `;
+  drawerFocusRef = null;
+  drawerReturnFocus = document.activeElement;
   $("drawerBackdrop").hidden = false;
   $("evidenceDrawer").classList.add("open");
   $("evidenceDrawer").setAttribute("aria-hidden", "false");
+  $("drawerCloseBtn").focus();
 }
 
 function renderAll() {
@@ -848,6 +878,8 @@ function simulateRun() {
   interventionAccepted = false;
   workflowEvidenceAccepted = false;
   outboxQueued = false;
+  outboxReconciled = false;
+  feishuDispatched = false;
   taskProgress = 0;
   traceIndex = 0;
   renderAll();
@@ -870,9 +902,11 @@ function dispatchFeishu() {
     return;
   }
   phaseIndex = Math.max(3, phaseIndex);
+  feishuDispatched = true;
   taskProgress = 0;
   workflowEvidenceAccepted = false;
   outboxQueued = Boolean(decision.queue);
+  outboxReconciled = false;
   renderAll();
   const action = decision.queue ? `飞书不可用，事件已进入Outbox：${selected().id}` : `已按幂等键 ${selected().id} 编排 Base、卡片和飞书任务`;
   showToast(action);
@@ -884,7 +918,6 @@ function confirmAction() {
     showToast(`确认被策略服务阻断：${decision.reason}`);
     return;
   }
-  if (phaseIndex < 3) dispatchFeishu();
   confirmed = true;
   taskProgress = 1;
   renderAll();
@@ -934,17 +967,28 @@ function downloadEvent() {
   showToast("事件证据包已导出");
 }
 
-function openDrawer() {
+function openDrawer(event) {
+  drawerFocusRef = event?.currentTarget?.dataset?.evidenceRef || null;
+  drawerReturnFocus = event?.currentTarget || document.activeElement;
   renderDrawer();
   $("drawerBackdrop").hidden = false;
   $("evidenceDrawer").classList.add("open");
   $("evidenceDrawer").setAttribute("aria-hidden", "false");
+  $("drawerCloseBtn").focus();
+  if (drawerFocusRef) {
+    const target = [...document.querySelectorAll("#drawerContent [data-evidence-id]")].find((node) => node.dataset.evidenceId === drawerFocusRef);
+    target?.classList.add("focused");
+    target?.scrollIntoView({ block: "start" });
+  }
 }
 
 function closeDrawer() {
   $("drawerBackdrop").hidden = true;
   $("evidenceDrawer").classList.remove("open");
   $("evidenceDrawer").setAttribute("aria-hidden", "true");
+  drawerReturnFocus?.focus?.();
+  drawerReturnFocus = null;
+  drawerFocusRef = null;
 }
 
 function bindEvents() {

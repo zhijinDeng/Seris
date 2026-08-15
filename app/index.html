@@ -33,7 +33,7 @@
     </div>
   </header>
 
-  <section class="plant-strip" aria-label="工厂实时态势">
+  <section class="plant-strip" aria-label="工厂回放态势">
     <div data-plant="assembly"><span>总装一线</span><b class="normal">稳定</b></div>
     <div data-plant="welding"><span>焊装二线</span><b class="normal">稳定</b></div>
     <div data-plant="painting"><span>涂装一线</span><b class="normal">稳定</b></div>
@@ -47,7 +47,7 @@
       <div class="segmented" id="modeSelector" role="group" aria-label="选择运行模式">
         <button data-mode="shadow">影子验证</button>
         <button data-mode="collaborative" class="active">协同执行</button>
-        <button data-mode="controlled">生产受控</button>
+        <button data-mode="controlled" title="需企业授权条件，浏览器不可直接启用">生产授权条件</button>
       </div>
     </div>
     <div class="runtime-facts">
@@ -94,7 +94,7 @@
           </div>
 
           <div class="incident-kpis">
-            <div><span>根因置信度</span><strong id="confidence">--</strong><i><em id="confidenceBar"></em></i></div>
+            <div><span>Top-1假设置信度</span><strong id="confidence">--</strong><small>待现场验证</small><i><em id="confidenceBar"></em></i></div>
             <div><span>影响对象</span><strong id="scopeCount">--</strong><small id="scopeDetail"></small></div>
             <div><span>预计止损窗口</span><strong id="containmentWindow">--</strong><small>按当前节拍估算</small></div>
             <div><span>处置状态</span><strong id="phaseLabel">感知中</strong><small id="phaseDetail">等待事件编排</small></div>
@@ -115,8 +115,8 @@
 
           <div class="signal-console">
             <div class="signal-heading">
-              <div><span class="kicker">PROCESS SIGNAL</span><h3 id="signalTitle">工艺参数实时窗</h3></div>
-              <div class="legend"><span class="limit">控制界限</span><span class="actual">实时值</span></div>
+              <div><span class="kicker">PROCESS SIGNAL</span><h3 id="signalTitle">工艺参数回放窗</h3></div>
+              <div class="legend"><span class="limit">控制界限</span><span class="actual">回放当前值</span></div>
             </div>
             <div class="chart-wrap">
               <svg id="trendChart" viewBox="0 0 760 180" role="img" aria-label="工艺参数趋势图"></svg>
@@ -171,7 +171,7 @@
       </div>
       <article class="dataset-console panel-shell">
         <div class="dataset-heading">
-          <div><span class="mini-badge verified">赛事提供脱敏快照</span><h3>设备业务知识链健康度</h3></div>
+          <div><span class="mini-badge verified">赛事提供脱敏快照</span><h3>设备业务知识链健康度</h3><small id="datasetProvenance" class="dataset-provenance"></small></div>
           <button id="runDataAuditBtn" class="primary-btn">运行关系审计</button>
         </div>
         <div id="companyDatasetMetrics" class="dataset-metrics"></div>
@@ -249,7 +249,7 @@
       <div class="feishu-grid">
         <article class="feishu-status panel-shell">
           <div class="online-hero">
-            <div><span class="online-dot"></span><strong>飞书能力分层核验</strong><small>Base写入回读已核验 · 任务/文档对象样例可查 · Aily与事件订阅待部署</small></div>
+            <div><span id="onlineDot" class="online-dot"></span><strong id="feishuStatusTitle">飞书能力分层核验</strong><small id="feishuStatusDetail">Base写入回读已核验 · 任务/文档对象样例可查 · Aily与事件订阅待部署</small></div>
             <a id="baseLink" class="secondary-btn" href="https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD" target="_blank" rel="noreferrer">打开质量台账</a>
           </div>
           <div id="feishuPipeline" class="feishu-pipeline"></div>
@@ -306,8 +306,8 @@
   </footer>
 
   <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
-  <aside id="evidenceDrawer" class="evidence-drawer" aria-hidden="true">
-    <div class="drawer-head"><div><span class="kicker">EVIDENCE PACKAGE</span><h2>完整证据包</h2></div><button id="drawerCloseBtn" class="close-btn" aria-label="关闭">×</button></div>
+  <aside id="evidenceDrawer" class="evidence-drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" tabindex="-1">
+    <div class="drawer-head"><div><span class="kicker">EVIDENCE PACKAGE</span><h2 id="drawerTitle">完整证据包</h2></div><button id="drawerCloseBtn" class="close-btn" aria-label="关闭">×</button></div>
     <div id="drawerContent" class="drawer-content"></div>
   </aside>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

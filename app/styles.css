@@ -68,6 +68,7 @@ a { color: inherit; text-decoration: none; }
   width: 8px; height: 8px; border-radius: 50%; background: var(--teal);
   box-shadow: 0 0 0 5px rgba(8, 125, 114, 0.12); animation: pulse 1.8s ease-in-out infinite;
 }
+.online-dot.offline { background: var(--amber); box-shadow: 0 0 0 5px rgba(184, 111, 0, 0.14); }
 .primary-btn, .secondary-btn, .ghost-btn {
   min-height: 38px; padding: 8px 14px; border-radius: 5px; font-weight: 700; border: 1px solid transparent;
 }
@@ -482,8 +483,10 @@ footer strong { color: var(--ink); font-size: 13px; }
 .close-btn { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 23px; line-height: 1; }
 .drawer-content { padding-top: 12px; }
 .drawer-group { margin-bottom: 16px; }
+.drawer-group.focused { padding: 10px 12px; margin-left: -12px; margin-right: -12px; border-left: 3px solid var(--teal); background: var(--teal-soft); }
 .drawer-group h3 { font-size: 13px; margin: 0 0 6px; }
 .drawer-group p, .drawer-group li { color: #45505b; font-size: 11px; }
+.dataset-provenance { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; font-weight: 500; }
 .toast { position: fixed; z-index: 100; right: 22px; bottom: 22px; min-width: 260px; max-width: 420px; padding: 12px 14px; color: #fff; background: #20262d; border-left: 4px solid var(--teal); border-radius: 4px; box-shadow: 0 12px 32px rgba(21,27,34,.24); opacity: 0; transform: translateY(12px); pointer-events: none; transition: .22s ease; }
 .toast.show { opacity: 1; transform: translateY(0); }
 
