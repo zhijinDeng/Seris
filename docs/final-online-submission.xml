@@ -197,6 +197,7 @@
 <callout emoji="📌" background-color="rgb(245,247,250)" border-color="rgb(156,163,175)"><p><b>数据与结论边界：</b>页面工艺参数、时间序列、检测签署身份为脱敏仿真；赛事企业数据仅用于聚合统计与重键关系审计；UCI SECOM只验证通用检测和数据治理。所有现网收益均列为90天试点目标，不把仿真值包装成生产成绩。</p></callout>
 
 <h2>五、参赛材料附件与网页入口</h2>
+<callout emoji="🚀" background-color="rgb(235,247,255)" border-color="rgb(59,130,246)"><p><b>互动网页直达：</b><a href="https://zhijindeng.github.io/Seris/">打开知质·灵巡互动工作台</a>，直接体验主动预警、企业数据审计、GraphRAG证据、反事实验证、飞书协同、故障降级与五门关闭。　<b>源码审查：</b><a href="https://github.com/zhijinDeng/Seris">查看GitHub公开仓库</a>。</p></callout>
 <callout emoji="📦" background-color="rgb(238,247,246)" border-color="rgb(15,118,110)"><p><b>正式材料下载区：</b>以下附件为本队参赛提交材料的可打开版本。建议先查看“40强赛完整参赛方案”和“决赛完整技术方案”，再按需打开开题报告、平台说明、案例、创新点与参考依据。附件与正文相互补充，正文中的图文证据和互动入口可直接在线查看。</p></callout>
 <h3>1. 正式参赛材料</h3>
 <p><b>00｜报名表填写文本</b>　队伍、作品和参赛信息。</p>
