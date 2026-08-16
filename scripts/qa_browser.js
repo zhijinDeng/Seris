@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, "..");
 const outputDir = path.join(root, "output", "playwright");
 const target = process.env.SERIS_URL || "http://127.0.0.1:8878/app/index.html";
 const executablePath = process.env.PLAYWRIGHT_CHROME;
+const navigationWaitUntil = process.env.SERIS_WAIT_UNTIL || "networkidle";
 
 function expect(condition, message) {
   if (!condition) throw new Error(message);
@@ -40,7 +41,7 @@ async function main() {
   const desktop = await browser.newPage({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1 });
   desktop.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
   desktop.on("console", (message) => { if (message.type() === "error") errors.push(`console: ${message.text()}`); });
-  await desktop.goto(target, { waitUntil: "networkidle" });
+  await desktop.goto(target, { waitUntil: navigationWaitUntil });
   let metrics = await pageMetrics(desktop);
   expect(metrics.scrollWidth <= metrics.width, `桌面端横向溢出：${metrics.scrollWidth}/${metrics.width}`);
   expect(metrics.lead === "22 分钟", `首场景前置量错误：${metrics.lead}`);
@@ -132,7 +133,7 @@ async function main() {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   mobile.on("pageerror", (error) => errors.push(`mobile pageerror: ${error.message}`));
   mobile.on("console", (message) => { if (message.type() === "error") errors.push(`mobile console: ${message.text()}`); });
-  await mobile.goto(target, { waitUntil: "networkidle" });
+  await mobile.goto(target, { waitUntil: navigationWaitUntil });
   metrics = await pageMetrics(mobile);
   expect(metrics.scrollWidth <= metrics.width, `移动端横向溢出：${metrics.scrollWidth}/${metrics.width}`);
   await mobile.screenshot({ path: path.join(outputDir, "final-mobile.png") });
