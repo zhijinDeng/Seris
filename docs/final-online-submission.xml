@@ -195,3 +195,34 @@
 <li><a href="https://open.feishu.cn/document/server-docs/docs/bitable-v1/bitable-overview?lang=zh-CN">飞书多维表格</a>、<a href="https://open.feishu.cn/document/task-v2/overview">飞书任务</a>、<a href="https://open.feishu.cn/document/server-docs/event-subscription-guide/overview?lang=zh-CN">事件订阅</a>官方文档。</li>
 </ol>
 <callout emoji="📌" background-color="rgb(245,247,250)" border-color="rgb(156,163,175)"><p><b>数据与结论边界：</b>页面工艺参数、时间序列、检测签署身份为脱敏仿真；赛事企业数据仅用于聚合统计与重键关系审计；UCI SECOM只验证通用检测和数据治理。所有现网收益均列为90天试点目标，不把仿真值包装成生产成绩。</p></callout>
+
+<h2>五、参赛材料附件与网页入口</h2>
+<callout emoji="📦" background-color="rgb(238,247,246)" border-color="rgb(15,118,110)"><p><b>正式材料下载区：</b>以下附件为本队参赛提交材料的可打开版本。建议先查看“40强赛完整参赛方案”和“决赛完整技术方案”，再按需打开开题报告、平台说明、案例、创新点与参考依据。附件与正文相互补充，正文中的图文证据和互动入口可直接在线查看。</p></callout>
+<h3>1. 正式参赛材料</h3>
+<p><b>00｜报名表填写文本</b>　队伍、作品和参赛信息。</p>
+<figure view-type="Card"><source path="@./提交材料/00_报名表填写文本.docx" name="00_报名表填写文本.docx"/></figure>
+<p><b>01｜开题报告</b>　命题前置分析、问题洞察与方案起点。</p>
+<figure view-type="Card"><source path="@./提交材料/01_开题报告.docx" name="01_开题报告.docx"/></figure>
+<p><b>02｜整体解决方案书</b>　整体架构、核心模块、创新机制、价值与推广路径。</p>
+<figure view-type="Card"><source path="@./提交材料/02_整体解决方案书.docx" name="02_整体解决方案书.docx"/></figure>
+<p><b>03｜平台运行说明</b>　互动工作台、运行流程与体验方法。</p>
+<figure view-type="Card"><source path="@./提交材料/03_平台运行说明.docx" name="03_平台运行说明.docx"/></figure>
+<p><b>04｜参考文献与数据依据</b>　企业资料、标准、论文、公开数据与边界说明。</p>
+<figure view-type="Card"><source path="@./提交材料/04_参考文献与数据依据.docx" name="04_参考文献与数据依据.docx"/></figure>
+<p><b>05｜系统运行说明与完整案例</b>　主动预警、知识债审计、GraphRAG、反事实与飞书协同案例。</p>
+<figure view-type="Card"><source path="@./提交材料/05_系统运行说明与完整案例.docx" name="05_系统运行说明与完整案例.docx"/></figure>
+<p><b>06｜方案创新亮点</b>　双入口主动感知、可证伪推理、双重确定性关闭与执行织网。</p>
+<figure view-type="Card"><source path="@./提交材料/06_方案创新亮点.docx" name="06_方案创新亮点.docx"/></figure>
+<p><b>07｜仿真工况与交互案例</b>　四类工况、交互动作、指标口径与验证边界。</p>
+<figure view-type="Card"><source path="@./提交材料/07_仿真工况与交互案例.docx" name="07_仿真工况与交互案例.docx"/></figure>
+<p><b>08｜40强赛完整参赛方案</b>　阶段性完整方案汇编。</p>
+<figure view-type="Card"><source path="@./提交材料/08_40强赛完整参赛方案.docx" name="08_40强赛完整参赛方案.docx"/></figure>
+<p><b>09｜决赛完整技术方案</b>　决赛版技术架构、系统实现、落地路线、治理与验收合同。</p>
+<figure view-type="Card"><source path="@./提交材料/09_决赛完整技术方案.docx" name="09_决赛完整技术方案.docx"/></figure>
+<h3>2. 互动网页与公开源码入口</h3>
+<table><colgroup><col width="180"/><col width="540"/></colgroup><thead><tr><th><p>入口</p></th><th><p>用途与说明</p></th></tr></thead><tbody>
+<tr><td><p><b>互动工作台直达</b></p></td><td><p><a href="https://zhijindeng.github.io/Seris/">知质·灵巡互动工作台</a><br/>打开后直接进入实时管控页面，可体验主动预警、企业数据审计、GraphRAG证据、反事实验证、飞书协同、故障降级与五门关闭。</p></td></tr>
+<tr><td><p><b>公开源码仓库</b></p></td><td><p><a href="https://github.com/zhijinDeng/Seris">GitHub｜zhijinDeng/Seris</a><br/>查看完整源码、数据契约、运行脚本、参考资料、高清展示素材与材料源文件。</p></td></tr>
+<tr><td><p><b>飞书质量事件台账</b></p></td><td><p><a href="https://larkcommunity.feishu.cn/base/DYAabhZeiagT0ZsjGaTcWFPrn7b?table=tblFo5Btaj0IBXiD">在线Base｜质量风险事件台账</a><br/>查看同一事件ID下的根因假设、证据节点、运行分支、责任人与状态。</p></td></tr>
+</tbody></table>
+<callout emoji="🔐" background-color="rgb(245,247,250)" border-color="rgb(107,114,128)"><p><b>材料边界：</b>网页中的工艺参数、时间序列和签署身份为脱敏仿真；企业数据用于聚合统计和关系审计。正式材料中的“已核验”“脱敏仿真验证”“待企业接入”三类口径保持一致，不将仿真结果表述为赛力斯现网成绩。</p></callout>
